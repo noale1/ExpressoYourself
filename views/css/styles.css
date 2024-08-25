@@ -1,0 +1,27 @@
+.navbar {
+    background-color: #343a40;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f8f9fa;
+}
+
+.navbar-nav .nav-link {
+    color: #f8f9fa;
+    margin-right: 1rem;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #adb5bd;
+}
+
+.form-control {
+    border-radius: 20px;
+}
+
+.btn-outline-light {
+    border-radius: 20px;
+}

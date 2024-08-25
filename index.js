@@ -7,8 +7,8 @@ const app = express();
 app.use(express.json());
 
 // Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, '../public')));
-app.use(express.static(path.join(__dirname, '../views')));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'views')));
 
 // Connect to mongo
 mongoose.connect('mongodb://localhost:27017/expresso-yourself')
@@ -18,11 +18,11 @@ mongoose.connect('mongodb://localhost:27017/expresso-yourself')
 // Handle routes
 const userRoutes = require('./routes/userRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
-const orderRoutes = require('./routes/orderRoutes.js');
+const supplierRoutes = require('./routes/supplierRoutes.js');
 
 app.use('/',userRoutes);
 app.use('/products', productRoutes);
-app.use('/orders',orderRoutes);
+app.use('/supplier',supplierRoutes);
 
 // Start the server
 app.listen(3000, () => {
