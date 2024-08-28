@@ -6,22 +6,35 @@ exports.list_products = async (req, res) => {
     res.json(products);
 };
 
-// Admin add product
+// Add a new product
 exports.add_product = async (req, res) => {
-    const { name, description, price, imageUrl } = req.body;
-    const newProduct = new Product({ name, description, price, imageUrl });
-    await newProduct.save();
-    res.json({ message: 'Product added successfully' });
+    try {
+        const newProduct = new Product(req.body);
+        await newProduct.save();
+        res.status(201).json({ message: 'Product added successfully', product: newProduct });
+    } catch (error) {
+        res.status(400).json({ message: 'Error adding product', error });
+    }
 };
 
-// Admin delete product
-exports.delete_product = async (req, res) => {
-    await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Product deleted successfully' });
-};
-
-// Admin update product
+// Update an existing product
 exports.update_product = async (req, res) => {
-    await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Product updated successfully' });
+    try {
+        const productId = req.params.id;
+        const updatedProduct = await Product.findByIdAndUpdate(productId, req.body, { new: true });
+        res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
+    } catch (error) {
+        res.status(400).json({ message: 'Error updating product', error });
+    }
+};
+
+// Delete a product
+exports.delete_product = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        await Product.findByIdAndDelete(productId);
+        res.status(200).json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ message: 'Error deleting product', error });
+    }
 };

@@ -15,14 +15,19 @@
 
     <h1>Expresso Yourself</h1>
 
+    <form id="addProductForm">
+        <!-- Form fields -->
+        <button type="submit">Add Product</button>
+    </form>
+
     <div class="card custom-card" style="width: 18rem;">
         <img class="card-img-top" src="./images/default_beans.jpg" alt="Card image cap">
         <div class="card-body">
             <h5 class="card-title">Sample Product</h5>
             <p class="card-text">Example of information about the product</p>
-                <a href="#" class="image-link-button">
-                    <img src="./images/shopping_cart.webp" alt="Button Image">
-                </a>
+            <a href="#" class="image-link-button">
+                <img src="./images/shopping_cart.webp" alt="Button Image">
+            </a>
         </div>
     </div>
 
@@ -30,7 +35,29 @@
     <script src="/js/scripts.js"></script>
     <script>
         // Load navbar partial
-        $('#navbar').load('views/partials/navbar.html');
+        // $('#navbar').load('views/partials/navbar.html');
+        $('#addProductForm').submit(function (e) {
+            e.preventDefault();
+            const productData = {
+                name: $('#name').val(),
+                price: $('#price').val(),
+                description: $('#description').val(),
+                imageUrl: $('#imageUrl').val(),
+                category: $('#category').val()
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/api/admin/products',
+                data: JSON.stringify(productData),
+                contentType: 'application/json',
+                success: function (response) {
+                    alert('Product added successfully!');
+                },
+                error: function (error) {
+                    alert('Error adding product.');
+                }
+            });
+        });
     </script>
 
     <!-- Bootstrap JS and dependencies -->
