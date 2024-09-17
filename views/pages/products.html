@@ -5,14 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - Expresso Yourself</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 
 <body>
-
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="/">Expresso Yourself</a>
@@ -35,14 +32,37 @@
                         <a class="nav-link" href="contact.html">Contact</a>
                     </li>
                     <li>
-                        <a href="shoppingCart.html" class="image-link-navbar">
+                        <a href="shoppingCart.html" data-bs-toggle="modal" class="image-link-navbar"
+                            data-bs-target="#cartModal">
                             <img src="../images/shopping_cart.webp" alt="Button Image">
+                            <span id="cartCount">0</span>
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cartModalLabel">Your Cart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="cartItems" class="list-group">
+                    </ul>
+                    <p class="mt-3">Total: $<span id="cartTotal">0.00</span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn custom-btn" onclick="checkout()">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <header class="text-light py-5 text-center" style="background-color: #a0b598;">
         <h1 class="display-4">Our Coffee Beans</h1>
@@ -55,9 +75,22 @@
         </div>
     </div>
 
+    <footer class="footer text-center">
+        <div class="container">
+            <p>© Expresso Yourself | All Rights Reserved</p>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let cart = [];
+
         document.addEventListener('DOMContentLoaded', function () {
+            loadProducts();
+            loadCart();
+        });
+
+        function loadProducts() {
             fetch('/api/products')
                 .then(response => response.json())
                 .then(products => {
@@ -71,7 +104,7 @@
                                         <h5 class="card-title">${product.name}</h5>
                                         <p class="card-text">${product.description}</p>
                                         <p class="card-text">Price: $${product.price.toFixed(2)}</p>
-                                        <a href="#" class="image-link-button" onclick="addToCart('${product._id}')">
+                                        <a href="#" class="image-link-button" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">
                                             <img src="../images/shopping_cart.webp" alt="Add to Cart">
                                         </a>
                                     </div>
@@ -82,14 +115,67 @@
                     });
                 })
                 .catch(error => console.error('Error fetching products:', error));
-        });
+        };
 
-        function addToCart(productId) {
-            // Implement add to cart functionality here
-            console.log('Adding product to cart:', productId);
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
+            updateCart();
+            saveCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartCount = document.getElementById('cartCount');
+
+            cartItems.innerHTML = '';
+            let total = 0;
+            let count = 0;
+
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `
+                    ${item.name} - $${item.price.toFixed(2)} x ${item.quantity}
+                    <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.png"></button>
+                `;
+                cartItems.appendChild(li);
+                total += item.price * item.quantity;
+                count += item.quantity;
+            });
+
+            cartTotal.textContent = total.toFixed(2);
+            cartCount.textContent = count;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
+            saveCart();
+        }
+
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function loadCart() {
+            const savedCart = localStorage.getItem('cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCart();
+            }
+        }
+
+        function checkout() {
+            console.log('Checkout clicked');
+            alert('Checkout functionality not implemented yet.');
         }
     </script>
-
 
 </body>
 
