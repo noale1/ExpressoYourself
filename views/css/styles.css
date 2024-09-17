@@ -1,23 +1,3 @@
-.navbar {
-    background-color: #343a40;
-}
-
-.navbar-brand {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #f8f9fa;
-}
-
-.navbar-nav .nav-link {
-    color: #f8f9fa;
-    margin-right: 1rem;
-    transition: color 0.3s ease-in-out;
-}
-
-.navbar-nav .nav-link:hover {
-    color: #adb5bd;
-}
-
 .form-control {
     border-radius: 20px;
 }
@@ -32,6 +12,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    margin: 20px;
 }
 
 .custom-card:hover {
@@ -73,3 +54,29 @@
 .image-link-button img:hover {
     transform: scale(1.05);
 }
+
+.welcome {
+    background-image: url('../images/coffee_background.jpeg'); 
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .welcome h1 {
+    font-size: 4rem;
+  }
+
+  .products img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .footer {
+    background-color: #edd7bc;
+    color: #6e7976;
+    padding: 20px 0;
+  }
