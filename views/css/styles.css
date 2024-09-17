@@ -55,6 +55,19 @@
     transform: scale(1.05);
 }
 
+.image-link-navbar img {
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.image-link-navbar img:hover {
+    transform: scale(1.05);
+}
+
 .welcome {
     background-image: url('../images/coffee_background.jpeg'); 
     background-size: cover;
