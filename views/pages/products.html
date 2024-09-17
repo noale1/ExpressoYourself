@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Expresso Yourself</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Expresso Yourself</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li style="margin-right: 400px;">
+                        <a href="shoppingCart.html" class="image-link-button">
+                            <img src="../images/shopping_cart.webp" alt="Button Image">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="products.html">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Our Coffee Beans</h1>
+        <p>Discover our wide selection of premium coffee beans from around the world.</p>
+    </header>
+    </section>
+
+    <div class="container mt-4">
+        <div id="products-container" class="row">
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-light text-center py-3">
+        <div class="container">
+            <p>© 2024 Coffee Bean Store | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/api/products')
+                .then(response => response.json())
+                .then(products => {
+                    const productsContainer = document.getElementById('products-container');
+                    products.forEach(product => {
+                        const productCard = `
+                            <div class="col-md-4 mb-4">
+                                <div class="card custom-card">
+                                    <img class="card-img-top" src="${product.image || '../images/default_beans.jpg'}" alt="${product.name}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${product.name}</h5>
+                                        <p class="card-text">${product.description}</p>
+                                        <p class="card-text">Price: $${product.price.toFixed(2)}</p>
+                                        <a href="#" class="image-link-button" onclick="addToCart('${product._id}')">
+                                            <img src="../images/shopping_cart.webp" alt="Add to Cart">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        productsContainer.innerHTML += productCard;
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        });
+
+        function addToCart(productId) {
+            // Implement add to cart functionality here
+            console.log('Adding product to cart:', productId);
+        }
+    </script>
+
+
+</body>
+
+</html>

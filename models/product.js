@@ -13,7 +13,7 @@ const productSchema = new mongoose.Schema({
         type: String
     },
     imageUrl: {
-        type: String
+        type: String, default: '../images/default_beans.jpg'
     },
     category: {
         type: String
