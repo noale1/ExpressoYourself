@@ -1,8 +1,10 @@
+require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const Product = require('./models/product.js');
+const Location = require('./models/location.js');
 
 // Middleware
 app.use(express.json());
@@ -11,7 +13,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
 
 // Connect to mongo
-mongoose.connect('mongodb://localhost:27017/expresso-yourself')
+const mongoAtlasUri = process.env.MONGO_ATLAS_URI;
+mongoose.connect(mongoAtlasUri)
     .then(() => console.log('Connected!'))
     .catch(e => console.log(e));
 
@@ -37,6 +40,15 @@ app.get('/api/products', async (req, res) => {
 
 app.get('/products', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages', 'products.html'));
+});
+
+app.get('/api/locations', async (req, res) => {
+    try {
+        const locations = await Location.find();
+        res.json(locations);
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to fetch locations' });
+    }
 });
 
 app.use(express.static('public'));
