@@ -87,3 +87,8 @@
     max-width: 100%;
     height: auto;
   }
+
+  .custom-btn {
+    background-color: #7d9a72;
+    color: #fff;
+}
