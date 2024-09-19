@@ -142,7 +142,7 @@
                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
                 li.innerHTML = `
                     ${item.name} - $${item.price.toFixed(2)} x ${item.quantity}
-                    <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.png"></button>
+                    <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.webp"></button>
                 `;
                 cartItems.appendChild(li);
                 total += item.price * item.quantity;
