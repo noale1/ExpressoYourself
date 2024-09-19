@@ -7,5 +7,6 @@ const path = require('path');
 router.get('/', (req, res) => { res.sendFile(path.join(__dirname, '../views/pages', 'home.html')) });
 router.post('/register', userController.register);
 router.post('/login', userController.login);
+router.get('/users', userController.listAll);
 
 module.exports = router;

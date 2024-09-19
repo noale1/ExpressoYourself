@@ -10,12 +10,47 @@ const jwt = require('jsonwebtoken');
 //TODO: enforce auth
 
 
+//list all Users
+exports.listAll = async (req, res) => {
+    try {
+        const users = await User.find();
+        const successMessage = req.query.message;
+        res.json({ users, successMessage });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 // Register new user
 exports.register = async (req, res) => {
     const { username, email, password } = req.body;
-    const newUser = new User({ username, email, password });
-    await newUser.save();
-    res.json({ message: 'User registered successfully' });
+    console.log(username, email, password);
+    try{
+        const newUser = new User({ username, email, password });
+        await newUser.save();
+        res.redirect(302, '/login');
+    }catch (error){
+        console.log(error.message);
+        if (error.code === 11000) { // MongoDB duplicate key error code
+            const field = Object.keys(error.keyValue)[0]; // Get the field that caused the duplication
+            return res.status(400).json({ message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists.` });
+        }
+        return res.status(500).json({ message: 'Parameter Error!' });
+    }
+};
+
+// Delete a user by username
+exports.delete = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.username);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    };
 };
 
 // Login 
@@ -28,8 +63,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid Credentails!' });
         }
 
-        //const isMatch = await bcrypt.compare(password, user.password);
-        const isMatch = (password === user.password)
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid Credentails!' });
         }
@@ -48,5 +82,7 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+
 
 
