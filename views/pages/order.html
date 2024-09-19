@@ -70,8 +70,10 @@
                         <label for="country" class="form-label">Country</label>
                         <select id="country" class="form-select">
                             <option value="" selected>Choose...</option>
+                            <option value="IL">Israel</option>
+                            <option value="PT">Portugal</option>
+                            <option value="TH">Thailand</option>
                             <option value="US">United States</option>
-                            <option value="CA">Canada</option>
                             <option value="UK">United Kingdom</option>
                         </select>
                     </div>
@@ -100,49 +102,9 @@
             </div>
 
 
-            <!-- Order Summary -->
             <div class="col-md-5">
                 <h3>Order Summary</h3>
-                <ul class="list-group mb-3">
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Arabica Coffee Beans</h6>
-                            <small class="text-muted">1 lb bag</small>
-                        </div>
-                        <span class="text-muted">$12.99</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Robusta Coffee Beans</h6>
-                            <small class="text-muted">1 lb bag</small>
-                        </div>
-                        <span class="text-muted">$9.99</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Espresso Blend</h6>
-                            <small class="text-muted">1 lb bag</small>
-                        </div>
-                        <span class="text-muted">$15.99</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Espresso Blend</h6>
-                            <small class="text-muted">1 lb bag</small>
-                        </div>
-                        <span class="text-muted">$15.99</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">Espresso Blend</h6>
-                            <small class="text-muted">1 lb bag</small>
-                        </div>
-                        <span class="text-muted">$15.99</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Total (USD)</span>
-                        <strong>$38.97</strong>
-                    </li>
+                <ul class="list-group mb-3 order-summary" id="order-summary">
                 </ul>
 
                 <hr class="my-4">
@@ -158,7 +120,114 @@
         </div>
     </footer>
 
+    <script>
+        function loadProducts() {
+            fetch('/api/products')
+                .then(response => response.json())
+                .then(products => {
+                    const orderSummary = document.querySelector('.order-summary');
+                    orderSummary.innerHTML = ''; 
+        
+                    products.forEach(product => {
+                        const productItem = `
+                        <li class="list-group-item d-flex justify-content-between lh-sm">
+                            <div>
+                                <h6 class="my-0">${product.name}</h6>
+                                <small class="text-muted">${product.description || 'No description'}</small>
+                            </div>
+                            <span class="text-muted">$${product.price}</span>
+                        </li>`;
+                        orderSummary.insertAdjacentHTML('beforeend', productItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadProducts);
+        </script>
 
+<script>
+    document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
+        event.preventDefault();
+    
+        const cart = [
+            // Fetch items from the shopping cart (localStorage or backend)
+            // Example: { productId: '123', quantity: 2 }
+        ];
+    
+        const userDetails = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            country: document.getElementById('country').value,
+            zip: document.getElementById('zip').value
+        };
+    
+        // Send checkout details to the server
+        fetch('/api/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cart, userDetails })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Checkout successful') {
+                alert('Order placed successfully!');
+            } else {
+                alert('Error during checkout');
+            }
+        })
+        .catch(error => console.error('Error during checkout:', error));
+    });
+    </script>
+
+<script>
+    // Fetch the cart (order) from MongoDB for the specific user
+    function loadCart(userId) {
+        fetch(`/api/cart/${userId}`)
+            .then(response => response.json())
+            .then(order => {
+                const orderSummary = document.getElementById('order-summary');
+                orderSummary.innerHTML = ''; // Clear any previous items
+    
+                // Loop through the items in the order and display them
+                order.items.forEach(item => {
+                    const orderItem = `
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">${item.productName}</h6>
+                            <small class="text-muted">Quantity: ${item.quantity}</small>
+                        </div>
+                        <span class="text-muted">$${item.price * item.quantity}</span>
+                    </li>`;
+                    orderSummary.insertAdjacentHTML('beforeend', orderItem);
+                });
+    
+                // Add a total price line
+                const totalPrice = order.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+                const totalLine = `
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total (USD)</span>
+                    <strong>$${totalPrice}</strong>
+                </li>`;
+                orderSummary.insertAdjacentHTML('beforeend', totalLine);
+            })
+            .catch(error => console.error('Error fetching cart:', error));
+    }
+    
+    // Call this function when the page loads with the correct userId (or session ID)
+    document.addEventListener('DOMContentLoaded', function() {
+        const userId = 'exampleUserId'; // Replace with the actual user ID or session ID
+        loadCart(userId);
+    });
+    </script>
+    
+    
+        
 </body>
 
 </html>
