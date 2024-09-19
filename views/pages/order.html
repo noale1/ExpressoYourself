@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Expresso Yourself</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="products.html">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Checkout</h1>
+        <p>Thanks for shopping with Expresso Yourself! Looking forward to drinking coffee with you again!</p>
+    </header>
+    </section>
+
+    <section class="container py-5">
+        <div class="row">
+            <!-- Billing Information -->
+            <div class="col-md-7">
+                <h3>Billing Information</h3>
+                <form>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="email" placeholder="Email Address">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="address" placeholder="Address">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="city" placeholder="City">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="zip" placeholder="ZIP Code">
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <select id="country" class="form-select">
+                            <option value="" selected>Choose...</option>
+                            <option value="US">United States</option>
+                            <option value="CA">Canada</option>
+                            <option value="UK">United Kingdom</option>
+                        </select>
+                    </div>
+                </form>
+                <!-- Payment Information -->
+                <h4 class="mb-3">Payment</h4>
+                <form>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="cardName" placeholder="Name on Card">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cardNumber" class="form-label">Credit Card Number</label>
+                        <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9101 1121">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cardExpiry" class="form-label">Expiration Date</label>
+                            <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cardCVV" class="form-label">CVV</label>
+                            <input type="text" class="form-control" id="cardCVV" placeholder="123">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Order Summary -->
+            <div class="col-md-5">
+                <h3>Order Summary</h3>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Arabica Coffee Beans</h6>
+                            <small class="text-muted">1 lb bag</small>
+                        </div>
+                        <span class="text-muted">$12.99</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Robusta Coffee Beans</h6>
+                            <small class="text-muted">1 lb bag</small>
+                        </div>
+                        <span class="text-muted">$9.99</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Espresso Blend</h6>
+                            <small class="text-muted">1 lb bag</small>
+                        </div>
+                        <span class="text-muted">$15.99</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Espresso Blend</h6>
+                            <small class="text-muted">1 lb bag</small>
+                        </div>
+                        <span class="text-muted">$15.99</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
+                        <div>
+                            <h6 class="my-0">Espresso Blend</h6>
+                            <small class="text-muted">1 lb bag</small>
+                        </div>
+                        <span class="text-muted">$15.99</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (USD)</span>
+                        <strong>$38.97</strong>
+                    </li>
+                </ul>
+
+                <hr class="my-4">
+                <button class="w-100 btn custom-btn" type="submit">Complete Checkout</button>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footer text-center">
+        <div class="container">
+            <p>© Expresso Yourself | All Rights Reserved</p>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>
