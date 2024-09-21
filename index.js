@@ -19,11 +19,13 @@ mongoose.connect(mongoAtlasUri)
     .catch(e => console.log(e));
 
 // Handle routes
+const authRoutes = require('./routes/authRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
 const supplierRoutes = require('./routes/supplierRoutes.js');
 
-app.use('/', userRoutes);
+app.use('/', authRoutes);
+app.use('/api', userRoutes);
 app.use('/products', productRoutes);
 app.use('/supplier', supplierRoutes);
 
