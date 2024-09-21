@@ -25,6 +25,7 @@ exports.login = async (req, res) => {
             httpOnly: true, // Prevents client-side access to the cookie
             maxAge: 10800000 // 3 hour in milliseconds
         });
+        console.log("[+] User Logged In: ",email, user.username,  password);
         res.json({ message: 'Login successful, Welcome '+user.username });
     } catch (error) {
         console.error(error);
@@ -35,7 +36,7 @@ exports.login = async (req, res) => {
 
 exports.register = async (req, res) => {
     const { email, username,  password } = req.body;
-    console.log(email, username,  password);
+    console.log("[+] New User Registered: ",email, username,  password);
     try{
         const newUser = new User({ username, email, password });
         await newUser.save();

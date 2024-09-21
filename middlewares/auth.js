@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 // Middleware function to check authentication
 exports.authenticateToken = async (req, res, next) => {
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.headers['cookie']?.split('=')[1];
     if (!token) return res.redirect(302, '/login'); // No token, unauthorized
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {

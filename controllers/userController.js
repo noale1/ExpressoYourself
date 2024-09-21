@@ -6,8 +6,9 @@ const jwt = require('jsonwebtoken');
 //TODO: hash password in the create function -> DONE
 //TODO: validate jwt -> DONE
 //TODO: make jwt secret in the .env -> DONE
+//TODO: enforce auth -> DONE
 //TODO: validate admin 
-//TODO: enforce auth
+//TODO: Logoff
 
 //list all Users
 exports.listAll = async (req, res) => {
@@ -33,6 +34,18 @@ exports.delete = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     };
 };
+
+
+exports.deleteAll = async (req, res) => {
+    try {
+        const result = await User.deleteMany({});
+        res.json({ message: 'All Users deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    };
+};
+
 
 
 

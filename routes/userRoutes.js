@@ -8,6 +8,7 @@ const auth = require('../middlewares/auth');
 router.use(auth.authenticateToken);
 
 // Register and login routes - change to google/facebook later
-router.get('/users' ,userController.listAll);
+router.get('/getUsers' ,userController.listAll);
+router.get('/deleteUsers' ,userController.deleteAll);
 
 module.exports = router;
