@@ -1,57 +1,91 @@
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f3e5ab; /* Light coffee-like background */
-    color: #6b4f1f; /* Coffee brown color */
+    background: url('https://img.freepik.com/free-photo/top-view-cup-coffee-with-copy-space_23-2148251570.jpg?t=st=1726951320~exp=1726954920~hmac=f7f34f3533ac1caa2c080476cb0f2a56e9f0f3a6faef4a9af499ce69e312bcd3&w=1380') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.login-container {
-    max-width: 400px;
-    margin: 100px auto;
-    background: #fff;
+.container {
+    background: rgba(255, 255, 255, 0.9);
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
+    max-width: 400px;
+    width: 100%;
 }
 
 h1 {
-    font-size: 2em;
+    color: #5C3D2E;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #7A5C4B;
     margin-bottom: 20px;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 label {
-    margin: 10px 0 5px;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 input {
+    width: 100%;
     padding: 10px;
-    font-size: 1em;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    margin-bottom: 15px;
+}
+
+input:focus {
+    border-color: #5C3D2E;
+    outline: none;
 }
 
 button {
-    padding: 10px 15px;
-    font-size: 1.2em;
-    color: #fff;
-    background-color: #6b4f1f;
+    background-color: #5C3D2E;
+    color: white;
+    padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    width: 100%;
 }
 
 button:hover {
-    background-color: #563d1a;
+    background-color: #7A5C4B;
+}
+
+.footer-text {
+    margin-top: 20px;
+}
+
+.footer-text a {
+    color: #5C3D2E;
+    text-decoration: none;
+}
+.error-message {
+    color: #F5E1C1;
+    margin-top: 15px;
+    font-weight: bold;
+    border: 1px solid #F5E1C1;
+    background-color: #5C3D2E;
+    padding: 10px;
+    border-radius: 5px;
+    display: none; /* Initially hidden */
 }

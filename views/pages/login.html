@@ -3,47 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Lover Login</title>
     <link rel="stylesheet" href="/css/login_styles.css">
+    <title>Login - Coffee E-Shop</title>
 </head>
 <body>
-    <div class="login-container">
-        <h1>☕ Welcome to the Coffee Club ☕</h1>
-        <form id="loginForm">
-            <label for="email">Email:</label>
-            <input type="text" id="email" placeholder="Enter your coffee email..." required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" placeholder="Enter your secret coffee word..." required>
-
-            <button type="submit">Login</button>
-        </form>
-
-        <!-- Add a link to the registration page -->
-        <p>Don't have an account? <a href="/register">Register here</a></p>
+    <div class="container">
+        <div class="login-form">
+            <h1>Welcome Back!</h1>
+            <p>Log in to your coffee paradise.</p>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Log In</button>
+                <div class="error-message" id="error-message"></div>
+            </form>
+            <p class="footer-text">Don't have an account? <a href="/register">Sign up</a></p>
+        </div>
     </div>
 
     <script>
-        // Handle form submission with JavaScript
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
 
-            // Collect form data
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = '';
+            errorMessage.style.display = 'none'; 
 
-            // Send data to the server as JSON using fetch
-            const response = await fetch('/login', {
+            // Create a JSON object
+            const data = {
+                email: email,
+                password: password
+            };
+
+            // Send a POST request
+            fetch('/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password }) // Send as JSON
+                cache: 'no-cache',
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                window.location.href = '/';
+                // Handle success (e.g., redirect or display a message)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Invalid login credentials. Please try again.';
+                errorMessage.style.display = 'block';
             });
-
-            // Handle the response
-            const result = await response.text();
-            document.getElementById('response').innerHTML = result;
         });
     </script>
 </body>
