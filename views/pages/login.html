@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Lover Login</title>
+    <link rel="stylesheet" href="/css/login_styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>☕ Welcome to the Coffee Club ☕</h1>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="text" id="email" placeholder="Enter your coffee email..." required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your secret coffee word..." required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Add a link to the registration page -->
+        <p>Don't have an account? <a href="/register">Register here</a></p>
+    </div>
+
+    <script>
+        // Handle form submission with JavaScript
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Collect form data
+            const username = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Send data to the server as JSON using fetch
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }) // Send as JSON
+            });
+
+            // Handle the response
+            const result = await response.text();
+            document.getElementById('response').innerHTML = result;
+        });
+    </script>
+</body>
+</html>

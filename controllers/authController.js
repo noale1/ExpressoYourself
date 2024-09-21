@@ -34,8 +34,8 @@ exports.login = async (req, res) => {
 
 
 exports.register = async (req, res) => {
-    const { username, email, password } = req.body;
-    console.log(username, email, password);
+    const { email, username,  password } = req.body;
+    console.log(email, username,  password);
     try{
         const newUser = new User({ username, email, password });
         await newUser.save();

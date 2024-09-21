@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Coffee Lover</title>
+    <link rel="stylesheet" href="/css/login_styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>☕ Join the Coffee Club ☕</h1>
+        <form id="registerForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email..." required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Create your coffee name..." required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Create a secret coffee word..." required>
+
+            <button type="submit">Register</button>
+        </form>
+
+        <p id="response"></p> <!-- Will show the registration response -->
+    </div>
+
+    <script>
+        // Handle form submission with JavaScript
+        document.getElementById('registerForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Collect form data
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Send data to the server as JSON using fetch
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, username, password }) // Send email as well
+            });
+
+            // Handle the response
+            const statusCode = response.status;
+            console.log(statusCode)
+            if(statusCode !== 200){
+                const result = await response.text();
+                document.getElementById('response').innerHTML = result;
+            }
+        });
+    </script>
+</body>
+</html>
