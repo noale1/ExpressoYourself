@@ -1,20 +1,52 @@
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-// Register new user
-exports.register = async (req, res) => {
-    const { username, email, password } = req.body;
-    const newUser = new User({ username, email, password });
-    await newUser.save();
-    res.json({ message: 'User registered successfully' });
-};
+//TODO: crud for user -> DONE
+//TODO: hash password in the create function -> DONE
+//TODO: validate jwt -> DONE
+//TODO: make jwt secret in the .env -> DONE
+//TODO: enforce auth -> DONE
+//TODO: validate admin 
+//TODO: Logoff
 
-// Login - change to google/facebook login
-exports.login = async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email, password });
-    if (user) {
-        res.json({ message: 'Login successful', user });
-    } else {
-        res.json({ message: 'Invalid credentials' });
+//list all Users
+exports.listAll = async (req, res) => {
+    try {
+        const users = await User.find();
+        const successMessage = req.query.message;
+        res.json({ users, successMessage });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
+
+// Delete a user by username
+exports.delete = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.username);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    };
+};
+
+
+exports.deleteAll = async (req, res) => {
+    try {
+        const result = await User.deleteMany({});
+        res.json({ message: 'All Users deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    };
+};
+
+
+
+
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login_styles.css">
+    <title>Register - Coffee E-Shop</title>
+</head>
+<body>
+    <div class="container">
+        <div class="register-form">
+            <h1>Create Your Account</h1>
+            <p>Join us for a delightful coffee experience.</p>
+            <form id="registerForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit">Register</button>
+                <div class="error-message" id="error-message"></div>
+            </form>
+            <p class="footer-text">Already have an account? <a href="/login">Log in</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = ''; // Clear previous error messages
+            errorMessage.style.display = 'none'; // Hide error message initially
+
+            // Simple password matching validation
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match. Please try again.';
+                errorMessage.style.display = 'block'; // Show the error message
+                return;
+            }
+
+            // Create a JSON object
+            const data = {
+                username: username,
+                email: email,
+                password: password
+            };
+            // Send a POST request
+            fetch('/register', {
+                method: 'POST',
+                redirect: 'manual',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                cache: 'no-cache',
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                response.headers.forEach((value, name) => {
+                    console.log(`${name}: ${value}`);
+                });
+                if (response.status === 302) {             
+                    window.location.href = "/login"; // Redirect to the new URL
+                } // Log the response status
+                else if (!response.ok) {
+                    // Handle error messages from the server, if any
+                    return response.json().then(errData => {
+                        throw new Error(errData.message || 'Registration failed');
+                    });
+                }
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                errorMessage.textContent = error; // Display specific error message
+                errorMessage.style.display = 'block'; // Show the error message
+            });
+        });
+    </script>
+</body>
+</html>
