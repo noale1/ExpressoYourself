@@ -23,7 +23,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="products.html">Products</a>
+                        <a class="nav-link" href="/products">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About Us</a>
@@ -47,28 +47,29 @@
             <!-- Billing Information -->
             <div class="col-md-7">
                 <h3>Billing Information</h3>
-                <form>
+                <form id="checkout-form">
+                    <!-- User Info -->
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                        <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                        <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
                     </div>
                     <div class="mb-3">
-                        <input type="email" class="form-control" id="email" placeholder="Email Address">
+                        <input type="email" class="form-control" id="email" placeholder="Email Address" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="address" placeholder="Address">
+                        <input type="text" class="form-control" id="address" placeholder="Address" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="city" placeholder="City">
+                        <input type="text" class="form-control" id="city" placeholder="City" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="zip" placeholder="ZIP Code">
+                        <input type="text" class="form-control" id="zip" placeholder="ZIP Code" required>
                     </div>
                     <div class="mb-3">
                         <label for="country" class="form-label">Country</label>
-                        <select id="country" class="form-select">
+                        <select id="country" class="form-select" required>
                             <option value="" selected>Choose...</option>
                             <option value="IL">Israel</option>
                             <option value="PT">Portugal</option>
@@ -77,25 +78,26 @@
                             <option value="UK">United Kingdom</option>
                         </select>
                     </div>
-                </form>
-                <!-- Payment Information -->
-                <h4 class="mb-3">Payment</h4>
-                <form>
+                    <!-- Payment Information -->
+                    <h4 class="mb-3">Payment</h4>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="cardName" placeholder="Name on Card">
+                        <input type="text" class="form-control" id="cardName" placeholder="Name on Card" required>
                     </div>
                     <div class="mb-3">
                         <label for="cardNumber" class="form-label">Credit Card Number</label>
-                        <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9101 1121">
+                        <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9101 1121"
+                            pattern="\d{16}" title="Please enter a valid 16-digit credit card number" required>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="cardExpiry" class="form-label">Expiration Date</label>
-                            <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY">
+                            <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY"
+                                pattern="\d{2}/\d{2}" title="Expiration date must be in MM/YY format" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="cardCVV" class="form-label">CVV</label>
-                            <input type="text" class="form-control" id="cardCVV" placeholder="123">
+                            <input type="text" class="form-control" id="cardCVV" placeholder="123" pattern="\d{3}"
+                                title="CVV must be 3 digits" required>
                         </div>
                     </div>
                 </form>
@@ -120,114 +122,88 @@
         </div>
     </footer>
 
+
     <script>
-        function loadProducts() {
-            fetch('/api/products')
-                .then(response => response.json())
-                .then(products => {
-                    const orderSummary = document.querySelector('.order-summary');
-                    orderSummary.innerHTML = ''; 
-        
-                    products.forEach(product => {
-                        const productItem = `
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">${product.name}</h6>
-                                <small class="text-muted">${product.description || 'No description'}</small>
-                            </div>
-                            <span class="text-muted">$${product.price}</span>
-                        </li>`;
-                        orderSummary.insertAdjacentHTML('beforeend', productItem);
-                    });
-                })
-                .catch(error => console.error('Error fetching products:', error));
-        }
-        
-        document.addEventListener('DOMContentLoaded', loadProducts);
-        </script>
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const orderSummary = document.getElementById('order-summary');
+            orderSummary.innerHTML = '';
 
-<script>
-    document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
-        event.preventDefault();
-    
-        const cart = [
-            // Fetch items from the shopping cart (localStorage or backend)
-            // Example: { productId: '123', quantity: 2 }
-        ];
-    
-        const userDetails = {
-            firstName: document.getElementById('firstName').value,
-            lastName: document.getElementById('lastName').value,
-            email: document.getElementById('email').value,
-            address: document.getElementById('address').value,
-            city: document.getElementById('city').value,
-            country: document.getElementById('country').value,
-            zip: document.getElementById('zip').value
-        };
-    
-        // Send checkout details to the server
-        fetch('/api/order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ cart, userDetails })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === 'Checkout successful') {
-                alert('Order placed successfully!');
-            } else {
-                alert('Error during checkout');
+            if (cart.length === 0) {
+                orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+                return;
             }
-        })
-        .catch(error => console.error('Error during checkout:', error));
-    });
+
+            cart.forEach(item => {
+                const orderItem = `
+        <li class="list-group-item d-flex justify-content-between lh-sm">
+            <div>
+                <h6 class="my-0">${item.name}</h6>
+                <small class="text-muted">Quantity: ${item.quantity}</small>
+            </div>
+            <span class="text-muted">$${item.price * item.quantity}</span>
+        </li>`;
+                orderSummary.insertAdjacentHTML('beforeend', orderItem);
+            });
+
+            const totalPrice = (cart.reduce((total, item) => total + (item.price * item.quantity), 0)).toFixed(2);
+            const totalLine = `
+    <li class="list-group-item d-flex justify-content-between">
+        <span>Total (USD)</span>
+        <strong>$${totalPrice}</strong>
+    </li>`;
+            orderSummary.insertAdjacentHTML('beforeend', totalLine);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCart);
+
+
+        document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const checkoutForm = document.getElementById('checkout-form');
+
+
+            if (!checkoutForm.checkValidity()) {
+                alert('Please fill in all required fields correctly.');
+                checkoutForm.reportValidity(); // Show validation errors
+                return;
+            }
+
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+
+            const userDetails = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                country: document.getElementById('country').value,
+                zip: document.getElementById('zip').value
+            };
+
+
+            const paymentDetails = {
+                cardName: document.getElementById('cardName').value,
+                cardNumber: document.getElementById('cardNumber').value,
+                cardExpiry: document.getElementById('cardExpiry').value,
+                cardCVV: document.getElementById('cardCVV').value
+            };
+
+            console.log('Cart:', cart);
+            console.log('User Details:', userDetails);
+            console.log('Payment Details:', paymentDetails);
+
+
+            localStorage.removeItem('cart');
+            alert('Checkout successful!');
+        });
     </script>
 
-<script>
-    // Fetch the cart (order) from MongoDB for the specific user
-    function loadCart(userId) {
-        fetch(`/api/cart/${userId}`)
-            .then(response => response.json())
-            .then(order => {
-                const orderSummary = document.getElementById('order-summary');
-                orderSummary.innerHTML = ''; // Clear any previous items
-    
-                // Loop through the items in the order and display them
-                order.items.forEach(item => {
-                    const orderItem = `
-                    <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
-                            <h6 class="my-0">${item.productName}</h6>
-                            <small class="text-muted">Quantity: ${item.quantity}</small>
-                        </div>
-                        <span class="text-muted">$${item.price * item.quantity}</span>
-                    </li>`;
-                    orderSummary.insertAdjacentHTML('beforeend', orderItem);
-                });
-    
-                // Add a total price line
-                const totalPrice = order.items.reduce((total, item) => total + (item.price * item.quantity), 0);
-                const totalLine = `
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Total (USD)</span>
-                    <strong>$${totalPrice}</strong>
-                </li>`;
-                orderSummary.insertAdjacentHTML('beforeend', totalLine);
-            })
-            .catch(error => console.error('Error fetching cart:', error));
-    }
-    
-    // Call this function when the page loads with the correct userId (or session ID)
-    document.addEventListener('DOMContentLoaded', function() {
-        const userId = 'exampleUserId'; // Replace with the actual user ID or session ID
-        loadCart(userId);
-    });
-    </script>
-    
-    
-        
 </body>
 
 </html>

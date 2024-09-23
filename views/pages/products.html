@@ -173,8 +173,9 @@
         }
 
         function checkout() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            window.location.href = '/order';
             console.log('Checkout clicked');
-            alert('Checkout functionality not implemented yet.');
         }
     </script>
 

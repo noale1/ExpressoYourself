@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/orderController');
 const path = require('path');
+const Order = require('../models/order');
 
 router.get('/', (req, res) => { res.sendFile(path.join(__dirname, '../views/pages', 'order.html')) });
 router.post('/api/order', async (req, res) => {
@@ -16,11 +16,11 @@ router.post('/api/order', async (req, res) => {
 });
 
 // Fetch order details for a specific user (or session)
-router.get('/api/cart/:userId', async (req, res) => {
-    const userId = req.params.userId;
+router.get('/api/cart/:user', async (req, res) => {
+    const user = req.params.user;
 
     try {
-        // Find the order by user ID (or session ID)
+        // Find the order by user (or session ID)
         const order = await Order.findOne({ user }); 
         if (!order) {
             return res.status(404).json({ message: 'No active order found' });
