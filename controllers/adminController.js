@@ -12,31 +12,26 @@ const jwt = require('jsonwebtoken');
 
 //list all Users
 exports.listAll = async (req, res) => {
-    console.log("a")
     try {
-        console.log("b")
         const users = await User.find();
         const successMessage = req.query.message;
-        console.log("C")
-        res.json({ users, successMessage });
-        console.log("D")
+        return res.json({ users, successMessage });
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
 // Delete a user by username
 exports.delete = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.username);
+        const user = await User.findOne(req.params.username);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.json({ message: 'User deleted successfully' });
+        return res.json({ message: 'User deleted successfully' });
     } catch (error) {
         console.error('Error deleting user:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     };
 };
 
@@ -44,35 +39,37 @@ exports.delete = async (req, res) => {
 exports.deleteAll = async (req, res) => {
     try {
         const result = await User.deleteMany({});
-        res.json({ message: 'All Users deleted successfully' });
+        return res.json({ message: 'All Users deleted successfully' });
     } catch (error) {
         console.error('Error deleting user:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     };
 };
 
 // Add Admin
 exports.addAdmin = async (req, res) => {
-    const { username } = req.body;
+    if(!req.query.user) return res.status(502).json({ message: 'No user Was specified' });
+    const username = req.query.user;
     try {
-        const user = await User.findOne(username);
-        if (!user) {
+        const user = await User.findOne({ username });
+            if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }
-
+        console.log("We Have a new Admin here, Welcome to the white Family " + username)
         user.isAdmin = true; // Set the user as an admin
         await user.save();
 
-        res.json({ message: `User ${user.username} has been granted admin privileges.` });
+        return res.json({ message: `We Have a new Admin here, Welcome to the white Family + ${username}` });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error while adding admin.' });
+        return res.status(500).json({ message: 'Server error while adding admin.' });
     }
 };
 
 // Revoke Admin
 exports.revokeAdmin = async (req, res) => {
-    const { username } = req.body;
+    const { username } = req.query.user;
+    if(!username) return res.status(502).json({ message: 'No user Was specified' });
 
     try {
         const user = await User.findOne(username);
@@ -83,10 +80,10 @@ exports.revokeAdmin = async (req, res) => {
         user.isAdmin = false; // Remove admin privileges
         await user.save();
 
-        res.json({ message: `User ${user.username} has been revoked admin privileges.` });
+        return res.json({ message: `User ${user.username} has been revoked admin privileges.` });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error while revoking admin.' });
+        return res.status(500).json({ message: 'Server error while revoking admin.' });
     }
 };
 
