@@ -71,14 +71,10 @@
                 body: JSON.stringify(data)
             })
             .then(response => {
-                console.log('Response status:', response.status);
-                response.headers.forEach((value, name) => {
-                    console.log(`${name}: ${value}`);
-                });
-                if (response.status === 302) {             
+                if (response.ok) {             
                     window.location.href = "/login"; // Redirect to the new URL
                 } // Log the response status
-                else if (!response.ok) {
+                else{
                     // Handle error messages from the server, if any
                     return response.json().then(errData => {
                         throw new Error(errData.message || 'Registration failed');
@@ -86,10 +82,6 @@
                 }
                 console.log('Response status:', response.status);
                 return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-                
             })
             .catch((error) => {
                 console.error('Error:', error);

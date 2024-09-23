@@ -40,7 +40,7 @@ exports.register = async (req, res) => {
     try{
         const newUser = new User({ username, email, password });
         await newUser.save();
-        res.redirect(302, '/login');
+        res.json({ message: 'Register successful, '+ username + ' Enjoy Our Site'});
     }catch (error){
         console.log(error.message);
         if (error.code === 11000) { // MongoDB duplicate key error code
