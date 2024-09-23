@@ -12,11 +12,16 @@ const jwt = require('jsonwebtoken');
 
 //list all Users
 exports.listAll = async (req, res) => {
+    console.log("a")
     try {
+        console.log("b")
         const users = await User.find();
         const successMessage = req.query.message;
+        console.log("C")
         res.json({ users, successMessage });
+        console.log("D")
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: error.message });
     }
 };
