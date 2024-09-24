@@ -26,7 +26,7 @@
                         <a class="nav-link active" href="/products">Products</a>
                     </li>
                     <li class="nav-item"></li>
-                        <a class="nav-link" href="locations.html">Locations</a>
+                        <a class="nav-link" href="/locations">Locations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About Us</a>
@@ -95,7 +95,7 @@
         });
 
         function loadProducts() {
-            fetch('/api/products')
+            fetch('/products')
                 .then(response => response.json())
                 .then(products => {
                     const productsContainer = document.getElementById('products-container');
