@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const Product = require('./models/product.js');
-const Location = require('./models/location.js');
 
 // Middleware
 app.use(express.json());
@@ -24,11 +23,13 @@ const userRoutes = require('./routes/userRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
 const orderRoutes = require('./routes/orderRoutes.js');
 const supplierRoutes = require('./routes/supplierRoutes.js');
+const locationRoutes = require('./routes/locationRoutes');
 
 app.use('/', authRoutes);
 app.use('/api', userRoutes);
 app.use('/products', productRoutes);
 app.use('/supplier', supplierRoutes);
+app.use(locationRoutes);
 app.use('/order', orderRoutes);
 
 app.get('/api/products', async (req, res) => {
@@ -48,15 +49,6 @@ app.get('/products', (req, res) => {
 
 app.get('/order', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages', 'order.html'));
-});
-
-app.get('/api/locations', async (req, res) => {
-    try {
-        const locations = await Location.find();
-        res.json(locations);
-    } catch (error) {
-        res.status(500).json({ error: 'Unable to fetch locations' });
-    }
 });
 
 app.use(express.static('public'));
