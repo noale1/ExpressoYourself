@@ -18,15 +18,19 @@ mongoose.connect(mongoAtlasUri)
     .catch(e => console.log(e));
 
 // Handle routes
+const authRoutes = require('./routes/authRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 const productRoutes = require('./routes/productRoutes.js');
+const orderRoutes = require('./routes/orderRoutes.js');
 const supplierRoutes = require('./routes/supplierRoutes.js');
 const locationRoutes = require('./routes/locationRoutes');
 
-app.use('/', userRoutes);
+app.use('/', authRoutes);
+app.use('/api', userRoutes);
 app.use('/products', productRoutes);
 app.use('/supplier', supplierRoutes);
 app.use(locationRoutes);
+app.use('/order', orderRoutes);
 
 app.get('/api/products', async (req, res) => {
     try {
@@ -42,6 +46,11 @@ app.get('/api/products', async (req, res) => {
 app.get('/products', (req, res) => {
     res.sendFile(path.join(__dirname, '/pages', 'products.html'));
 });
+
+app.get('/order', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages', 'order.html'));
+});
+
 app.use(express.static('public'));
 
 

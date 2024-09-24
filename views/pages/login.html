@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login_styles.css">
+    <title>Login - Coffee E-Shop</title>
+</head>
+<body>
+    <div class="container">
+        <div class="login-form">
+            <h1>Welcome Back!</h1>
+            <p>Log in to your coffee paradise.</p>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Log In</button>
+                <div class="error-message" id="error-message"></div>
+            </form>
+            <p class="footer-text">Don't have an account? <a href="/register">Sign up</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = '';
+            errorMessage.style.display = 'none'; 
+
+            // Create a JSON object
+            const data = {
+                email: email,
+                password: password
+            };
+
+            // Send a POST request
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                cache: 'no-cache',
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                window.location.href = '/';
+                // Handle success (e.g., redirect or display a message)
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Invalid login credentials. Please try again.';
+                errorMessage.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
