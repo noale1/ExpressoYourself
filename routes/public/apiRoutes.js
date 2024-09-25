@@ -3,7 +3,7 @@ const router = express.Router();
 const productController = require('../../controllers/productController');
 const locationController = require('../../controllers/locationController');
 
-router.get('/products', productController.get_products);
+router.get('/getProducts', productController.get_products);
 
 router.get('/getMapsAPIKey', locationController.getApiKey);
 
