@@ -10,3 +10,4 @@ router.delete('/admin/products/:id', productController.delete_product);
 router.post('/admin/products/:id', productController.update_product);
 
 module.exports = router;
+

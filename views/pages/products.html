@@ -95,7 +95,7 @@
         });
 
         function loadProducts() {
-            fetch('/api/products')
+            fetch('/api/getProducts')
                 .then(response => response.json())
                 .then(products => {
                     const productsContainer = document.getElementById('products-container');

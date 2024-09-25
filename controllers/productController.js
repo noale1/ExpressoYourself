@@ -38,3 +38,15 @@ exports.delete_product = async (req, res) => {
         res.status(400).json({ message: 'Error deleting product', error });
     }
 };
+
+
+exports.get_products = async(req, res) => {
+    try {
+        const products = await Product.find();
+        console.log('Products fetched:', products);
+        res.json(products);
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
