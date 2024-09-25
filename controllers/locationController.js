@@ -6,7 +6,7 @@ exports.getApiKey = (req, res) => {
     if (!apiKey) {
         return res.status(500).json({ error: 'Google Maps API key is missing' });
     }
-    res.json({ apiKey });
+    return res.json({ apiKey });
 };
 
 
@@ -14,8 +14,8 @@ exports.getApiKey = (req, res) => {
 exports.getLocations = async (req, res) => {
     try {
         const locations = await Location.find(); // Fetch all locations from MongoDB
-        res.json(locations);
+        return res.json(locations);
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching locations' });
+        return res.status(500).json({ error: 'Error fetching locations' });
     }
 };
