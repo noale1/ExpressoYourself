@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const Product = require('./models/product.js');
-const Location = require('./models/location.js');
 
 // Middleware
 app.use(express.json());
