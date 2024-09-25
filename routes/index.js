@@ -17,6 +17,3 @@ router.use('/admin', adminRoutes);
 
 
 module.exports = router;
-// const userRoutes = require('./userRoutes.js');
-// const productRoutes = require('./productRoutes.js');
-// const supplierRoutes = require('./supplierRoutes.js');
