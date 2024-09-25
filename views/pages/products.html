@@ -23,7 +23,10 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="products.html">Products</a>
+                        <a class="nav-link active" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item"></li>
+                        <a class="nav-link" href="locations.html">Locations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About Us</a>
@@ -58,6 +61,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <!--TODO:link to checkout page-->
                     <button type="button" class="btn custom-btn" onclick="checkout()">Checkout</button>
                 </div>
             </div>
@@ -172,8 +176,9 @@
         }
 
         function checkout() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            window.location.href = '/order';
             console.log('Checkout clicked');
-            alert('Checkout functionality not implemented yet.');
         }
     </script>
 
