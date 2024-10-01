@@ -40,13 +40,52 @@ exports.delete_product = async (req, res) => {
 };
 
 
+
 exports.get_products = async(req, res) => {
     try {
-        const products = await Product.find();
-        console.log('Products fetched:', products);
-        res.json(products);
-    } catch (err) {
-        console.error('Error fetching products:', err);
-        res.status(500).json({ message: 'Server error', error: err.message });
+        const filters = req.query;  
+        let query = {};
+
+        if (filters.startPrice !== undefined && filters.maxPrice !== undefined) {
+            query.price = {
+                $gte: parseFloat(filters.startPrice),  
+                $lte: parseFloat(filters.maxPrice)    
+            };
+        }
+
+        if (filters.category) {
+            query.category = filters.category;
+        }
+
+        if (filters.inStock !== undefined) {
+            query.inStock = filters.inStock === 'true'; 
+        }
+
+        if (filters.descriptionContains) {
+            query.description = { $regex: filters.descriptionContains, $options: 'i' }; 
+        }
+
+        const products = await Product.find(query);
+
+        res.status(200).json(products);
+    } catch (error) {
+        console.error("Error filtering products:", error);
+        res.status(500).json({ error: 'An error occurred while fetching products.' });
+    }
+};
+
+exports.get_categories = async (req, res) => {
+    try {
+        // Use Mongoose distinct method to get unique categories
+        const categories = await Product.distinct('category');
+
+        // Log the categories to the console
+        console.log('Unique categories:', categories);
+
+        // Return the unique categories as a set
+        res.status(200).json({ categories: [...new Set(categories)] });
+    } catch (error) {
+        console.error('Error fetching unique categories:', error);
+        res.status(500).json({ error: 'An error occurred while fetching categories.' });
     }
 };
