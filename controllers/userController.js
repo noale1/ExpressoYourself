@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 //TODO: Logoff
 
 //list all Users
-exports.listAll = async (req, res) => {
+exports.listAllUsers = async (req, res) => {
     try {
         const users = await User.find();
         const successMessage = req.query.message;
@@ -22,7 +22,7 @@ exports.listAll = async (req, res) => {
 };
 
 // Delete a user by username
-exports.delete = async (req, res) => {
+exports.deleteUser = async (req, res) => {
     try {
         const user = await User.findOne(req.params.username);
         if (!user) {
@@ -36,7 +36,7 @@ exports.delete = async (req, res) => {
 };
 
 
-exports.deleteAll = async (req, res) => {
+exports.deleteAllUsers = async (req, res) => {
     try {
         const result = await User.deleteMany({});
         return res.json({ message: 'All Users deleted successfully' });

@@ -43,6 +43,9 @@ app.get('/order', (req, res) => {
 });
 
 // app.use(express.static('public'));
+const routes = require('./routes');
+app.use('/', routes);
+    // Handle routes
 
 // Start the server
 app.listen(3000, () => {

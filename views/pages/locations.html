@@ -57,6 +57,7 @@
             
        // Fetch location data from your backend
        fetch('/locations/markers')
+       fetch('/map')
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(location => {
