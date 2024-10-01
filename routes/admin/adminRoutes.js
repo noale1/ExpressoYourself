@@ -6,8 +6,8 @@ const path = require('path');
 const auth = require('../../middlewares/auth_midware');
 const admin = require('../../middlewares/admin_midware');
 
-router.use(auth.authenticateToken);
-router.use(admin.isAdmin);
+// router.use(auth.authenticateToken);
+// router.use(admin.isAdmin);
 
 // Register and login routes
 router.get('/getUsers' ,userController.listAllUsers);
