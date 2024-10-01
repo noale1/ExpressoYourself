@@ -56,8 +56,7 @@
             });
             
        // Fetch location data from your backend
-       fetch('/locations/markers')
-       fetch('/map')
+       fetch('/api/locations')
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(location => {
@@ -76,7 +75,7 @@
           // Load Google Maps API
         function loadGoogleMaps() {
             // Fetch the API key from an endpoint
-            fetch('/locations/key')
+            fetch('/api/getMapsAPIKey')
                 .then(response => response.json())
                 .then(data => {
                     const script = document.createElement('script');
