@@ -9,6 +9,24 @@
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 
+<style>
+    #filter-menu {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 220px;
+        padding: 20px;
+        background-color: #f8f9fa;
+        height: 100%;
+        overflow-y: auto;
+        z-index: 1000;
+        border-right: 1px solid #dee2e6;
+    }
+    #filter-menu h5 {
+        margin-top: 80px;
+    }
+</style>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
@@ -23,7 +41,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="products.html">Products</a>
+                        <a class="nav-link active" href="/products">Products</a>
                     </li>
                     <li class="nav-item"></li>
                         <a class="nav-link" href="locations.html">Locations</a>
@@ -36,7 +54,7 @@
                     </li>
                     <li>
                         <a href="shoppingCart.html" data-bs-toggle="modal" class="image-link-navbar"
-                            data-bs-target="#cartModal">
+                            data-bs-target="#cartModal" style="text-decoration:none; color: black">
                             <img src="../images/shopping_cart.webp" alt="Button Image">
                             <span id="cartCount">0</span>
                         </a>
@@ -61,10 +79,40 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <!--TODO:link to checkout page-->
                     <button type="button" class="btn custom-btn" onclick="checkout()">Checkout</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div id="filter-menu">
+        <h5>Filter Products</h5>
+        <form id="filter-form", onsubmit="applyFilter(); return false;">
+            <div class="mb-3">
+                <label for="minPrice" class="form-label">Min Price</label>
+                <input type="number" step="0.01" class="form-control" id="minPrice" name="minPrice">
+            </div>
+            <div class="mb-3">
+                <label for="maxPrice" class="form-label">Max Price</label>
+                <input type="number" step="0.01" class="form-control" id="maxPrice" name="maxPrice">
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category">
+                    <option value="AllCategories" selected>AllCategories</option>
+                </select>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="inStock" name="inStock">
+                <label class="form-check-label" for="inStock">In Stock Only</label>
+            </div>
+            <div class="mb-3">
+                <label for="descriptionContains" class="form-label">Description Contains</label>
+                <input type="text" class="form-control" id="descriptionContains" name="descriptionContains">
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
     </div>
 
     <header class="text-light py-5 text-center" style="background-color: #a0b598;">
@@ -91,10 +139,30 @@
         document.addEventListener('DOMContentLoaded', function () {
             loadProducts();
             loadCart();
+            loadCategories();
         });
 
-        function loadProducts() {
-            fetch('/api/products')
+        function loadCategories() {
+            fetch('/api/getCategories')
+                .then(response => response.json())
+                .then(data => {
+                    const categories = data.categories;  // Access the 'categories' array
+                    const categorySelect = document.getElementById('category');
+
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category;
+                        option.textContent = category;
+                        categorySelect.appendChild(option);  // Append each category to the select element
+                    });
+                })
+                .catch(error => console.error('Error fetching categories:', error));
+        }
+        
+        function loadProducts(params = {}) {
+            const queryString = new URLSearchParams(params).toString();
+    
+            fetch(`/api/getProducts?${queryString}`)
                 .then(response => response.json())
                 .then(products => {
                     const productsContainer = document.getElementById('products-container');
@@ -145,7 +213,7 @@
                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
                 li.innerHTML = `
                     ${item.name} - $${item.price.toFixed(2)} x ${item.quantity}
-                    <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.png"></button>
+                    <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.webp"></button>
                 `;
                 cartItems.appendChild(li);
                 total += item.price * item.quantity;
@@ -175,9 +243,33 @@
         }
 
         function checkout() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            window.location.href = '/order';
             console.log('Checkout clicked');
-            alert('Checkout functionality not implemented yet.');
         }
+
+        function applyFilter() {
+        // Get filter values from form inputs
+        const minPrice = document.getElementById('minPrice').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const category = document.getElementById('category').value;
+        const inStock = document.getElementById('inStock').checked;
+        const descriptionContains = document.getElementById('descriptionContains').value;
+
+        // Build the params object based on the filter values
+        const params = {};
+        if (minPrice) params.minPrice = minPrice;
+        if (maxPrice) params.maxPrice = maxPrice;
+        if (category) params.category = category;
+        if (inStock) params.inStock = inStock;
+        if (descriptionContains) params.descriptionContains = descriptionContains;
+
+        // Clear existing product cards
+        document.getElementById('products-container').innerHTML = '';
+
+        // Call loadProducts with the filter parameters
+        loadProducts(params);
+    }
     </script>
 
 </body>
