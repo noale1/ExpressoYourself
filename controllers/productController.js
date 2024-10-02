@@ -99,3 +99,26 @@ exports.get_categories = async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching categories.' });
     }
 };
+
+exports.get_category_product_type_graph = async (req, res) => {
+    try {
+        const categoryCounts = await Product.aggregate([
+            { $group: { _id: '$category', count: { $sum: 1 } } }
+        ]);
+        res.json(categoryCounts);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch category counts' });
+    }
+};
+
+exports.get_product_per_price_graph = async (req, res) => {
+    try {
+        const priceCounts = await Product.aggregate([
+            { $group: { _id: '$price', count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+        res.json(priceCounts);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch price counts' });
+    }
+};
