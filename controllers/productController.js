@@ -46,27 +46,37 @@ exports.get_products = async(req, res) => {
         const filters = req.query;  
         let query = {};
 
-        if (filters.startPrice !== undefined && filters.maxPrice !== undefined) {
-            query.price = {
-                $gte: parseFloat(filters.startPrice),  
-                $lte: parseFloat(filters.maxPrice)    
-            };
+        // Handle price range filter
+        if (filters.minPrice || filters.maxPrice) {
+            query.price = {};
+            if (filters.minPrice) {
+                query.price.$gte = parseFloat(filters.minPrice);  // Only add $gte if minPrice is provided
+            }
+            if (filters.maxPrice) {
+                query.price.$lte = parseFloat(filters.maxPrice);  // Only add $lte if maxPrice is provided
+            }
         }
 
-        if (filters.category) {
+        // Handle category filter
+        if (filters.category && filters.category.trim() !== "" && filters.category !== "AllCategories") {
             query.category = filters.category;
         }
 
+        // Handle inStock filter
         if (filters.inStock !== undefined) {
             query.inStock = filters.inStock === 'true'; 
         }
 
-        if (filters.descriptionContains) {
+        // Handle descriptionContains filter
+        if (filters.descriptionContains && filters.descriptionContains.trim() !== "") {
             query.description = { $regex: filters.descriptionContains, $options: 'i' }; 
         }
 
-        const products = await Product.find(query);
+        console.log('Filters:', filters);
+        console.log('Constructed query:', query);
 
+        // Use the constructed query, not filters
+        const products = await Product.find(query);
         res.status(200).json(products);
     } catch (error) {
         console.error("Error filtering products:", error);
