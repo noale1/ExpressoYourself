@@ -32,3 +32,22 @@ exports.getUserCart = async (req, res) => {
         res.status(500).json({ message: 'Error fetching order' });
     }
 };
+
+exports.get_top_saled_product_graph = async (req, res) => {
+    try {
+        const topProducts = await Order.aggregate([
+            { $unwind: "$items" },
+            { 
+                $group: { 
+                    _id: "$items.productName", 
+                    totalQuantity: { $sum: "$items.quantity" } 
+                } 
+            },
+            { $sort: { totalQuantity: -1 } },
+            { $limit: 10 }
+        ]);
+        res.json(topProducts);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch top products' });
+    }
+};
