@@ -1,10 +1,16 @@
 const mongoose = require('mongoose');
 
 const supplierSchema = new mongoose.Schema({
-    supplier: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Supplier',
-        required: true
+        ref: 'User',  // Reference to the User model
+        required: true  // Every supplier must be associated with a user
+    },
+    name: {
+        type: String,
+        required: true,
+        unique: true,  // Each supplier should have a unique name
+        trim: true
     },
     products: [{
         product: {
@@ -17,32 +23,41 @@ const supplierSchema = new mongoose.Schema({
             required: true
         }
     }],
-    total: {
-        type: Number,
-        required: true
-    },
     contactInfo: { 
         phone: {
             type: String,
-            required: true
+            required: true,
+            validate: {
+                validator: function(v) {
+                    return /^\+?[1-9]\d{1,14}$/.test(v);
+                },
+                message: props => `${props.value} is not a valid phone number!`
+            }
         },
         email: {
             type: String,
             required: true,
             trim: true,
-            lowercase: true
+            lowercase: true,
+            validate: {
+                validator: function(v) {
+                    return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v);
+                },
+                message: props => `${props.value} is not a valid email!`
+            }
         },
         address: { 
-            street: String,
-            city: String,
-            state: String,
-            zipCode: String,
+            street: { type: String, required: true },
+            city: { type: String, required: true },
+            state: { type: String },
+            zipCode: { type: String },
             country: {
                 type: String,
                 required: true
             }
         }
     }
-});
+}, { versionKey: false });
+
 
 module.exports = mongoose.model('Supplier', supplierSchema);
