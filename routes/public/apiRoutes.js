@@ -10,7 +10,7 @@ router.get('/getCategories', productController.get_categories);
 router.get('/getMapsAPIKey', locationController.getApiKey);
 router.get('/locations',locationController.getLocations);
 
-router.post('/order',orderController.checkout);
+
 
 router.get('/cart/:user',orderController.getUserCart)
 
