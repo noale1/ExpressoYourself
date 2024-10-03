@@ -194,13 +194,35 @@
                 cardCVV: document.getElementById('cardCVV').value
             };
 
-            console.log('Cart:', cart);
-            console.log('User Details:', userDetails);
-            console.log('Payment Details:', paymentDetails);
+            const checkoutData = {
+                cart: cart,
+                userDetails: userDetails,
+                paymentDetails: paymentDetails
+            };
+            
+            fetch('/private/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(checkoutData)
+            })
+            .then(response => {
+                if (response.status !== 200) {
+                    throw new Error('Checkout failed');
+                }
+                // If status is 200, remove the cart from localStorage
+                localStorage.removeItem('cart');
+                alert('Checkout successful!');
+                
+                // Redirect to the homepage
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('Error during checkout:', error);
+                alert('Checkout failed2!');
+            });
 
-
-            localStorage.removeItem('cart');
-            alert('Checkout successful!');
         });
     </script>
 

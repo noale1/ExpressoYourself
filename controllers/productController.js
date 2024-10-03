@@ -72,9 +72,6 @@ exports.get_products = async(req, res) => {
             query.description = { $regex: filters.descriptionContains, $options: 'i' }; 
         }
 
-        console.log('Filters:', filters);
-        console.log('Constructed query:', query);
-
         // Use the constructed query, not filters
         const products = await Product.find(query);
         res.status(200).json(products);
@@ -88,9 +85,6 @@ exports.get_categories = async (req, res) => {
     try {
         // Use Mongoose distinct method to get unique categories
         const categories = await Product.distinct('category');
-
-        // Log the categories to the console
-        console.log('Unique categories:', categories);
 
         // Return the unique categories as a set
         res.status(200).json({ categories: [...new Set(categories)] });

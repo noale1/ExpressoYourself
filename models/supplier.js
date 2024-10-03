@@ -20,6 +20,28 @@ const supplierSchema = new mongoose.Schema({
     total: {
         type: Number,
         required: true
+    },
+    contactInfo: { 
+        phone: {
+            type: String,
+            required: true
+        },
+        email: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true
+        },
+        address: { 
+            street: String,
+            city: String,
+            state: String,
+            zipCode: String,
+            country: {
+                type: String,
+                required: true
+            }
+        }
     }
 });
 
