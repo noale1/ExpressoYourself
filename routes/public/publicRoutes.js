@@ -19,7 +19,7 @@ router.post('/register', authController.register);
 router.post('/login', authController.login);
 
 // map page
-router.get('/map', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'locations.html'));});
+router.get('/locations', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'locations.html'));});
 
 
 
