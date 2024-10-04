@@ -1,5 +1,6 @@
 const Order = require('../models/order');
 const User = require('../models/user');
+const Product = require('../models/product');
 const jwt = require('jsonwebtoken');
 
 // List all orders
@@ -32,6 +33,25 @@ exports.checkout = async (req, res) => {
     }
 
     try {
+
+        // check if all products have enough quantity in stock
+        for (const item of cart) {
+            const product = await Product.findById(item.id);
+            if (!product) {
+                return res.status(404).send(`Product with id ${item.id} not found`);
+            }
+            if (product.quantity < item.quantity) {
+                return res.status(500).send(`Not enough stock for product ${product.name}`);
+            }
+        }
+
+        // update product quantities 
+        for (const item of cart) {
+            const product = await Product.findById(item.id);
+            product.quantity -= item.quantity;
+            await product.save();
+        }
+
         // calc total amount
         cart.forEach(item => {
             totalPrice += item.price * item.quantity;
