@@ -18,10 +18,6 @@ const supplierSchema = new mongoose.Schema({
             ref: 'Product',
             required: true
         },
-        quantity: {
-            type: Number,
-            required: true
-        }
     }],
     contactInfo: { 
         phone: {
