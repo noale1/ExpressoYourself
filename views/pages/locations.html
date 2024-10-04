@@ -56,7 +56,7 @@
             });
             
        // Fetch location data from your backend
-       fetch('/api/locations')
+       fetch('/api/getMarkers')
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(location => {
