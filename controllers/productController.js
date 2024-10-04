@@ -48,27 +48,34 @@ exports.get_products = async(req, res) => {
         const filters = req.query;  
         let query = {};
 
-        if (filters.startPrice !== undefined && filters.maxPrice !== undefined) {
-            query.price = {
-                $gte: parseFloat(filters.startPrice),  
-                $lte: parseFloat(filters.maxPrice)    
-            };
+        // Handle price range filter
+        if (filters.minPrice || filters.maxPrice) {
+            query.price = {};
+            if (filters.minPrice) {
+                query.price.$gte = parseFloat(filters.minPrice);  // Only add $gte if minPrice is provided
+            }
+            if (filters.maxPrice) {
+                query.price.$lte = parseFloat(filters.maxPrice);  // Only add $lte if maxPrice is provided
+            }
         }
 
-        if (filters.category) {
+        // Handle category filter
+        if (filters.category && filters.category.trim() !== "" && filters.category !== "AllCategories") {
             query.category = filters.category;
         }
 
+        // Handle inStock filter
         if (filters.inStock !== undefined) {
             query.inStock = filters.inStock === 'true'; 
         }
 
-        if (filters.descriptionContains) {
+        // Handle descriptionContains filter
+        if (filters.descriptionContains && filters.descriptionContains.trim() !== "") {
             query.description = { $regex: filters.descriptionContains, $options: 'i' }; 
         }
 
+        // Use the constructed query, not filters
         const products = await Product.find(query);
-
         res.status(200).json(products);
     } catch (error) {
         console.error("Error filtering products:", error);
@@ -81,13 +88,33 @@ exports.get_categories = async (req, res) => {
         // Use Mongoose distinct method to get unique categories
         const categories = await Product.distinct('category');
 
-        // Log the categories to the console
-        console.log('Unique categories:', categories);
-
         // Return the unique categories as a set
         res.status(200).json({ categories: [...new Set(categories)] });
     } catch (error) {
         console.error('Error fetching unique categories:', error);
         res.status(500).json({ error: 'An error occurred while fetching categories.' });
+    }
+};
+
+exports.get_category_product_type_graph = async (req, res) => {
+    try {
+        const categoryCounts = await Product.aggregate([
+            { $group: { _id: '$category', count: { $sum: 1 } } }
+        ]);
+        res.json(categoryCounts);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch category counts' });
+    }
+};
+
+exports.get_product_per_price_graph = async (req, res) => {
+    try {
+        const priceCounts = await Product.aggregate([
+            { $group: { _id: '$price', count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+        res.json(priceCounts);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch price counts' });
     }
 };

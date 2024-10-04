@@ -206,8 +206,53 @@
                 return;
             }
 
-            localStorage.removeItem('cart');
-            alert('Checkout successful!');
+            const userDetails = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                country: document.getElementById('country').value,
+                zip: document.getElementById('zip').value
+            };
+
+
+            const paymentDetails = {
+                cardName: document.getElementById('cardName').value,
+                cardNumber: document.getElementById('cardNumber').value,
+                cardExpiry: document.getElementById('cardExpiry').value,
+                cardCVV: document.getElementById('cardCVV').value
+            };
+
+            const checkoutData = {
+                cart: cart,
+                userDetails: userDetails,
+                paymentDetails: paymentDetails
+            };
+            
+            fetch('/private/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(checkoutData)
+            })
+            .then(response => {
+                if (response.status !== 200) {
+                    throw new Error('Checkout failed');
+                }
+                // If status is 200, remove the cart from localStorage
+                localStorage.removeItem('cart');
+                alert('Checkout successful!');
+                
+                // Redirect to the homepage
+                window.location.href = '/';
+            })
+            .catch(error => {
+                console.error('Error during checkout:', error);
+                alert('Checkout failed2!');
+            });
+
         });
     </script>
 
