@@ -115,3 +115,59 @@ exports.get_top_saled_product_graph = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch top products' });
     }
 };
+
+exports.get_order_count_per_day_last_week_graph = async (req, res) => {
+    try {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); 
+  
+      const ordersPerDay = await Order.aggregate([
+        {
+          $match: {
+            orderDate: { $gte: oneWeekAgo }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: "%Y-%m-%d", date: "$orderDate" } 
+            },
+            count: { $sum: 1 } 
+          }
+        },
+      ]);
+  
+      res.json(ordersPerDay);
+    } catch (error) {
+      console.error('Error aggregating orders per day:', error);
+      res.status(500).send('Server Error');
+    }
+  };
+
+  exports.get_sales_per_day_last_week = async (req, res) => {
+    try {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); 
+  
+      const moneyPerDay = await Order.aggregate([
+        {
+          $match: {
+            orderDate: { $gte: oneWeekAgo }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: "%Y-%m-%d", date: "$orderDate" } 
+            },
+            totalMoney: { $sum: "$totalPrice" } 
+          }
+        },
+      ]);
+  
+      res.json(moneyPerDay);
+    } catch (error) {
+      console.error('Error aggregating total money per day:', error);
+      res.status(500).send('Server Error');
+    }
+  };

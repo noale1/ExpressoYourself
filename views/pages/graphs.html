@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph Management - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Expresso Yourself</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin Panel</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+    </header>
+
+    <div class="container mt-4">
+        <h2 class="text-center">Graph Viewer</h2>
+        <div class="d-flex justify-content-center mb-4">
+            <select id="graphType" class="form-select" style="width: 300px;">
+                <option value="salesPerDay">Sales Per Day</option>
+                <option value="topProducts">Top Products</option>
+                <option value="orderPerDay">Orders Per Day</option>
+                <option value="productPerCategory">Products Per Category</option>
+                <option value="productPerPrice">Products Per Price</option>
+                <option value="suppliersByCountry">Suppliers By Country</option>
+                <option value="productsPerSupplier">Products Per Supplier</option>
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <svg id="graphSvg" width="600" height="400" style="border: 1px solid black; background-color: #f4f4f9;"></svg>
+        </div>
+    </div>
+
+    <script>
+        function drawBarPlot(data, svgId, xLabel, yLabel, title) {
+            const svg = d3.select(svgId);
+            svg.selectAll("*").remove();  
+
+            const width = svg.attr("width");
+            const height = svg.attr("height");
+
+            const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+            const graphWidth = width - margin.left - margin.right;
+            const graphHeight = height - margin.top - margin.bottom;
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleBand()
+                .domain(data.map(d => d._id))
+                .range([0, graphWidth])
+                .padding(0.1);
+
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.totalQuantity || d.count)])  
+                .nice()
+                .range([graphHeight, 0]);
+
+            g.append("g")
+                .selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", d => x(d._id))
+                .attr("y", d => y(d.totalQuantity || d.count))
+                .attr("width", x.bandwidth())
+                .attr("height", d => graphHeight - y(d.totalQuantity || d.count))
+                .attr("fill", "#69b3a2");
+
+            g.append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0,${graphHeight})`)
+                .call(d3.axisBottom(x))
+                .selectAll("text")
+                .attr("transform", "rotate(-40)")
+                .style("text-anchor", "end");
+
+            g.append("g")
+                .attr("class", "y-axis")
+                .call(d3.axisLeft(y));
+
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height - 10)
+                .attr("text-anchor", "middle")
+                .style("font-size", "14px")
+                .text(xLabel);
+
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("transform", `translate(${margin.left - 40}, ${height / 2})rotate(-90)`)
+                .style("font-size", "14px")
+                .text(yLabel);
+
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", 20)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("font-weight", "bold")
+                .text(title);
+        }
+
+        function drawScatterPlot(data, svgId, xLabel, yLabel, title, yField) {
+            const svg = d3.select(svgId);
+            svg.selectAll("*").remove(); 
+
+            const width = svg.attr("width");
+            const height = svg.attr("height");
+
+            const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+            const graphWidth = width - margin.left - margin.right;
+            const graphHeight = height - margin.top - margin.bottom;
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const parseDate = d3.timeParse("%Y-%m-%d");
+            data.forEach(d => d._id = parseDate(d._id));
+
+            const x = d3.scaleTime()
+                .domain(d3.extent(data, d => d._id))
+                .range([0, graphWidth]);
+
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d[yField])])
+                .range([graphHeight, 0]);
+
+            g.append("g")
+                .selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", d => x(d._id))
+                .attr("cy", d => y(d[yField]))
+                .attr("r", 6)
+                .attr("fill", "#69b3a2");
+
+            g.append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(0,${graphHeight})`)
+                .call(d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%Y-%m-%d")));
+
+            g.append("g")
+                .attr("class", "y-axis")
+                .call(d3.axisLeft(y).ticks(5));
+
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", height - 10)
+                .attr("text-anchor", "middle")
+                .style("font-size", "14px")
+                .text(xLabel);
+
+            svg.append("text")
+                .attr("text-anchor", "middle")
+                .attr("transform", `translate(${margin.left - 40}, ${height / 2})rotate(-90)`)
+                .style("font-size", "14px")
+                .text(yLabel);
+
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", 20)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("font-weight", "bold")
+                .text(title);
+        }
+
+        function drawPieChart(data, svgId, title) {
+            const svg = d3.select(svgId);
+            svg.selectAll("*").remove();  
+
+            const width = svg.attr("width");
+            const height = svg.attr("height");
+
+            const radius = Math.min(width, height) / 2.5;  
+            const g = svg.append("g")
+                .attr("transform", `translate(${width / 2.5}, ${height / 2})`);
+
+            const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+            const pie = d3.pie()
+                .value(d => d.count || d.productCount); 
+
+            const data_ready = pie(data);
+
+            const arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
+            // Draw pie slices
+            g.selectAll('slices')
+                .data(data_ready)
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', d => color(d.data._id));
+
+            // Add title
+            svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", 20)
+                .attr("text-anchor", "middle")
+                .style("font-size", "16px")
+                .style("font-weight", "bold")
+                .text(title);
+
+            const legendG = svg.append("g")
+                .attr("transform", `translate(${width / 1.5}, ${height / 3})`);  
+
+            legendG.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", (d, i) => i * 25)  
+                .attr("height", 18)
+                .style("fill", d => color(d._id));
+
+            legendG.selectAll("text")
+                .data(data)
+                .enter()
+                .append("text")
+                .attr("x", 25)
+                .attr("y", (d, i) => i * 25 + 13)  
+                .text(d => d._id)
+                .style("font-size", "12px")
+                .attr("text-anchor", "start");
+        }
+
+        function loadGraph(graphType) {
+            $.ajax({
+                url: '/admin/getGraph/' + graphType,
+                method: 'GET',
+                success: function (data) {
+                    switch (graphType) {
+                        case 'topProducts':
+                            drawBarPlot(data, '#graphSvg', 'Product', 'Quantity', 'Top Products');
+                            break;
+                        case 'productPerPrice':
+                            drawBarPlot(data, '#graphSvg', 'Price ($)', 'Product Count', 'Products Per Price');
+                            break;
+                        case 'orderPerDay':
+                            drawScatterPlot(data, '#graphSvg', 'Date', 'Order Count', 'Orders Per Day', 'count');
+                            break;
+                        case 'salesPerDay':
+                            drawScatterPlot(data, '#graphSvg', 'Date', 'Sales ($)', 'Sales Per Day', 'totalMoney');
+                            break;
+                        case 'productPerCategory':
+                            drawPieChart(data, '#graphSvg', 'Products Per Category');
+                            break;
+                        case 'suppliersByCountry':
+                            drawPieChart(data, '#graphSvg', 'Suppliers By Country');
+                            break;
+                        case 'productsPerSupplier':
+                            drawPieChart(data, '#graphSvg', 'Products Per Supplier');
+                            break;
+                        default:
+                            console.error('Unknown graph type: ' + graphType);
+                    }
+                },
+                error: function (err) {
+                    alert('Error fetching graph data: ' + err.responseText);
+                }
+            });
+        }
+
+
+        $(document).ready(function () {
+            loadGraph('salesPerDay');
+
+            $('#graphType').change(function () {
+                const selectedGraph = $(this).val();
+                loadGraph(selectedGraph);
+            });
+        });
+
+    </script>
+
+    <footer class="footer text-center py-4">
+        <div class="container">
+            <p>© Expresso Yourself | All Rights Reserved</p>
+        </div>
+    </footer>
+</body>
+
+</html>
