@@ -50,10 +50,10 @@ exports.get_products = async(req, res) => {
         if (filters.minPrice || filters.maxPrice) {
             query.price = {};
             if (filters.minPrice) {
-                query.price.$gte = parseFloat(filters.minPrice);  // Only add $gte if minPrice is provided
+                query.price.$gte = parseFloat(filters.minPrice);  
             }
             if (filters.maxPrice) {
-                query.price.$lte = parseFloat(filters.maxPrice);  // Only add $lte if maxPrice is provided
+                query.price.$lte = parseFloat(filters.maxPrice);  
             }
         }
 
@@ -83,14 +83,27 @@ exports.get_products = async(req, res) => {
 
 exports.get_categories = async (req, res) => {
     try {
-        // Use Mongoose distinct method to get unique categories
         const categories = await Product.distinct('category');
 
-        // Return the unique categories as a set
         res.status(200).json({ categories: [...new Set(categories)] });
     } catch (error) {
         console.error('Error fetching unique categories:', error);
         res.status(500).json({ error: 'An error occurred while fetching categories.' });
+    }
+};
+
+exports.get_product_by_id = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching product', error });
     }
 };
 

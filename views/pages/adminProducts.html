@@ -119,6 +119,12 @@
                     <label for="descriptionContains" class="form-label">Description Contains</label>
                     <input type="text" class="form-control" id="descriptionContains" name="descriptionContains">
                 </div>
+                <div class="mb-3">
+                    <label for="supplier" class="form-label">Supplier</label>
+                    <select class="form-select" id="supplier" name="supplier">
+                        <option value="" selected>All Suppliers</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">Filter</button>
             </form>
         </div>
@@ -146,9 +152,24 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             loadProducts();
-            loadCart();
             loadCategories();
         });
+
+	function loadSuppliers() {
+            fetch('/admin/listAllSuppliers')
+                .then(response => response.json())
+                .then(data => {
+                    const suppliers = data;
+                    const supplierSelect = document.getElementById('supplier');
+                    suppliers.forEach(supplier => {
+                        const option = document.createElement('option');
+                        option.value = supplier.name;
+                        option.textContent = supplier.name;
+                        supplierSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching suppliers:', error));
+        }
 
         function loadCategories() {
             fetch('/api/getCategories')
@@ -176,19 +197,18 @@
                     const productsContainer = document.getElementById('products-container');
                     products.forEach(product => {
                         const productCard = `
-                            <div class="col-md-4 mb-4">
-                                <div class="card custom-card">
-                                    <img class="card-img-top" src="${product.image || '../images/default_beans.jpg'}" alt="${product.name}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${product.name}</h5>
-                                        <p class="card-text">${product.description}</p>
-                                        <p class="card-text">Price: $${product.price.toFixed(2)}</p>
-                                        <a href="#" class="image-link-button" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">
-                                            <img src="../images/shopping_cart.webp" alt="Add to Cart">
-                                        </a>
-                                    </div>
+                                <div class="col-md-4 mb-4">
+                                    <a href="/admin/productPage/${product._id}">
+                                        <div class="card custom-card">
+                                            <img class="card-img-top" src="${product.image || '../images/default_beans.jpg'}" alt="${product.name}">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${product.name}</h5>
+                                                <p class="card-text">${product.description}</p>
+                                                <p class="card-text">Price: $${product.price.toFixed(2)}</p>
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
-                            </div>
                         `;
                         productsContainer.innerHTML += productCard;
                     });
@@ -207,48 +227,6 @@
             saveCart();
         }
 
-        function updateCart() {
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-            const cartCount = document.getElementById('cartCount');
-
-            cartItems.innerHTML = '';
-            let total = 0;
-            let count = 0;
-
-            cart.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.innerHTML = `
-                    ${item.name} - $${item.price.toFixed(2)} x ${item.quantity}
-                    <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.webp"></button>
-                `;
-                cartItems.appendChild(li);
-                total += item.price * item.quantity;
-                count += item.quantity;
-            });
-
-            cartTotal.textContent = total.toFixed(2);
-            cartCount.textContent = count;
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            updateCart();
-            saveCart();
-        }
-
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        function loadCart() {
-            const savedCart = localStorage.getItem('cart');
-            if (savedCart) {
-                cart = JSON.parse(savedCart);
-                updateCart();
-            }
-        }
 
         function checkout() {
             localStorage.setItem('cart', JSON.stringify(cart));

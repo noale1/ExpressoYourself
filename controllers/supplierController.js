@@ -15,7 +15,7 @@ exports.add_supplier = async (req, res) => {
             return res.status(404).json({ message: 'User not found.' });
         }
         console.log("[+] We Have a new Supplier here, welcome " + user)
-        user.isSuppllier = true; // Set the user as an admin
+        user.isSupplier = true;
         const newSupplier = new Supplier({ user: user ,name: supplier_name ,contactInfo: contact_info });
         await newSupplier.save();
         user.supplier = newSupplier;
@@ -89,6 +89,37 @@ exports.get_supplier = async (req, res) => {
 
 // List all suppliers for admin
 exports.list_all_supplier = async (req, res) => {
-    const suppliers = await Supplier.find().populate('user').populate('products.product');
-    return res.json(suppliers);
+    try {
+        const { email, city, state, name, productName } = req.query;
+        let query = {};
+
+        // filter by the start of the email
+        if (email) {
+            query['contactInfo.email'] = { $regex: `^${email}`, $options: 'i' }; 
+        }
+
+        // filter by state + city 
+        if (state || city) {
+            query['contactInfo.address'] = {};
+            if (city) query['contactInfo.address.city'] = { $regex: city, $options: 'i' };
+            if (state) query['contactInfo.address.state'] = { $regex: state, $options: 'i' };
+        }
+
+        // filter by supplier name
+        if (name) {
+            query['name'] = { $regex: name, $options: 'i' }; 
+        }
+
+        // filter by product name 
+        let suppliersQuery = Supplier.find(query).populate('user').populate({
+            path: 'products.product',
+            match: productName ? { name: { $regex: productName, $options: 'i' } } : {},
+        });
+
+        const suppliers = await suppliersQuery.exec();
+
+        return res.json(suppliers);
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
 };
