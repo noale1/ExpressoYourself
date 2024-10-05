@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Management - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Expresso Yourself</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin Panel</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Supplier Management</h1>
+        <p>Manage suppliers for Expresso Yourself Coffee Shop.</p>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div id="filter-menu" class="p-4">
+                    <h5>Filter Suppliers</h5>
+                    <form id="filter-form" onsubmit="applyFilter(); return false;">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Starts With</label>
+                            <input type="text" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text" class="form-control" id="state" name="state">
+                        </div>
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" name="city">
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Supplier Name</label>
+                            <input type="text" class="form-control" id="name" name="name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" name="productName">
+                        </div>
+                        <button type="submit" class="btn custom-btn">Apply Filter</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="container mt-4">
+                    <div class="d-flex justify-content-between mb-4">
+                        <a href="/admin" class="btn btn-secondary">Back to Admin Panel</a>
+                        <a href="/admin/addSupplier" class="btn btn-success">Add Supplier</a>
+                    </div>
+
+                    <h5>Suppliers</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Add Product</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Products</th>
+                            </tr>
+                        </thead>
+                        <tbody id="supplier-table-body">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer text-center py-4">
+        <div class="container">
+            <p>© Expresso Yourself | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        function applyFilter() {
+            const filterData = {
+                name: $('#name').val(),
+                email: $('#email').val(),
+                state: $('#state').val(),
+                city: $('#city').val(),
+                productName: $('#productName').val()
+            };
+
+            $.ajax({
+                url: '/admin/listAllSuppliers',
+                method: 'GET',
+                data: filterData,
+                success: function (suppliers) {
+                    const tbody = $('#supplier-table-body');
+                    tbody.empty();
+
+                    suppliers.forEach(supplier => {
+                        tbody.append(`
+                            <tr>
+                                <td>
+                                    <a href="/admin/products?supplier=${supplier.name}" class="btn btn-link text-primary">Products</a>
+                                </td>
+                                <td>${supplier.name}</td>
+                                <td>${supplier.contactInfo.email}</td>
+                                <td>${supplier.contactInfo.phone}</td>
+                                <td>${supplier.contactInfo.address.city}</td>
+                                <td>${supplier.contactInfo.address.state || ''}</td>
+                                <td>
+                                    <a href="/admin/products?supplier=${supplier.name}" class="btn btn-link text-primary">Products</a>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                },
+                error: function (err) {
+                    alert('Error fetching suppliers: ' + err.responseText);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            applyFilter();
+        });
+    </script>
+</body>
+
+</html>

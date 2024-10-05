@@ -7,6 +7,7 @@
     <title>Products - Expresso Yourself</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <style>
@@ -44,7 +45,7 @@
                         <a class="nav-link active" href="/products">Products</a>
                     </li>
                     <li class="nav-item"></li>
-                        <a class="nav-link" href="/locations">Locations</a>
+                        <a class="nav-link" href="locations.html">Locations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About Us</a>
@@ -119,6 +120,12 @@
                     <label for="descriptionContains" class="form-label">Description Contains</label>
                     <input type="text" class="form-control" id="descriptionContains" name="descriptionContains">
                 </div>
+                <div class="mb-3">
+                    <label for="supplier" class="form-label">Supplier</label>
+                    <select class="form-select" id="supplier" name="supplier">
+                        <option value="" selected>All Suppliers</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">Filter</button>
             </form>
         </div>
@@ -141,15 +148,36 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let cart = [];
 
         document.addEventListener('DOMContentLoaded', function () {
-            loadProducts();
-            loadCart();
+            const params = new URLSearchParams(window.location.search);
+            const supplier = params.get('supplier'); 
+
+            const paramsToPass = {}
+            if(supplier) paramsToPass.supplier = supplier;
+            
+            loadProducts(paramsToPass);
             loadCategories();
+            loadSuppliers();
         });
+
+	    function loadSuppliers() {
+            fetch('/admin/listAllSuppliers')
+                .then(response => response.json())
+                .then(data => {
+                    const suppliers = data;
+                    const supplierSelect = document.getElementById('supplier');
+                    suppliers.forEach(supplier => {
+                        const option = document.createElement('option');
+                        option.value = supplier.name;
+                        option.textContent = supplier.name;
+                        supplierSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching suppliers:', error));
+        }
 
         function loadCategories() {
             fetch('/api/getCategories')
@@ -168,30 +196,50 @@
                 .catch(error => console.error('Error fetching categories:', error));
         }
         
-        function loadProducts(params = {}) {
+        async function loadProducts(params = {}) {
             const queryString = new URLSearchParams(params).toString();
-    
+            let supplierProductIds = null;
+
+            if (params.supplier){
+                 $.ajax({
+                        url: `/admin/getSupplier?supplier_name=${params.supplier}`,
+                        method: 'GET',
+                        success: function(response) {
+                            supplierProductIds = response.products.map(product => product.product._id);
+                            console.log(productIds); 
+                        },
+                        error: function(err) {
+                            alert('Cant find the suppliers show all suppliers');
+                        }
+                    });
+            }
+
+
             fetch(`/api/getProducts?${queryString}`)
                 .then(response => response.json())
                 .then(products => {
                     const productsContainer = document.getElementById('products-container');
                     products.forEach(product => {
-                        const productCard = `
-                            <div class="col-md-4 mb-4">
-                                <div class="card custom-card">
-                                    <img class="card-img-top" src="${product.image || '../images/default_beans.jpg'}" alt="${product.name}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${product.name}</h5>
-                                        <p class="card-text">${product.description}</p>
-                                        <p class="card-text">Price: $${product.price.toFixed(2)}</p>
-                                        <a href="#" class="image-link-button" onclick="addToCart('${product._id}', '${product.name}', ${product.price})">
-                                            <img src="../images/shopping_cart.webp" alt="Add to Cart">
+                        let toAdd = true;
+                        if (supplierProductIds) if (!supplierProductIds.includes(product._id)) toAdd=false;
+
+                        if (toAdd){
+                            const productCard = `
+                                    <div class="col-md-4 mb-4">
+                                        <a href="/admin/productPage/${product._id}">
+                                            <div class="card custom-card">
+                                                <img class="card-img-top" src="${product.image || '../images/default_beans.jpg'}" alt="${product.name}">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">${product.name}</h5>
+                                                    <p class="card-text">${product.description}</p>
+                                                    <p class="card-text">Price: $${product.price.toFixed(2)}</p>
+                                                </div>
+                                            </div>
                                         </a>
                                     </div>
-                                </div>
-                            </div>
-                        `;
-                        productsContainer.innerHTML += productCard;
+                            `;
+                            productsContainer.innerHTML += productCard;
+                        }
                     });
                 })
                 .catch(error => console.error('Error fetching products:', error));
@@ -208,48 +256,6 @@
             saveCart();
         }
 
-        function updateCart() {
-            const cartItems = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-            const cartCount = document.getElementById('cartCount');
-
-            cartItems.innerHTML = '';
-            let total = 0;
-            let count = 0;
-
-            cart.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item d-flex justify-content-between align-items-center';
-                li.innerHTML = `
-                    ${item.name} - $${item.price.toFixed(2)} x ${item.quantity}
-                    <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.webp"></button>
-                `;
-                cartItems.appendChild(li);
-                total += item.price * item.quantity;
-                count += item.quantity;
-            });
-
-            cartTotal.textContent = total.toFixed(2);
-            cartCount.textContent = count;
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            updateCart();
-            saveCart();
-        }
-
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-        }
-
-        function loadCart() {
-            const savedCart = localStorage.getItem('cart');
-            if (savedCart) {
-                cart = JSON.parse(savedCart);
-                updateCart();
-            }
-        }
 
         function checkout() {
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -257,42 +263,43 @@
         }
 
         function applyFilter() {
-        // Get filter values from form inputs
-        const minPrice = document.getElementById('minPrice').value;
-        const maxPrice = document.getElementById('maxPrice').value;
-        const category = document.getElementById('category').value;
-        const inStock = document.getElementById('inStock').checked;
-        const descriptionContains = document.getElementById('descriptionContains').value;
+            // Get filter values from form inputs
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const category = document.getElementById('category').value;
+            const inStock = document.getElementById('inStock').checked;
+            const descriptionContains = document.getElementById('descriptionContains').value;
+            const supplier = document.getElementById('supplier').value;
+            
+            // Build the params object based on the filter values
+            const params = {};
+            if (minPrice) params.minPrice = minPrice;
+            if (maxPrice) params.maxPrice = maxPrice;
+            if (category) params.category = category;
+            if (inStock) params.inStock = inStock;
+            if (descriptionContains) params.descriptionContains = descriptionContains;
+            if (supplier !== 'All Suppliers') params.supplier = supplier;
+            
+            document.getElementById('products-container').innerHTML = '';
 
-        // Build the params object based on the filter values
-        const params = {};
-        if (minPrice) params.minPrice = minPrice;
-        if (maxPrice) params.maxPrice = maxPrice;
-        if (category) params.category = category;
-        if (inStock) params.inStock = inStock;
-        if (descriptionContains) params.descriptionContains = descriptionContains;
-
-        // Clear existing product cards
-        document.getElementById('products-container').innerHTML = '';
-
-        // Call loadProducts with the filter parameters
-        loadProducts(params);
-    }
-    
-    function toggleFilters() {
-        const openFilterBtn = document.getElementById('openFilterBtn');
-        const filterMenuCollapse = new bootstrap.Collapse(document.getElementById('filterMenuCollapse'), {
-            toggle: false  
-        });
-
-        if (openFilterBtn.style.display === 'none') {
-            openFilterBtn.style.display = 'block';
-            filterMenuCollapse.hide();
-        } else {
-            openFilterBtn.style.display = 'none';
-            filterMenuCollapse.show();
+            // Call loadProducts with the filter parameters
+            loadProducts(params);
         }
-    }
+    
+        function toggleFilters() {
+            const openFilterBtn = document.getElementById('openFilterBtn');
+            const filterMenuCollapse = new bootstrap.Collapse(document.getElementById('filterMenuCollapse'), {
+                toggle: false  
+            });
+
+            if (openFilterBtn.style.display === 'none') {
+                openFilterBtn.style.display = 'block';
+                filterMenuCollapse.hide();
+            } else {
+                openFilterBtn.style.display = 'none';
+                filterMenuCollapse.show();
+            }
+        }
     </script>
 
 </body>

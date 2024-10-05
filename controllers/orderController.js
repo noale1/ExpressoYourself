@@ -1,4 +1,7 @@
 const Order = require('../models/order');
+const User = require('../models/user');
+const Product = require('../models/product');
+const jwt = require('jsonwebtoken');
 
 // List all orders
 exports.list_orders = async (req, res) => {
@@ -10,11 +13,72 @@ exports.list_orders = async (req, res) => {
 exports.checkout = async (req, res) => {
     const cart = req.body.cart; 
     const userDetails = req.body.userDetails; 
+    const token = req.headers['cookie']?.split('=')[1];
+    
+    let totalPrice = 0;
+    let user;  
 
     try {
-        res.status(200).json({ message: 'Checkout successful' });
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.userId;
+        
+        user = await User.findById(userId); 
+
+        if (!user) {
+            return res.status(403).send('Invalid token');
+        }
+        
+    } catch (err) {
+        return res.status(403).send('Invalid token');
+    }
+
+    try {
+
+        // check if all products have enough quantity in stock
+        for (const item of cart) {
+            const product = await Product.findById(item.id);
+            if (!product) {
+                return res.status(404).send(`Product with id ${item.id} not found`);
+            }
+            if (product.quantity < item.quantity) {
+                return res.status(500).send(`Not enough stock for product ${product.name}`);
+            }
+        }
+
+        // update product quantities 
+        for (const item of cart) {
+            const product = await Product.findById(item.id);
+            product.quantity -= item.quantity;
+            await product.save();
+        }
+
+        // calc total amount
+        cart.forEach(item => {
+            totalPrice += item.price * item.quantity;
+        });
+
+        const newOrder = new Order({
+            user: user._id,  
+            items: cart.map(item => ({
+                productId: item.id,
+                productName: item.name,
+                price: item.price,
+                quantity: item.quantity
+            })),
+            totalPrice,
+            deliveryDetails: {
+                address: userDetails.address,
+                city: userDetails.city,
+                country: userDetails.country,
+                zip: userDetails.zip
+            }
+        });
+
+        await newOrder.save();
+        res.status(200).json({ message: 'Order created successfully!', orderId: newOrder._id });
     } catch (error) {
-        res.status(500).json({ message: 'Error during checkout' });
+        console.error('Error creating order:', error);
+        res.status(500).json({ message: 'Failed to create order', error });
     }
 };
 

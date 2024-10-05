@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-    userId: { type: String, required: true }, 
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, 
     items: [
         {
             productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
@@ -11,7 +11,14 @@ const orderSchema = new mongoose.Schema({
         }
     ],
     totalPrice: { type: Number, required: true },
-    status: { type: String, default: 'Pending' }
+    deliveryDetails: { 
+        address: { type: String, required: true },
+        city: { type: String, required: true },
+        country: { type: String, required: true },
+        zip: { type: String, required: true }
+    },
+    orderDate: { type: Date, default: Date.now },
+
 });
 
 const Order = mongoose.model('Order', orderSchema);
