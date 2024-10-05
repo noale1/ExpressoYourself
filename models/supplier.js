@@ -56,4 +56,14 @@ const supplierSchema = new mongoose.Schema({
 }, { versionKey: false });
 
 
+// supplierSchema.pre('deleteOne', async function(next) {
+//     try {
+//         // Remove all suppliers linked to this user
+//         await products.deleteMany({ user: this.username });
+//         next(); // Continue with the deletion of the user
+//     } catch (error) {
+//         next(error); // Pass the error to the next middleware
+//     }
+// });
+
 module.exports = mongoose.model('Supplier', supplierSchema);

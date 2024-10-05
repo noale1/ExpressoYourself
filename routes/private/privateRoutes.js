@@ -10,6 +10,7 @@ router.use( auth.authenticateToken );
 
 
 
+
 // order page
 router.get('/order', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'order.html')) });
 router.post('/order',orderController.checkout);
