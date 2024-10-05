@@ -9,8 +9,8 @@ const auth = require('../../middlewares/auth_midware');
 const admin = require('../../middlewares/admin_midware');
 const RELATIVE_PAGES_PATH = '../../views/pages';
 
-router.use(auth.authenticateToken);
-router.use(admin.isAdmin);
+// router.use(auth.authenticateToken);
+// router.use(admin.isAdmin);
 
 // Register and login routes
 router.get('/getUsers' ,userController.listAllUsers);

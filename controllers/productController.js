@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const PostToSocials = require('./postProductController');
 
 // List all products
 exports.list_products = async (req, res) => {
@@ -11,6 +12,7 @@ exports.add_product = async (req, res) => {
     try {
         const newProduct = new Product(req.body);
         await newProduct.save();
+        await PostToSocials.postProduct(newProduct);
         res.status(201).json({ message: 'Product added successfully', product: newProduct });
     } catch (error) {
         res.status(400).json({ message: 'Error adding product', error });

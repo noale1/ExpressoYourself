@@ -8,9 +8,7 @@ router.get('/getProducts', productController.get_products);
 router.get('/getCategories', productController.get_categories);
 
 router.get('/getMapsAPIKey', locationController.getApiKey);
-router.get('/locations',locationController.getLocations);
-
-
+router.get('/getMarkers',locationController.getLocations);
 
 router.get('/cart/:user',orderController.getUserCart)
 
