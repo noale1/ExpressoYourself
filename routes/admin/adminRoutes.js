@@ -27,7 +27,7 @@ router.get('/suplliersManagment', (req, res) => { res.sendFile(path.join(__dirna
 router.get('/listAllSuppliers', supplierController.list_all_supplier);
 router.get('/deleteSupplier', supplierController.delete_supplier);
 router.get('/getSupplier', supplierController.get_supplier);
-
+router.post('/addProdectToSupplier', supplierController.add_product_to_supplier);
 
 // Product Routes
 router.get('/', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'products.html')) });

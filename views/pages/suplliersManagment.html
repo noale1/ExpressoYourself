@@ -89,6 +89,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th>Add Product</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
@@ -115,10 +116,10 @@
     <script>
         function applyFilter() {
             const filterData = {
+                name: $('#name').val(),
                 email: $('#email').val(),
                 state: $('#state').val(),
                 city: $('#city').val(),
-                name: $('#name').val(),
                 productName: $('#productName').val()
             };
 
@@ -131,16 +132,18 @@
                     tbody.empty();
 
                     suppliers.forEach(supplier => {
-                        const products = supplier.products.map(p => p.product.name).join(', ');
                         tbody.append(`
                             <tr>
+                                <td>
+                                    <a href="/admin/products?supplier=${supplier.name}" class="btn btn-link text-primary">Products</a>
+                                </td>
                                 <td>${supplier.name}</td>
                                 <td>${supplier.contactInfo.email}</td>
                                 <td>${supplier.contactInfo.phone}</td>
                                 <td>${supplier.contactInfo.address.city}</td>
                                 <td>${supplier.contactInfo.address.state || ''}</td>
                                 <td>
-                                    <a href="/admin/supplierProduct?supplierId=${supplier._id}" class="btn btn-link text-primary">Products</a>
+                                    <a href="/admin/products?supplier=${supplier.name}" class="btn btn-link text-primary">Products</a>
                                 </td>
                             </tr>
                         `);

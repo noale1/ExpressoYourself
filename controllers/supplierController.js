@@ -70,7 +70,10 @@ exports.get_supplier = async (req, res) => {
         const supplier_name = req.params.supplier_name;
 
         // Find the supplier by ID and update the fields
-        supplier = await Supplier.findOne(supplier_name);
+        supplier = await Supplier.findOne(supplier_name).populate({
+            path: 'products.product',
+            model: 'Product',
+        });
 
         // Check if the supplier exists
         if (!supplier) {
@@ -100,7 +103,6 @@ exports.list_all_supplier = async (req, res) => {
 
         // filter by state + city 
         if (state || city) {
-            query['contactInfo.address'] = {};
             if (city) query['contactInfo.address.city'] = { $regex: city, $options: 'i' };
             if (state) query['contactInfo.address.state'] = { $regex: state, $options: 'i' };
         }
@@ -111,15 +113,51 @@ exports.list_all_supplier = async (req, res) => {
         }
 
         // filter by product name 
-        let suppliersQuery = Supplier.find(query).populate('user').populate({
-            path: 'products.product',
-            match: productName ? { name: { $regex: productName, $options: 'i' } } : {},
-        });
+        let suppliersQuery = Supplier.aggregate([
+            { $match: query },  // Apply other supplier filters (like by name or location)
+            { 
+                $lookup: {
+                    from: 'products',
+                    localField: 'products.product',
+                    foreignField: '_id',
+                    as: 'products',
+                }
+            },
+            { 
+                $match: productName ? { 'products.name': { $regex: productName, $options: 'i' } } : {}
+            }
+        ]);
 
         const suppliers = await suppliersQuery.exec();
 
         return res.json(suppliers);
     } catch (err) {
         return res.status(500).json({ error: err.message });
+    }
+};
+
+exports.add_product_to_supplier = async (req, res) => {
+    try {
+        const { supplierName, productId } = req.body;
+        const supplier = await Supplier.findOne({ name: supplierName.trim() });
+
+        if (!supplier) {
+            return res.status(404).json({ message: 'Supplier not found' });
+        }
+
+        const productExists = supplier.products.some(
+            (p) => p.product.toString() === productId
+        );
+
+        if (productExists) {
+            return res.status(400).json({ message: 'Product already exists in the supplier\'s product list' });
+        }
+
+        supplier.products.push({ product: productId });
+        await supplier.save();
+
+        res.status(200).json({ message: 'Product successfully added to supplier', supplier });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
