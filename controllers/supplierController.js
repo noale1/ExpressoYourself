@@ -161,3 +161,45 @@ exports.add_product_to_supplier = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+exports.get_suppliers_by_country = async (req, res) => {
+    try {
+      const suppliersByCountry = await Supplier.aggregate([
+        {
+          $group: {
+            _id: "$contactInfo.address.country",
+            count: { $sum: 1 } 
+          }
+        },
+        {
+          $sort: { _id: 1 }
+        }
+      ]);
+  
+      res.json(suppliersByCountry); 
+    } catch (error) {
+      console.error('Error aggregating suppliers by country:', error);
+      res.status(500).send('Server Error');
+    }
+  };
+
+  exports.get_products_per_supplier = async (req, res) => {
+    try {
+      const productsPerSupplier = await Supplier.aggregate([
+        {
+          $unwind: "$products"
+        },
+        {
+          $group: {
+            _id: "$name",  
+            productCount: { $sum: 1 } 
+          }
+        },
+      ]);
+  
+      res.json(productsPerSupplier);
+    } catch (error) {
+      console.error('Error aggregating products per supplier:', error);
+      res.status(500).send('Server Error');
+    }
+  };

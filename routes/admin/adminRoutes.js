@@ -4,6 +4,7 @@ const userController = require('../../controllers/userController');
 const supplierController = require('../../controllers/supplierController');
 const productController = require('../../controllers/productController');
 const uploadController = require('../../controllers/uploadController');
+const orderController = require('../../controllers/orderController');
 const path = require('path');
 const auth = require('../../middlewares/auth_midware');
 const admin = require('../../middlewares/admin_midware');
@@ -40,5 +41,17 @@ router.get('/getProductByID/:id', productController.get_product_by_id);
 
 // Upload Image
 router.post('/uploadImage', uploadController.upload_image);
+
+// Graphs
+router.get('/getGraphs', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'graphs.html')) });
+router.get('/getGraph/topProducts', orderController.get_top_saled_product_graph);
+router.get('/getGraph/orderPerDay', orderController.get_order_count_per_day_last_week_graph);
+router.get('/getGraph/salesPerDay', orderController.get_sales_per_day_last_week);
+router.get('/getGraph/productPerCategory', productController.get_product_per_category_graph);
+router.get('/getGraph/productPerPrice', productController.get_product_per_price_graph);
+router.get('/getGraph/suppliersByCountry', supplierController.get_suppliers_by_country);
+router.get('/getGraph/productsPerSupplier', supplierController.get_products_per_supplier);
+
+
 
 module.exports = router;

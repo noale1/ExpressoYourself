@@ -109,7 +109,7 @@ exports.get_product_by_id = async (req, res) => {
     }
 };
 
-exports.get_category_product_type_graph = async (req, res) => {
+exports.get_product_per_category_graph = async (req, res) => {
     try {
         const categoryCounts = await Product.aggregate([
             { $group: { _id: '$category', count: { $sum: 1 } } }
@@ -123,8 +123,7 @@ exports.get_category_product_type_graph = async (req, res) => {
 exports.get_product_per_price_graph = async (req, res) => {
     try {
         const priceCounts = await Product.aggregate([
-            { $group: { _id: '$price', count: { $sum: 1 } } },
-            { $sort: { _id: 1 } }
+            { $group: { _id: '$price', count: { $sum: 1 } } }
         ]);
         res.json(priceCounts);
     } catch (error) {
