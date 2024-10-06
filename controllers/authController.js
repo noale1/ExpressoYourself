@@ -42,11 +42,12 @@ exports.register = async (req, res) => {
         await newUser.save();
         res.json({ message: 'Register successful, '+ username + ' Enjoy Our Site'});
     }catch (error){
-        console.log(error.message);
+        console.log(error.message + error.code);
         if (error.code === 11000) { // MongoDB duplicate key error code
             const field = Object.keys(error.keyValue)[0]; // Get the field that caused the duplication
             return res.status(400).json({ message: `${field.charAt(0).toUpperCase() + field.slice(1)} already exists.` });
         }
-        return res.status(500).json({ message: 'Parameter Error!' });
+
+        return res.status(500).json({ message: error.message });
     }
 };

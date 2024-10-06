@@ -23,6 +23,4 @@ router.get('/locations', (req, res) => {res.sendFile(path.join(__dirname, RELATI
 
 
 
-
-
 module.exports = router;
