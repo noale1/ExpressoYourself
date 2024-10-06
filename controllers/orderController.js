@@ -1,5 +1,6 @@
 const Order = require('../models/order');
 const User = require('../models/user');
+const Product = require('../models/product');
 const jwt = require('jsonwebtoken');
 
 // List all orders
@@ -32,6 +33,25 @@ exports.checkout = async (req, res) => {
     }
 
     try {
+
+        // check if all products have enough quantity in stock
+        for (const item of cart) {
+            const product = await Product.findById(item.id);
+            if (!product) {
+                return res.status(404).send(`Product with id ${item.id} not found`);
+            }
+            if (product.quantity < item.quantity) {
+                return res.status(500).send(`Not enough stock for product ${product.name}`);
+            }
+        }
+
+        // update product quantities 
+        for (const item of cart) {
+            const product = await Product.findById(item.id);
+            product.quantity -= item.quantity;
+            await product.save();
+        }
+
         // calc total amount
         cart.forEach(item => {
             totalPrice += item.price * item.quantity;
@@ -103,3 +123,58 @@ exports.getExchangeAPIKey = (req, res) => {
     }
     return res.json({ apiKey });
 };
+exports.get_order_count_per_day_last_week_graph = async (req, res) => {
+    try {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); 
+  
+      const ordersPerDay = await Order.aggregate([
+        {
+          $match: {
+            orderDate: { $gte: oneWeekAgo }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: "%Y-%m-%d", date: "$orderDate" } 
+            },
+            count: { $sum: 1 } 
+          }
+        },
+      ]);
+  
+      res.json(ordersPerDay);
+    } catch (error) {
+      console.error('Error aggregating orders per day:', error);
+      res.status(500).send('Server Error');
+    }
+  };
+
+  exports.get_sales_per_day_last_week = async (req, res) => {
+    try {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7); 
+  
+      const moneyPerDay = await Order.aggregate([
+        {
+          $match: {
+            orderDate: { $gte: oneWeekAgo }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              $dateToString: { format: "%Y-%m-%d", date: "$orderDate" } 
+            },
+            totalMoney: { $sum: "$totalPrice" } 
+          }
+        },
+      ]);
+  
+      res.json(moneyPerDay);
+    } catch (error) {
+      console.error('Error aggregating total money per day:', error);
+      res.status(500).send('Server Error');
+    }
+  };
