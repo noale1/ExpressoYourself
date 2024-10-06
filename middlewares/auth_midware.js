@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken'); // If using JWT
-const User = require('../models/user');
 
 
 // Middleware function to check authentication

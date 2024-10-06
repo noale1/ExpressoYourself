@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Expresso Yourself</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Background image and text styling */
+        body {
+            background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93');
+            background-size: cover;
+            background-position: center;
+            color: #fff; /* White text for contrast */
+            font-family: 'Arial', sans-serif;
+        }
+
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 3rem;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #f3d9c0; /* Coffee cream color for headers */
+        }
+
+        .form-control,
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.8); /* Light background for input fields */
+            color: #333; /* Dark text for input fields */
+        }
+
+        .btn-coffee {
+            background-color: #8B4513; /* Coffee brown */
+            color: #fff;
+        }
+
+        .btn-coffee:hover {
+            background-color: #A0522D; /* Lighter coffee brown on hover */
+        }
+
+        .alert-dismissible {
+            position: relative;
+            z-index: 1; /* Ensure alert is above other elements */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Expresso Yourself</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="text-center py-5">
+        <h1 class="display-3">Get in Touch! ☕</h1>
+        <p class="lead">We'd love to hear from you!</p>
+    </header>
+
+    <!-- Contact Us Section with Background Overlay -->
+    <section class="overlay text-center">
+        <div class="container">
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-8">
+                    <h2>Contact Us</h2>
+                    <p class="mb-4">
+                        Whether you have a question about our coffee blends, want to share a brewing tip, or just need to chat about your favorite espresso, we’re all ears!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Bootstrap Alert Section -->
+            <div id="alertContainer" class="mb-4"></div>
+
+            <form id="contactForm">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Your Email" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" rows="4" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-coffee">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 bg-dark text-light">
+        <p>&copy; 2024 Expresso Yourself. Powered by coffee and creativity.</p>
+        <p>Need help? <a href="contact.html" class="text-warning">Contact us</a>.</p>
+    </footer>
+
+    <!-- Bootstrap JavaScript Bundle CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Gather form data
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            // Create JSON object
+            const data = {
+                name: name,
+                email: email,
+                message: message
+            };
+
+            // Send the POST request
+            fetch('/add_Message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    showAlert('Message sent successfully!', 'success');
+                    // Clear the form fields after successful submission
+                    document.getElementById('contactForm').reset();
+                } else {
+                    showAlert('Failed to send message. Please try again.', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred. Please try again later.', 'danger');
+            });
+        });
+
+        function showAlert(message, type) {
+            // Create alert div
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            // Append alert to the alert container
+            document.getElementById('alertContainer').innerHTML = ''; // Clear previous alerts
+            document.getElementById('alertContainer').appendChild(alertDiv);
+        }
+    </script>
+</body>
+
+</html>
