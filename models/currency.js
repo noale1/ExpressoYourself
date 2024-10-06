@@ -2,13 +2,20 @@ const fallbackRates = {
     'USD': 1,       // US Dollar
     'EUR': 0.85,    // Euro
     'NIS': 3.75,    // New Israeli Shekel
-    'JPY': 110.57   // Japanese Yen
+    'JPY': 110.57,   // Japanese Yen
   };
   
   class CurrencyModel {
     constructor(apiKey) {
       this.apiKey = apiKey;  // API key for the currency API
     }
+
+    currencySymbols = {
+      'USD': '$',
+      'EUR': '€',
+      'NIS': '₪',
+      'JPY': '¥',
+    };
   
     async fetchExchangeRate(fromCurrency, toCurrency) {
       let apiUrl = `http://api.currencylayer.com/convert?access_key=${this.apiKey}&from=${fromCurrency}&to=${toCurrency}&amount=1`;
@@ -30,5 +37,5 @@ const fallbackRates = {
     }
   }
   
-  module.exports = CurrencyModel;
+  export default CurrencyModel;
   

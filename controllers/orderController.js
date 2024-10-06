@@ -95,3 +95,11 @@ exports.get_top_saled_product_graph = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch top products' });
     }
 };
+
+exports.getExchangeAPIKey = (req, res) => {
+    const apiKey = process.env.EXCHANGE_API_KEY;
+    if (!apiKey) {
+        return res.status(500).json({ error: 'Exchange API key is missing' });
+    }
+    return res.json({ apiKey });
+};
