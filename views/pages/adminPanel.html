@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<style>
+    .icon-button {
+        width: 120px;
+        height: 120px;
+        background-color: #f4f4f9;
+        border: 2px solid #ccc;
+        border-radius: 12px;
+        margin: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .icon-button canvas {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .button-label {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+</style>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Expresso Yourself</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin Panel</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Supplier Management</h1>
+        <p>Manage suppliers for Expresso Yourself Coffee Shop.</p>
+    </header>
+
+    <div class="container">
+        <a href="/admin/getGraphs" class="icon-button-wrapper">
+            <button class="icon-button">
+                <canvas id="graphIcon" width="80" height="80"></canvas>
+                <span class="button-label">Graphs</span>
+            </button>
+        </a>
+
+        <a href="/admin/suplliersManagment" class="icon-button-wrapper">
+            <button class="icon-button">
+                <canvas id="supplierIcon" width="80" height="80"></canvas>
+                <span class="button-label">Suppliers</span>
+            </button>
+        </a>
+
+        <a href="/admin/products" class="icon-button-wrapper">
+            <button class="icon-button">
+                <canvas id="productIcon" width="80" height="80"></canvas>
+                <span class="button-label">Products</span>
+            </button>
+        </a>
+
+        <a href="/admin/carts" class="icon-button-wrapper">
+            <button class="icon-button">
+                <canvas id="cartIcon" width="80" height="80"></canvas>
+                <span class="button-label">Carts</span>
+            </button>
+        </a>
+    </div>
+
+    <script>
+        function drawGraphIcon() {
+            const canvas = document.getElementById('graphIcon');
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#ccc';
+
+            for (let i = 10; i <= 70; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(10, i);
+                ctx.lineTo(70, i);
+                ctx.stroke();
+            }
+
+            // bars
+            ctx.fillStyle = '#4caf50';  
+            ctx.fillRect(20, 60, 10, -40);
+            ctx.fillRect(35, 60, 10, -30);
+            ctx.fillRect(50, 60, 10, -50);
+
+            // axis
+            ctx.beginPath();
+            ctx.moveTo(10, 60);
+            ctx.lineTo(70, 60);
+            
+            // bottom axis
+            ctx.strokeStyle = '#333';  
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function drawSupplierIcon() {
+            const canvas = document.getElementById('supplierIcon');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#808080';
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const outerRadius = 25;
+            const innerRadius = 20;
+            const toothHeight = 5;
+            const numTeeth = 8;
+
+            ctx.beginPath();
+            for (let i = 0; i < numTeeth; i++) {
+                const angle = (i / numTeeth) * Math.PI * 2;
+                const nextAngle = ((i + 1) / numTeeth) * Math.PI * 2;
+
+                // outer point of tooth
+                ctx.lineTo(
+                    centerX + Math.cos(angle) * (outerRadius + toothHeight),
+                    centerY + Math.sin(angle) * (outerRadius + toothHeight)
+                );
+
+                // inner point of next tooth
+                ctx.lineTo(
+                    centerX + Math.cos(nextAngle) * outerRadius,
+                    centerY + Math.sin(nextAngle) * outerRadius
+                );
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            // circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerRadius / 2, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+        }
+
+
+
+
+        // Draw Product Icon (Improved Box Design)
+        function drawProductIcon() {
+            const canvas = document.getElementById('productIcon');
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#D2B48C';  
+            ctx.beginPath();
+            ctx.moveTo(20, 40);  
+            ctx.lineTo(60, 40);  
+            ctx.lineTo(60, 70);  
+            ctx.lineTo(20, 70);  
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.fillStyle = '#D9D9D9';  
+            ctx.fillRect(38, 40, 4, 20);  
+
+            ctx.fillStyle = '#333'; 
+            ctx.font = '10px Arial';
+            ctx.fillText("↑↑", 50, 65);
+            ctx.font = '5px Arial';
+            ctx.fillText("Product", 22, 68); 
+
+            
+        }
+
+        function drawCartIcon() {
+            const canvas = document.getElementById('cartIcon');
+            const ctx = canvas.getContext('2d');
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(15, 30);
+            ctx.lineTo(60, 30);
+            ctx.lineTo(50, 50);
+            ctx.lineTo(20, 50);
+            ctx.closePath();
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(25, 55, 5, 0, Math.PI * 2);
+            ctx.arc(45, 55, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#333';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(60, 30);
+            ctx.lineTo(70, 15);
+            ctx.stroke();
+        }
+
+        window.onload = function() {
+            drawGraphIcon();
+            drawSupplierIcon();
+            drawProductIcon();
+            drawCartIcon();  
+        };
+    </script>
+
+</body>
+</html>
