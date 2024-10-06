@@ -162,6 +162,32 @@ exports.add_product_to_supplier = async (req, res) => {
     }
 };
 
+exports.remove_product_from_supplier = async (req, res) => {
+    try {
+        const { supplierName, productId } = req.body;
+        const supplier = await Supplier.findOne({ name: supplierName.trim() });
+
+        if (!supplier) {
+            return res.status(404).json({ message: 'Supplier not found' });
+        }
+
+        const productExists = supplier.products.some(
+            (p) => p.product.toString() === productId
+        );
+
+        if (!productExists) {
+            return res.status(400).json({ message: 'Product Does Not exists in the supplier\'s product list' });
+        }
+
+        supplier.products.deleteOne({ product: productId });
+        await supplier.save();
+
+        res.status(200).json({ message: 'Product successfully Deleted from supplier', supplier });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 exports.get_suppliers_by_country = async (req, res) => {
     try {
       const suppliersByCountry = await Supplier.aggregate([
