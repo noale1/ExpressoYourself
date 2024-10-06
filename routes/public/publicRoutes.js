@@ -22,5 +22,14 @@ router.post('/login', authController.login);
 router.get('/locations', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'locations.html'));});
 
 
+router.get('/controllers/currencyController.js', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../controllers', 'currencyController.js'));
+});
+
+router.get('/models/currency.js', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../models', 'currency.js'));
+});
+
+
 
 module.exports = router;
