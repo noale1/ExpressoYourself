@@ -186,8 +186,8 @@
                     products.forEach(product => {
                         const productCard = `
                             <div class="col-md-4 mb-4">
-                                <div class="card custom-card">
-                                    <img class="card-img-top" src="${product.image || '../images/default_beans.jpg'}" alt="${product.name}">
+                                <div class="card custom-card" style="height: 400px">
+                                    <img class="card-img-top" src="${product.imageUrl || '../images/default_beans.jpg'}" alt="${product.name}">
                                     <div class="card-body">
                                         <h5 class="card-title">${product.name}</h5>
                                         <p class="card-text">${product.description}</p>
