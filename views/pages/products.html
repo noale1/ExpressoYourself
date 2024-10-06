@@ -22,6 +22,7 @@
         z-index: 1000;
         border-right: 1px solid #dee2e6;
     }
+
     #filter-menu h5 {
         margin-top: 80px;
     }
@@ -44,13 +45,21 @@
                         <a class="nav-link active" href="/products">Products</a>
                     </li>
                     <li class="nav-item"></li>
-                        <a class="nav-link" href="/locations">Locations</a>
+                    <a class="nav-link" href="/locations">Locations</a>
                     </li>
                     <li class="nav-item">
+
                         <a class="nav-link" href="/about">About Us</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/contactus">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="login-logout-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item d-none" id="logout-link">
+                        <a class="nav-link" href="#" onclick="logoutUser()">Logout</a>
+
                     </li>
                     <li>
                         <a href="shoppingCart.html" data-bs-toggle="modal" class="image-link-navbar"
@@ -96,7 +105,7 @@
                 Close Filters
             </button>
             <h5>Filter Products</h5>
-            <form id="filter-form", onsubmit="applyFilter(); return false;">
+            <form id="filter-form" , onsubmit="applyFilter(); return false;">
                 <div class="mb-3">
                     <label for="minPrice" class="form-label">Min Price</label>
                     <input type="number" step="0.01" class="form-control" id="minPrice" name="minPrice">
@@ -167,10 +176,10 @@
                 })
                 .catch(error => console.error('Error fetching categories:', error));
         }
-        
+
         function loadProducts(params = {}) {
             const queryString = new URLSearchParams(params).toString();
-    
+
             fetch(`/api/getProducts?${queryString}`)
                 .then(response => response.json())
                 .then(products => {
@@ -257,42 +266,63 @@
         }
 
         function applyFilter() {
-        // Get filter values from form inputs
-        const minPrice = document.getElementById('minPrice').value;
-        const maxPrice = document.getElementById('maxPrice').value;
-        const category = document.getElementById('category').value;
-        const inStock = document.getElementById('inStock').checked;
-        const descriptionContains = document.getElementById('descriptionContains').value;
+            // Get filter values from form inputs
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const category = document.getElementById('category').value;
+            const inStock = document.getElementById('inStock').checked;
+            const descriptionContains = document.getElementById('descriptionContains').value;
 
-        // Build the params object based on the filter values
-        const params = {};
-        if (minPrice) params.minPrice = minPrice;
-        if (maxPrice) params.maxPrice = maxPrice;
-        if (category) params.category = category;
-        if (inStock) params.inStock = inStock;
-        if (descriptionContains) params.descriptionContains = descriptionContains;
+            // Build the params object based on the filter values
+            const params = {};
+            if (minPrice) params.minPrice = minPrice;
+            if (maxPrice) params.maxPrice = maxPrice;
+            if (category) params.category = category;
+            if (inStock) params.inStock = inStock;
+            if (descriptionContains) params.descriptionContains = descriptionContains;
 
-        // Clear existing product cards
-        document.getElementById('products-container').innerHTML = '';
+            // Clear existing product cards
+            document.getElementById('products-container').innerHTML = '';
 
-        // Call loadProducts with the filter parameters
-        loadProducts(params);
-    }
-    
-    function toggleFilters() {
-        const openFilterBtn = document.getElementById('openFilterBtn');
-        const filterMenuCollapse = new bootstrap.Collapse(document.getElementById('filterMenuCollapse'), {
-            toggle: false  
+            // Call loadProducts with the filter parameters
+            loadProducts(params);
+        }
+
+        function toggleFilters() {
+            const openFilterBtn = document.getElementById('openFilterBtn');
+            const filterMenuCollapse = new bootstrap.Collapse(document.getElementById('filterMenuCollapse'), {
+                toggle: false
+            });
+
+            if (openFilterBtn.style.display === 'none') {
+                openFilterBtn.style.display = 'block';
+                filterMenuCollapse.hide();
+            } else {
+                openFilterBtn.style.display = 'none';
+                filterMenuCollapse.show();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginLink = document.getElementById('login-logout-link');
+            const logoutLink = document.getElementById('logout-link');
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn === 'true') {
+                loginLink.classList.add('d-none'); 
+                logoutLink.classList.remove('d-none'); 
+            } else {
+                loginLink.classList.remove('d-none'); 
+                logoutLink.classList.add('d-none'); 
+            }
         });
 
-        if (openFilterBtn.style.display === 'none') {
-            openFilterBtn.style.display = 'block';
-            filterMenuCollapse.hide();
-        } else {
-            openFilterBtn.style.display = 'none';
-            filterMenuCollapse.show();
+        function logoutUser() {
+            localStorage.removeItem('isLoggedIn');
+            alert('You have logged out successfully.');
+            window.location.href = '/login';
         }
-    }
     </script>
 
 </body>
