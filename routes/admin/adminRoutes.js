@@ -31,7 +31,7 @@ router.get('/getSupplier', supplierController.get_supplier);
 router.post('/addProdectToSupplier', supplierController.add_product_to_supplier);
 
 // Product Routes
-router.get('/', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'products.html')) });
+router.get('/', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'adminPanel.html')) });
 router.get('/products', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'adminProducts.html')) });
 router.get('/productPage/:id', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'adminProductPage.html')) });
 router.post('/products', productController.add_product);
