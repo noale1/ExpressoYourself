@@ -11,6 +11,13 @@ router.get('/', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES
 // product page
 router.get('/products', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'products.html'))});
 
+//About Page
+router.get('/about', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'AboutPage.html'));});
+
+//ContactUs Page
+router.get('/ContactUs', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'ContactUs.html'));});
+
+
 
 // login and register pages
 router.get('/login', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'login.html'))});
@@ -20,6 +27,17 @@ router.post('/login', authController.login);
 
 // map page
 router.get('/locations', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'locations.html'));});
+
+
+
+
+router.get('/controllers/currencyController.js', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../controllers', 'currencyController.js'));
+});
+
+router.get('/models/currency.js', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../models', 'currency.js'));
+});
 
 
 

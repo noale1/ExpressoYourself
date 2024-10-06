@@ -31,9 +31,9 @@ router.get('/getSupplier', supplierController.get_supplier);
 router.post('/addProdectToSupplier', supplierController.add_product_to_supplier);
 
 // Product Routes
-router.get('/', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'adminPanel.html')) });
-router.get('/products', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'adminProducts.html')) });
-router.get('/productPage/:id', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'adminProductPage.html')) });
+router.get('/', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminPanel.html')) });
+router.get('/products', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminProducts.html')) });
+router.get('/productPage/:id', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminProductPage.html')) });
 router.post('/products', productController.add_product);
 router.delete('/products/:id', productController.delete_product);
 router.post('/products/:id', productController.update_product);
@@ -43,7 +43,7 @@ router.get('/getProductByID/:id', productController.get_product_by_id);
 router.post('/uploadImage', uploadController.upload_image);
 
 // Graphs
-router.get('/getGraphs', (req, res) => { res.sendFile(path.join(__dirname, '../../views/pages', 'graphs.html')) });
+router.get('/getGraphs', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'graphs.html')) });
 router.get('/getGraph/topProducts', orderController.get_top_saled_product_graph);
 router.get('/getGraph/orderPerDay', orderController.get_order_count_per_day_last_week_graph);
 router.get('/getGraph/salesPerDay', orderController.get_sales_per_day_last_week);
