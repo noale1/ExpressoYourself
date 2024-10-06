@@ -60,7 +60,7 @@
             })
             .then(data => {
                 window.location.href = '/';
-                // Handle success (e.g., redirect or display a message)
+                localStorage.setItem('isLoggedIn', 'true');
             })
             .catch((error) => {
                 console.error('Error:', error);
