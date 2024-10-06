@@ -1,6 +1,6 @@
-const CurrencyModel = require('../models/currency');
+import CurrencyModel from "../models/currency.js";
 
-class CurrencyController {
+export default class CurrencyController {
   constructor(apiKey) {
     this.currencyModel = new CurrencyModel(apiKey);
   }
@@ -10,6 +10,4 @@ class CurrencyController {
     let exchangeRate = await this.currencyModel.fetchExchangeRate(fromCurrency, toCurrency);
     return total * exchangeRate;
   }
-}
-
-module.exports = CurrencyController;
+};

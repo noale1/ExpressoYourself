@@ -2,14 +2,22 @@ require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const app = express();
 const Product = require('./models/product.js');
 
+const app = express();
 // Middleware
 app.use(express.json());
 
 // Serve static files from the "views" directory
 app.use(express.static(path.join(__dirname, 'views')));
+
+app.get('/controllers/currencyController.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'controllers', 'currencyController.js'));
+});
+
+app.get('/models/currency.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'models', 'currency.js'));
+});
 
 // Connect to mongo
 const mongoAtlasUri = process.env.MONGO_ATLAS_URI;

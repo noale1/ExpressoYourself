@@ -130,18 +130,35 @@
         </div>
     </footer>
 
-    <script>
-        async function fetchExchangeRate(fromCurrency, toCurrency) {
-            try {
-                const response = await fetch(`https://v6.exchangerate-api.com/v6/YOUR-API-KEY/latest/${fromCurrency}`);
-                const data = await response.json();
-                return data.rates[toCurrency] || 1; // Fallback to 1 if rate is unavailable
-            } catch (error) {
-                console.error('Error fetching exchange rates:', error);
-                return 1; // Fallback to 1 if API call fails
-            }
-        }
+    <script type="module">
+        
+        import CurrencyController from "../../controllers/currencyController.js";
+        async function getExchangeAPIKey() {
+             const response = await fetch('/api/getExchangeAPIKey');
+             const reader = response.body.getReader();
+             const decoder = new TextDecoder('utf-8');
+             let result = '';
+             let done = false;
+ 
+             while (!done) {
+                 const { value, done: doneReading } = await reader.read();
+                 done = doneReading;
+                 result += decoder.decode(value, { stream: !done });
+             }
+ 
+             const parsedResult = JSON.parse(result);
+             return parsedResult.apiKey;
+         }
 
+        let currencyController = new CurrencyController();
+         
+        getExchangeAPIKey().then(apiKey => {
+            const EXCHANGE_API_KEY = apiKey;
+            currencyController = new CurrencyController(EXCHANGE_API_KEY);
+            console.log('Currency controller initialized with API key:', EXCHANGE_API_KEY);
+        });
+
+        
         async function updateCartTotal(selectedCurrency) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const orderSummary = document.getElementById('order-summary');
@@ -153,8 +170,9 @@
             }
 
             let totalInUSD = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-            const exchangeRate = await fetchExchangeRate('USD', selectedCurrency);
-            const convertedTotal = (totalInUSD * exchangeRate).toFixed(2);
+            const convertedTotal = await currencyController.convertCurrency(totalInUSD, 'USD', selectedCurrency);
+            const exchangeRate = await currencyController.currencyModel.fetchExchangeRate('USD', selectedCurrency);
+            // const convertedTotal = (totalInUSD * exchangeRate).toFixed(2);
 
             // Render cart items
             cart.forEach(item => {
@@ -164,7 +182,7 @@
                         <h6 class="my-0">${item.name}</h6>
                         <small class="text-muted">Quantity: ${item.quantity}</small>
                     </div>
-                    <span class="text-muted">$${(item.price * item.quantity * exchangeRate).toFixed(2)} ${selectedCurrency}</span>
+                    <span class="text-muted">${currencyController.currencyModel.currencySymbols[selectedCurrency]}${(item.price * item.quantity * exchangeRate).toFixed(2)} ${selectedCurrency}</span>
                 </li>`;
                 orderSummary.insertAdjacentHTML('beforeend', orderItem);
             });
@@ -173,7 +191,7 @@
             const totalLine = `
             <li class="list-group-item d-flex justify-content-between">
                 <span>Total (${selectedCurrency})</span>
-                <strong>$${convertedTotal} ${selectedCurrency}</strong>
+                <strong>${currencyController.currencyModel.currencySymbols[selectedCurrency]}${convertedTotal} ${selectedCurrency}</strong>
             </li>`;
             orderSummary.insertAdjacentHTML('beforeend', totalLine);
         }
