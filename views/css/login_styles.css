@@ -6,7 +6,7 @@
 }
 
 body {
-    background: url('https://img.freepik.com/free-photo/top-view-cup-coffee-with-copy-space_23-2148251570.jpg?t=st=1726951320~exp=1726954920~hmac=f7f34f3533ac1caa2c080476cb0f2a56e9f0f3a6faef4a9af499ce69e312bcd3&w=1380') no-repeat center center fixed;
+    background: url('../images/coffee_background.jpeg') no-repeat center center fixed;
     background-size: cover;
     height: 100vh;
     display: flex;
@@ -15,7 +15,7 @@ body {
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.6);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -58,13 +58,13 @@ input:focus {
 }
 
 button {
-    background-color: #5C3D2E;
+    background-color: #6d5141;
     color: white;
     padding: 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    width: 100%;
+    width: 100px;
 }
 
 button:hover {
