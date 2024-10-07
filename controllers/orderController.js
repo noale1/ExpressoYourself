@@ -40,6 +40,9 @@ exports.checkout = async (req, res) => {
             if (!product) {
                 return res.status(404).send(`Product with id ${item.id} not found`);
             }
+            if (product.price !== item.price) {
+              return res.status(500).send(`Product price changed for ${product.name}`);
+            }
             if (product.quantity < item.quantity) {
                 return res.status(500).send(`Not enough stock for product ${product.name}`);
             }
