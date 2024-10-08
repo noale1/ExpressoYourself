@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Invitations Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Manage Invitations</h1>
+        <p>View and manage invitations from your suppliers.</p>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div id="filter-menu" class="p-4">
+                    <h5>Filter Invitations</h5>
+                    <form id="filter-form" onsubmit="applyFilter(); return false;">
+                        <div class="mb-3">
+                            <label for="statusFilter" class="form-label">Invitation Status</label>
+                            <select class="form-select" id="statusFilter" name="status">
+                                <option value="">All</option>
+                                <option value="pending">Pending</option>
+                                <option value="in progress">In Progress</option>
+                                <option value="declined">Declined</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" name="productName">
+                        </div>
+                        <button type="submit" class="btn custom-btn">Apply Filter</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="container mt-4">
+                    <h5>Your Invitations</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Supplier Name</th>
+                                <th>Product Name</th>
+                                <th>Created At</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invitations-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <script>
+        function loadInvitations(filters = {}) {
+            $.ajax({
+                url: '/admin/invitations',
+                method: 'GET',
+                data: filters,
+                success: function (invitations) {
+                    const tbody = $('#invitations-table-body');
+                    tbody.empty();
+
+                    invitations.forEach(invitation => {
+                        tbody.append(`
+                            <tr data-status="${invitation.status}" data-product-name="${invitation.product.name}">
+                                <td>${invitation.supplier.name}</td>
+                                <td>${invitation.product.name}</td>
+                                <td>${new Date(invitation.createdAt).toLocaleDateString()}</td>
+                                <td>${new Date(invitation.endDate).toLocaleDateString()}</td>
+                                <td>${invitation.status}</td>
+                                <td>
+                                    <button class="btn btn-danger delete-btn" data-id="${invitation._id}">Delete Invitation</button>
+                                </td>
+                            </tr>
+                        `);
+                    });
+
+                    $(document).on('click', '.delete-btn', function () {
+                        const invitationId = $(this).data('id');
+                        deleteInvitation(invitationId);
+                    });
+                },
+                error: function (err) {
+                    alert('Error loading invitations: ' + err.responseText);
+                }
+            });
+        }
+
+        function deleteInvitation(invitationId) {
+            $.ajax({
+                url: `/admin/invitations/${invitationId}`,
+                method: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify({ status }),
+                success: function () {
+                    loadInvitations();  
+                },
+                error: function (err) {
+                    alert('Error deleting status: ' + err.responseText);
+                }
+            });
+            location.reload()
+
+        }
+
+        function applyFilter() {
+            const filters = {
+                status: $('#statusFilter').val(),
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val(),
+                productName: $('#productName').val()
+            };
+
+            loadInvitations(filters);
+        }
+
+        $(document).ready(function () {
+            loadInvitations();  
+
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function (data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+
+            $.ajax({
+                url: '/components/adminFooter.html',
+                method: 'GET',
+                success: function (data) {
+                    $('#footer-container').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading footer:', error);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

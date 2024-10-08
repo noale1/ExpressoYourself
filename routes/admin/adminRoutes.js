@@ -5,6 +5,7 @@ const supplierController = require('../../controllers/supplierController');
 const productController = require('../../controllers/productController');
 const uploadController = require('../../controllers/uploadController');
 const orderController = require('../../controllers/orderController');
+const invitationController = require('../../controllers/invitationController');
 const path = require('path');
 const auth = require('../../middlewares/auth_midware');
 const admin = require('../../middlewares/admin_midware');
@@ -58,6 +59,15 @@ router.get('/getGraph/productPerCategory', productController.get_product_per_cat
 router.get('/getGraph/productPerPrice', productController.get_product_per_price_graph);
 router.get('/getGraph/suppliersByCountry', supplierController.get_suppliers_by_country);
 router.get('/getGraph/productsPerSupplier', supplierController.get_products_per_supplier);
+
+
+// Supllier invitaions
+router.post('/invitations', invitationController.create_invitation);
+router.put('/invitations/:id', invitationController.update_invitation);
+router.delete('/invitations/:id', invitationController.delete_invitation);
+router.get('/invitations', invitationController.get_all_invitations);
+router.get('/invitaionManagment', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'AdminInvitation.html')) });
+router.get('/createinvitaion/:id', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'AddInvatation.html')) });
 
 
 
