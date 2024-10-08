@@ -18,6 +18,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid Credentails!' });
         }
 
+
         const token = jwt.sign({ userId: user._id, username: user.username, isAdmin: user.isAdmin, isSupplier: user.isSupplier }, process.env.JWT_SECRET, {
             expiresIn: '3h', // Token expiration
         });
