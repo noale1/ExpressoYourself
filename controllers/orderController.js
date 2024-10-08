@@ -12,18 +12,15 @@ exports.list_orders = async (req, res) => {
 
 
 exports.checkout = async (req, res) => {
-    const cart = req.body.cart; 
-    const userDetails = req.body.userDetails; 
-    const token = req.headers['cookie']?.split('=')[1];
+    const cart = req.body.cart;  
+    const token = req.headers['cookie']?.split('=')[1]
+    const usernamefromjwt = auth.getUserFromToken(token)
     
     let totalPrice = 0;
     let user;  
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.userId;
-        
-        user = await User.findById(userId); 
+    try {        
+        user = await User.findById({username: usernamefromjwt}); 
 
         if (!user) {
             return res.status(403).send('Invalid token');
