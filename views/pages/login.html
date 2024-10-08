@@ -59,7 +59,12 @@
                 return response.json();
             })
             .then(data => {
-                window.location.href = '/';
+                if(data.is_admin) {
+                    window.location.href = '/admin';
+                } else {
+                    window.location.href = '/';
+                }
+                
                 localStorage.setItem('isLoggedIn', 'true');
             })
             .catch((error) => {

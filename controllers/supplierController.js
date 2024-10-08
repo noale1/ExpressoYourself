@@ -188,6 +188,23 @@ exports.remove_product_from_supplier = async (req, res) => {
     }
 };
 
+
+exports.removeProductFromAllSuppliers = async (productId) => {
+    try {
+        const result = await Supplier.updateMany(
+            { 'products.product': productId },
+            { $pull: { products: { product: productId } } }
+        );
+        
+        return result;
+    } catch (error) {
+        console.error('Error removing product from suppliers:', error);
+        return null;
+    }
+}
+
+//module.exports = removeProductFromAllSuppliers;
+
 exports.get_suppliers_by_country = async (req, res) => {
     try {
       const suppliersByCountry = await Supplier.aggregate([

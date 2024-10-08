@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { isAdmin } = require('../middlewares/admin_midware');
 
 // Login 
 exports.login = async (req, res) => {
@@ -26,7 +27,7 @@ exports.login = async (req, res) => {
             maxAge: 10800000 // 3 hour in milliseconds
         });
         console.log("[+] User Logged In: ",email, user.username,  password);
-        res.json({ message: 'Login successful, Welcome '+user.username });
+        res.json({ message: 'Login successful, Welcome '+user.username,  is_admin: user.isAdmin});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

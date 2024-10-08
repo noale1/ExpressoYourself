@@ -20,6 +20,8 @@ router.get('/deleteUser' ,userController.deleteUser);
 router.get('/grantAdmin' ,userController.addAdmin);
 router.get('/revokeAdmin' ,userController.revokeAdmin);
 
+// Home
+router.get('/', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminPanel.html')) });
 
 // Supplier routes
 router.post('/addSupplier', supplierController.add_supplier);
@@ -31,10 +33,10 @@ router.get('/getSupplier', supplierController.get_supplier);
 router.post('/addProdectToSupplier', supplierController.add_product_to_supplier);
 
 // Product Routes
-router.get('/', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminPanel.html')) });
 router.get('/products', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminProducts.html')) });
+router.get('/addProducts', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'addProduct.html')) });
 router.get('/productPage/:id', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminProductPage.html')) });
-router.post('/products', productController.add_product);
+router.post('/addProducts', productController.add_product);
 router.delete('/products/:id', productController.delete_product);
 router.post('/products/:id', productController.update_product);
 router.get('/getProductByID/:id', productController.get_product_by_id);

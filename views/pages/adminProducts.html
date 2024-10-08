@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products - Expresso Yourself</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../../css/styles.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -29,41 +29,8 @@
 </style>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">Expresso Yourself</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/products">Products</a>
-                    </li>
-                    <li class="nav-item"></li>
-                        <a class="nav-link" href="locations.html">Locations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contactus">Contact</a>
-                    </li>
-                    <li>
-                        <a href="shoppingCart.html" data-bs-toggle="modal" class="image-link-navbar"
-                            data-bs-target="#cartModal" style="text-decoration:none; color: black">
-                            <img src="../images/shopping_cart.webp" alt="Button Image">
-                            <span id="cartCount">0</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
+
 
 
     <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
@@ -201,7 +168,7 @@
             let supplierProductIds = null;
 
             if (params.supplier){
-                 $.ajax({
+                await $.ajax({
                         url: `/admin/getSupplier?supplier_name=${params.supplier}`,
                         method: 'GET',
                         success: function(response) {
@@ -221,14 +188,19 @@
                     const productsContainer = document.getElementById('products-container');
                     products.forEach(product => {
                         let toAdd = true;
-                        if (supplierProductIds) if (!supplierProductIds.includes(product._id)) toAdd=false;
+                        if (supplierProductIds) {
+                            if (!supplierProductIds.includes(product._id)) 
+                            {
+                                toAdd=false;
+                            }
+                        }
 
                         if (toAdd){
                             const productCard = `
                                     <div class="col-md-4 mb-4">
                                         <a href="/admin/productPage/${product._id}">
                                             <div class="card custom-card">
-                                                <img class="card-img-top" src="${product.image || '../images/default_beans.jpg'}" alt="${product.name}">
+                                                <img class="card-img-top" src="${product.imageUrl || '../images/default_beans.jpg'}" alt="${product.name}">
                                                 <div class="card-body">
                                                     <h5 class="card-title">${product.name}</h5>
                                                     <p class="card-text">${product.description}</p>
@@ -300,6 +272,19 @@
                 filterMenuCollapse.show();
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function(data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+        });
     </script>
 
 </body>

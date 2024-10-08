@@ -42,34 +42,7 @@
 </style>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">Expresso Yourself</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin Panel</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
     <header class="text-light py-5 text-center" style="background-color: #a0b598;">
         <h1 class="display-4">Supplier Management</h1>
@@ -104,8 +77,16 @@
                 <span class="button-label">Carts</span>
             </button>
         </a>
+
+        <a href="/admin/addProducts" class="icon-button-wrapper">
+            <button class="icon-button">
+                <canvas id="addProductIcon" width="80" height="80"></canvas>
+                <span class="button-label">Add Product</span>
+            </button>
+        </a>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function drawGraphIcon() {
             const canvas = document.getElementById('graphIcon');
@@ -230,12 +211,53 @@
             ctx.stroke();
         }
 
+        function drawAddProductIcon() {
+            const canvas = document.getElementById('addProductIcon');
+            const ctx = canvas.getContext('2d');
+
+            ctx.beginPath();
+            ctx.arc(40, 40, 30, 0, Math.PI * 2, true);
+            ctx.fillStyle = '#4caf50'; 
+            ctx.fill();
+
+            // Plus sign
+            ctx.strokeStyle = '#ffffff'; 
+            ctx.lineWidth = 8;
+            
+            ctx.beginPath();
+            ctx.moveTo(25, 40);
+            ctx.lineTo(55, 40);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(40, 25);
+            ctx.lineTo(40, 55);
+            ctx.stroke();
+        }
+
+
         window.onload = function() {
+            
+            $.ajax({
+            url: '/components/adminNavbar.html',
+            method: 'GET',
+            success: function(data) {
+                $('#navbar-container').html(data);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading navbar:', error);
+            }
+            });
+
             drawGraphIcon();
             drawSupplierIcon();
             drawProductIcon();
             drawCartIcon();  
+            drawAddProductIcon()
+
         };
+
+        
     </script>
 
 </body>

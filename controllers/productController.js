@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const PostToSocials = require('./postProductController');
+const { removeProductFromAllSuppliers } = require('./supplierController');
 
 // List all products
 exports.list_products = async (req, res) => {
@@ -36,6 +37,13 @@ exports.update_product = async (req, res) => {
 exports.delete_product = async (req, res) => {
     try {
         const productId = req.params.id;
+        
+        try {
+            const result = await removeProductFromAllSuppliers(productId);
+        } catch (error) {
+            res.status(400).json({ message: 'Error deleting product1', error });
+        }
+
         await Product.findByIdAndDelete(productId);
         res.status(200).json({ message: 'Product deleted successfully' });
     } catch (error) {
