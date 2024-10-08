@@ -130,7 +130,7 @@
                     data: JSON.stringify(productData),
                     success: function() {
                         alert('Product updated successfully!');
-                        location.reload();
+                        window.location.href = '/admin/';
 
                     },
                     error: function(err) {
