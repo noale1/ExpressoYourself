@@ -279,9 +279,15 @@
         }
 
         function checkout() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-            window.location.href = '/private/order';
+            if (cart.length !== 0){
+                localStorage.setItem('cart', JSON.stringify(cart));
+                window.location.href = '/private/order';
+            }else{
+                alert('Cart Empty');
+            }
         }
+
+
 
         function applyFilter() {
             // Get filter values from form inputs
