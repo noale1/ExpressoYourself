@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const Product = require('./models/product.js');
-const uploadController = require('./controllers/uploadController');
+const uploadController = require('./controllers/uploadController.js/index.js');
 
 const app = express();
 // Middleware
