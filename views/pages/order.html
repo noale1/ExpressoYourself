@@ -48,22 +48,22 @@
                 <h3>Billing Information</h3>
                 <form id="checkout-form">
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="firstName" placeholder="First Name" required>
+                        <input type="text" class="form-control" id="firstName" placeholder="First Name" maxlength="20" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="lastName" placeholder="Last Name" required>
+                        <input type="text" class="form-control" id="lastName" placeholder="Last Name" maxlength="20" required>
                     </div>
                     <div class="mb-3">
-                        <input type="email" class="form-control" id="email" placeholder="Email Address" required>
+                        <input type="email" class="form-control" id="email" placeholder="Email Address" maxlength="30" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="address" placeholder="Address" required>
+                        <input type="text" class="form-control" id="address" placeholder="Address" maxlength="20" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="city" placeholder="City" required>
+                        <input type="text" class="form-control" id="city" placeholder="City" maxlength="20" required>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="zip" placeholder="ZIP Code" required>
+                        <input type="text" class="form-control" id="zip" placeholder="ZIP Code" maxlength="20" required>
                     </div>
                     <div class="mb-3">
                         <label for="country" class="form-label">Country</label>
@@ -80,7 +80,7 @@
                     <!-- Payment Information -->
                     <h4 class="mb-3">Payment</h4>
                     <div class="mb-3">
-                        <input type="text" class="form-control" id="cardName" placeholder="Name on Card" required>
+                        <input type="text" class="form-control" id="cardName" placeholder="Name on Card" maxlength="50" required>
                     </div>
                     <div class="mb-3">
                         <label for="cardNumber" class="form-label">Credit Card Number</label>
@@ -91,12 +91,12 @@
                         <div class="col-md-6 mb-3">
                             <label for="cardExpiry" class="form-label">Expiration Date</label>
                             <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY"
-                                pattern="\d{2}/\d{2}" title="Expiration date must be in MM/YY format" required>
+                                pattern="\d{2}/\d{2}" maxlength="4" title="Expiration date must be in MM/YY format" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="cardCVV" class="form-label">CVV</label>
                             <input type="text" class="form-control" id="cardCVV" placeholder="123" pattern="\d{3}"
-                                title="CVV must be 3 digits" required>
+                                title="CVV must be 3 digits" maxlength="20" required>
                         </div>
                     </div>
                 </form>

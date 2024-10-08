@@ -25,11 +25,11 @@
             <input type="hidden" id="productId" value="">
             <div class="mb-3">
                 <label for="name" class="form-label">Product Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+                <input type="text" class="form-control" id="name" name="name" maxlength="30" required>
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
-                <input type="number" class="form-control" id="price" name="price" required>
+                <input type="number" class="form-control" id="price" name="price" maxlength="10" required>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
@@ -37,11 +37,11 @@
             </div>
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
-                <input type="text" class="form-control" id="category" name="category">
+                <input type="text" class="form-control" id="category" name="category" maxlength="50">
             </div>
             <div class="mb-3">
                 <label for="quantity" class="form-label">Quantity</label>
-                <input type="number" class="form-control" id="quantity" name="quantity" value="0" min="0">
+                <input type="number" class="form-control" id="quantity" name="quantity" value="0" min="0" maxlength="10">
             </div>
             <div class="mb-3">
                 <label for="imageInput" class="form-label">Update Product Image</label>
