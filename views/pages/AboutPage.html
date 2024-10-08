@@ -8,24 +8,38 @@
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Background image and text styling */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Ensure the video is behind all content */
+            opacity: 0.2; /* Make the video more transparent */
+        }
+
+        /* Body styling to ensure content is readable */
         body {
-            background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93');
-            background-size: cover;
-            background-position: center;
-            color: #fff; /* White text for contrast */
             font-family: 'Arial', sans-serif;
+            color: #363131;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: transparent;
         }
 
         .overlay {
-            background-color: rgba(0, 0, 0, 0.7);
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay to improve text readability */
             padding: 3rem;
         }
 
-        h1,
-        h2,
-        h3 {
-            color: #f3d9c0; /* Coffee cream color for headers */
+        h1, h2, h3 {
+            color: #6a5b4e; /* Coffee cream color for headers */
         }
 
         .team-member img {
@@ -34,10 +48,20 @@
             width: 150px;
             height: 150px;
         }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.7); /* Ensure footer is readable with overlay */
+        }
+        
     </style>
 </head>
 
 <body>
+    <video autoplay muted loop class="video-bg">
+        <source src="../images/coffee_video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -76,7 +100,7 @@
     <section class="overlay text-center">
         <div class="container">
             <div class="row justify-content-center mb-4">
-                <div class="col-md-8">
+                <div class="col-md-8" style="color: rgb(154, 154, 137);">
                     <h2>About Us</h2>
                     <p class="mb-4">
                         Welcome to <strong>Expresso Yourself</strong>—where your coffee cravings meet creativity! We’re not just another coffee shop. We're four students from the <strong>College of Management</strong> who turned our passion for caffeine into a thriving online coffee hub.
