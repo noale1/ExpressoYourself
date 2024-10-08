@@ -4,7 +4,6 @@ const User = require('../models/user');
 // Create a supplier
 exports.add_supplier = async (req, res) => {
     const { username, supplier_name, contact_info } = req.body;
-    console.log(req.body);
     console.log("add_supplier " + username, supplier_name , contact_info);
     if(!username) return res.status(502).json({ message: 'No user Was specified' });
     if(!supplier_name) return res.status(502).json({ message: 'No supplier name Was specified' });
@@ -67,14 +66,14 @@ exports.update_supplier = async (req, res) => {
 
 exports.get_supplier = async (req, res) => {
     try {
-        const supplier_name = req.params.supplier_name;
+        const supplier_name = req.query.supplier_name;
 
         // Find the supplier by ID and update the fields
-        supplier = await Supplier.findOne(supplier_name).populate({
+        supplier = await Supplier.findOne({ name: supplier_name }).populate({
             path: 'products.product',
             model: 'Product',
         });
-
+        
         // Check if the supplier exists
         if (!supplier) {
             return res.status(404).json({ message: 'Supplier not found' });
