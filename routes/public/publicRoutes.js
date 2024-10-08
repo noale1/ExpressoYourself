@@ -24,6 +24,7 @@ router.get('/login', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_
 router.get('/register', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'register.html'))});
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/logout', authController.logout);
 
 // map page
 router.get('/locations', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'locations.html'));});

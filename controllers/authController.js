@@ -54,6 +54,21 @@ exports.register = async (req, res) => {
     }
 };
 
+
+exports.logout = async (req, res) => {
+    const token = jwt.sign({ userId: "", username:"", isAdmin: "", isSupplier:"" }, process.env.JWT_SECRET, {
+        expiresIn: '0h', // Token expiration
+    });
+    res.cookie('Autherization', token, {
+        httpOnly: true, // Prevents client-side access to the cookie
+        maxAge: 10800000 // 3 hour in milliseconds
+    });
+      // Send response indicating successful logout
+    return res.status(200).send('Logged out successfully');
+};
+  
+
+
 exports.getUserFromToken = (token) => {
     try {
         const user = jwt.verify(token, process.env.JWT_SECRET); // Synchronous version

@@ -343,9 +343,22 @@
         });
 
         function logoutUser() {
-            localStorage.removeItem('isLoggedIn');
-            alert('You have logged out successfully.');
-            window.location.href = '/';
+            localStorage.clear();;
+            fetch('/logout', {
+                method: 'POST',
+                credentials: 'include'  // Include the JWT cookie in the request
+            }).then(response => {
+                if (response.ok) {
+                alert('You have logged out successfully.');
+                // Redirect the user to the login page or home after logout
+                window.location.href = '/';
+                } else {
+                console.error('Logout failed');
+                }
+            }).catch(error => {
+                console.error('Error during logout:', error);
+            });
+            
         }
 
         function getCoffeeTipOfTheDay() {
