@@ -2,6 +2,7 @@ const Order = require('../models/order');
 const User = require('../models/user');
 const Product = require('../models/product');
 const jwt = require('jsonwebtoken');
+const auth = require("../controllers/authController")
 
 // List all orders
 exports.list_orders = async (req, res) => {
@@ -86,16 +87,21 @@ exports.checkout = async (req, res) => {
     }
 };
 
-exports.getUserCart = async (req, res) => {
-    const user = req.params.user;
+exports.getUserHistoryOrders = async (req, res) => {
+    // const username = req.params.username;
+    const token = req.headers['cookie']?.split('=')[1]
+    const username = auth.getUserFromToken(token) // Attach user info to request
+
+    const userId = await User.findById({ username: username });
+
 
     try {
         // Find the order by user (or session ID)
-        const order = await Order.findOne({ user }); 
-        if (!order) {
-            return res.status(404).json({ message: 'No active order found' });
+        const orders = await Order.findById({ user: userId }); 
+        if (!orders) {
+            return res.status(404).json({ message: 'No active orders found' });
         }
-        res.json(order);
+        res.json(orders);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching order' });
     }
