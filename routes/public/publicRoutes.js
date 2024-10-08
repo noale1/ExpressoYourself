@@ -15,7 +15,7 @@ router.get('/products', (req, res) => {res.sendFile(path.join(__dirname, RELATIV
 router.get('/about', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'AboutPage.html'));});
 
 //ContactUs Page
-router.get('/ContactUs', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'ContactUs.html'));});
+router.get('/contact', (req, res) => {res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH,'ContactUs.html'));});
 
 
 
