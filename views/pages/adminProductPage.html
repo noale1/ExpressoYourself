@@ -1,196 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Product</title>
+    <title>Update Product - Expresso Yourself</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/styles.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<style>
-    .image-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 20px 0;
-    }
 
-    #imageDisplay {
-        max-width: 300px;
-        max-height: 300px;
-        object-fit: contain;
-    }
-</style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">Expresso Yourself</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin Panel</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div>
 
-    <div class="container">
-        <h1>Edit Product</h1>
-        <form id="editProductForm">
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Update Product</h1>
+        <p>Update the details of an existing product at Expresso Yourself Coffee Shop.</p>
+    </header>
+
+    <div class="container mt-4">
+        <form id="updateProductForm" enctype="multipart/form-data">
             <input type="hidden" id="productId" value="">
             <div class="mb-3">
                 <label for="name" class="form-label">Product Name</label>
-                <input type="text" id="name" class="form-control" required>
+                <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="mb-3">
                 <label for="price" class="form-label">Price</label>
-                <input type="float" id="price" class="form-control" required>
+                <input type="number" class="form-control" id="price" name="price" required>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea id="description" class="form-control"></textarea>
+                <textarea class="form-control" id="description" name="description"></textarea>
             </div>
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
-                <input type="text" id="category" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label for="inStock" class="form-label">In Stock</label>
-                <input type="checkbox" id="inStock">
+                <input type="text" class="form-control" id="category" name="category">
             </div>
             <div class="mb-3">
                 <label for="quantity" class="form-label">Quantity</label>
-                <input type="number" id="quantity" class="form-control" required>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="0" min="0">
             </div>
-            <button type="submit" class="btn btn-primary">Update Product</button>
+            <div class="mb-3">
+                <label for="imageInput" class="form-label">Update Product Image</label>
+                <input type="file" class="form-control" id="imageInput" name="image">
+            </div>
+            <div class="mb-3">
+                <img id="imageDisplay" src="" alt="Current Product Image" class="img-fluid">
+            </div>
+            <button type="submit" id="updateProductBtn" class="btn btn-success">Update Product</button>
+            <button type="button" id="deleteProductBtn" class="btn btn-danger">Delete Product</button>
         </form>
     </div>
 
-    <div class="image-container">
-        <img id="imageDisplay" src='../../images/default_beans.jpg' alt="Current Image">
-    </div>
-
-    <div class="image-container">
-        <label for="imageInput">Choose a new image:</label>
-        <input type="file" id="imageInput" accept="image/*">
-        <button onclick="updateImage()">Upload New Image</button>
-    </div>
+    <footer class="footer text-center py-4">
+        <div class="container">
+            <p>© Expresso Yourself | All Rights Reserved</p>
+        </div>
+    </footer>
 
     <script>
         $(document).ready(function() {
+            // Extract product ID from the URI
             const productId = window.location.pathname.split('/').pop();
-            if (productId) {
-                $.ajax({
-                    url: `/admin/getProductByID/${productId}`,
-                    method: 'GET',
-                    success: function(product) {
-                        $('#productId').val(product._id);
-                        $('#name').val(product.name);
-                        $('#price').val(product.price);
-                        $('#description').val(product.description);
-                        $('#category').val(product.category);
-                        $('#inStock').prop('checked', product.inStock);
-                        $('#quantity').val(product.quantity);
 
-                        if (product.imageUrl) {
-                            $('#imageDisplay').attr('src', product.imageUrl);
-                        }
-                    },
-                    error: function(err) {
-                        alert('Error fetching product: ' + err.responseText);
-                    }
-                });
-            }
+            // Fetch product data and prefill the form
+            $.ajax({
+                url: `/admin/getProductByID/${productId}`,
+                method: 'GET',
+                success: function(product) {
+                    $('#productId').val(product._id);
+                    $('#name').val(product.name);
+                    $('#price').val(product.price);
+                    $('#description').val(product.description);
+                    $('#category').val(product.category);
+                    $('#quantity').val(product.quantity);
 
-            $('#editProductForm').on('submit', function(e) {
+                    // Show the current product image
+                    $('#imageDisplay').attr('src', product.imageUrl || '../images/default_beans.jpg');
+                },
+                error: function(err) {
+                    alert('Error fetching product details: ' + err.responseText);
+                }
+            });
+
+            /// Handle form submission
+            $('#updateProductBtn').on('click', function(e) {
                 e.preventDefault();
 
-                const updatedProduct = {
+                let productData = {
                     name: $('#name').val(),
                     price: $('#price').val(),
                     description: $('#description').val(),
                     category: $('#category').val(),
-                    inStock: $('#inStock').is(':checked'),
-                    quantity: $('#quantity').val()
+                    quantity: $('#quantity').val(),
+                    inStock: $('#inStock').is(':checked')
                 };
 
+                const imageFile = $('#imageInput')[0].files[0];
+
+                if (imageFile) {
+                    const imageFormData = new FormData();
+                    imageFormData.append('image', imageFile);
+
+                    // Upload image first, then update the product
+                    $.ajax({
+                        url: '/admin/uploadImage',
+                        method: 'POST',
+                        data: imageFormData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            productData.imageUrl = response.imageUrl;
+                            updateProduct(productData, productId);
+                        },
+                        error: function() {
+                            alert('Error uploading image.');
+                        }
+                    });
+                } else {
+                    updateProduct(productData, productId);
+                }
+            });
+
+            // Function to send product update request
+            function updateProduct(productData, productId) {
                 $.ajax({
                     url: `/admin/products/${productId}`,
                     method: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify(updatedProduct),
-                    success: function(response) {
-                        alert('Product updated successfully');
+                    data: JSON.stringify(productData),
+                    success: function() {
+                        alert('Product updated successfully!');
+                        location.reload();
+
                     },
                     error: function(err) {
                         alert('Error updating product: ' + err.responseText);
                     }
                 });
+            }
+            // Handle delete button click
+            $('#deleteProductBtn').on('click', function() {
+                if (confirm('Are you sure you want to delete this product?')) {
+                    $.ajax({
+                        url: `/admin/products/${productId}`,
+                        method: 'DELETE',
+                        success: function() {
+                            alert('Product deleted successfully!');
+
+
+                            window.location.href = '/admin/';
+                        },
+                        error: function() {
+                            alert('Error deleting product.');
+                        }
+                    });
+                }
             });
         });
 
-        function updateImage() {
-            const productId = window.location.pathname.split('/').pop();
-            const imageInput = document.getElementById('imageInput');
-            const file = imageInput.files[0];
-
-            if (file) {
-                const formData = new FormData();
-                formData.append('image', file);
-
-                $.ajax({
-                    url: '/admin/uploadImage',
-                    method: 'POST',
-                    data: formData,
-                    processData: false,  // Prevent jQuery from converting the FormData into a query string
-                    contentType: false,  // Prevent jQuery from setting the Content-Type header (it will be set automatically)
-                    success: function(response) {
-                        const updatedProduct = {
-                            imageUrl: response.imageUrl,
-                        };
-
-                        $.ajax({
-                            url: `/admin/products/${productId}`,
-                            method: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(updatedProduct),
-                            success: function(response) {
-                                alert('Image uploaded successfully!');
-                            },
-                            error: function(err) {
-                                alert('Error updating product: ' + err.responseText);
-                            }
-                        });
-                        //
-
-                        $('#imageDisplay').attr('src', response.imageUrl);
-                    },
-                    error: function(err) {
-                        alert('Error uploading image: ' + err.responseText);
-                    }
-                });
-            } else {
-                alert('No image selected');
-            }
-        }
+        document.addEventListener("DOMContentLoaded", function () {
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function(data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+        });
     </script>
 </body>
+
 </html>

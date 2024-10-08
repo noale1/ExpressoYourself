@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Add New Product</h1>
+        <p>Add a new product to Expresso Yourself Coffee Shop.</p>
+    </header>
+
+    <div class="container mt-4">
+        <form id="addProductForm" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="name" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="float" class="form-control" id="price" name="price" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <input type="text" class="form-control" id="category" name="category">
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Product Image</label>
+                <input type="file" class="form-control" id="image" name="image">
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="0" min="0">
+            </div>
+            <div class="mb-3">
+                <label for="supplier" class="form-label">Supplier</label>
+                <select class="form-select" id="supplier" name="supplier" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Add Product</button>
+        </form>
+    </div>
+
+    <footer class="footer text-center py-4">
+        <div class="container">
+            <p>© Expresso Yourself | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function () {
+            // Fetch available suppliers
+            $.get('/admin/listAllSuppliers', function (suppliers) {
+                const supplierSelect = $('#supplier');
+                suppliers.forEach(supplier => {
+                    supplierSelect.append(`<option value="${supplier.name}">${supplier.name}</option>`);
+                });
+            });
+
+            $('#addProductForm').on('submit', function (e) {
+                e.preventDefault();
+
+                let productData = {
+                    name: $('#name').val(),
+                    price: $('#price').val(),
+                    description: $('#description').val(),
+                    category: $('#category').val(),
+                    quantity: $('#quantity').val()
+                };
+                
+                const supplierName = $('#supplier').val();
+                const imageFile = $('#image')[0].files[0];
+
+                // If an image is uploaded, upload it first
+                if (imageFile) {
+                    const imageFormData = new FormData();
+                    imageFormData.append('image', imageFile);
+
+                    $.ajax({
+                        url: '/admin/uploadImage',
+                        method: 'POST',
+                        data: imageFormData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            productData.imageUrl = response.imageUrl; 
+                            addProduct(productData, supplierName);
+                        },
+                        error: function () {
+                            alert('Error uploading image.');
+                        }
+                    });
+                } else {
+                    productData.imageUrl = '../images/default_beans.jpg'; 
+                    addProduct(productData, supplierName);
+                }
+            });
+
+            function addProduct(productData, supplierName) {
+                // Send product data as JSON
+                $.ajax({
+                    url: '/admin/addProducts',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(productData),
+                    success: function (productResponse) {
+                        const productId =  productResponse.product._id;;
+                        // Add product to supplier
+                        $.ajax({
+                            url: '/admin/addProdectToSupplier',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ supplierName, productId }),
+                            success: function () {
+                                alert('Product added successfully!');
+                                window.location.href = '/admin/';
+                            },
+                            error: function () {
+                                alert('Error adding product to supplier.');
+                            }
+                        });
+                    },
+                    error: function () {
+                        alert('Error adding product.');
+                    }
+                });
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function(data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
