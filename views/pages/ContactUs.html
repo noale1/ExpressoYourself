@@ -5,42 +5,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us | Expresso Yourself</title>
-    <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
-        /* Background image and text styling */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; 
+            opacity: 0.4;
+        }
+
         body {
-            background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93');
-            background-size: cover;
-            background-position: center;
-            color: #fff; /* White text for contrast */
             font-family: 'Arial', sans-serif;
+            color: #363131;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: transparent;
         }
 
         .overlay {
-            background-color: rgba(0, 0, 0, 0.7);
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay to improve text readability */
             padding: 3rem;
         }
 
         h1,
         h2,
         h3 {
-            color: #f3d9c0; /* Coffee cream color for headers */
+            color: #67574a; 
         }
 
         .form-control,
         .form-control:focus {
-            background-color: rgba(255, 255, 255, 0.8); /* Light background for input fields */
-            color: #333; /* Dark text for input fields */
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333; 
         }
 
         .btn-coffee {
-            background-color: #8B4513; /* Coffee brown */
+            background-color: #604e41; 
             color: #fff;
         }
 
         .btn-coffee:hover {
-            background-color: #A0522D; /* Lighter coffee brown on hover */
+            background-color: #a1887d; 
         }
 
         .alert-dismissible {
@@ -52,32 +67,31 @@
 
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">Expresso Yourself</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+    <video autoplay muted loop class="video-bg">
+        <source src="../images/coffee_video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="menu-dropdown">
+        <div class="dropdown">
+            <button class="btn btn-menu dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                ☰ Menu
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact</a>
-                    </li>
-                </ul>
-            </div>
+            <ul class="dropdown-menu" aria-labelledby="loginDropdown">
+                <li><a href="/login" id="login-logout-link">Login</a></li>
+                <li class="d-none" id="logout-link">
+                    <a href="#" onclick="logoutUser()">Logout</a>
+                </li>
+
+                <li><a href="/products">Products</a></li>
+                <li><a href="/locations">Locations</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
         </div>
-    </nav>
+    </div>
+
 
     <!-- Header Section -->
     <header class="text-center py-5">
@@ -91,7 +105,7 @@
             <div class="row justify-content-center mb-4">
                 <div class="col-md-8">
                     <h2>Contact Us</h2>
-                    <p class="mb-4">
+                    <p class="mb-4" style="color: #ac9898;">
                         Whether you have a question about our coffee blends, want to share a brewing tip, or just need to chat about your favorite espresso, we’re all ears!
                     </p>
                 </div>
@@ -123,7 +137,7 @@
     <!-- Footer -->
     <footer class="text-center py-4 bg-dark text-light">
         <p>&copy; 2024 Expresso Yourself. Powered by coffee and creativity.</p>
-        <p>Need help? <a href="contact.html" class="text-warning">Contact us</a>.</p>
+        <p>Need help? <a href="/contact" class="text-warning">Contact us</a>.</p>
     </footer>
 
     <!-- Bootstrap JavaScript Bundle CDN -->
@@ -179,6 +193,27 @@
             // Append alert to the alert container
             document.getElementById('alertContainer').innerHTML = ''; // Clear previous alerts
             document.getElementById('alertContainer').appendChild(alertDiv);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginLink = document.getElementById('login-logout-link');
+            const logoutLink = document.getElementById('logout-link');
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn === 'true') {
+                loginLink.classList.add('d-none');
+                logoutLink.classList.remove('d-none');
+            } else {
+                loginLink.classList.remove('d-none');
+                logoutLink.classList.add('d-none');
+            }
+        });
+
+        function logoutUser() {
+            localStorage.removeItem('isLoggedIn');
+            alert('You have logged out successfully.');
+            window.location.href = '/';
         }
     </script>
 </body>

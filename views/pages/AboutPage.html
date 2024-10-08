@@ -7,6 +7,7 @@
     <title>About Us | Expresso Yourself</title>
     <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
     <style>
         .video-bg {
             position: fixed;
@@ -15,11 +16,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            z-index: -1; /* Ensure the video is behind all content */
-            opacity: 0.2; /* Make the video more transparent */
+            z-index: -1; 
+            opacity: 0.2;
         }
 
-        /* Body styling to ensure content is readable */
         body {
             font-family: 'Arial', sans-serif;
             color: #363131;
@@ -34,12 +34,12 @@
 
         .overlay {
             position: relative;
-            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay to improve text readability */
+            background-color: rgba(0, 0, 0, 0.7); 
             padding: 3rem;
         }
 
         h1, h2, h3 {
-            color: #6a5b4e; /* Coffee cream color for headers */
+            color: #6a5b4e; 
         }
 
         .team-member img {
@@ -63,32 +63,25 @@
     </video>
 
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="/">Expresso Yourself</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+    <div class="menu-dropdown">
+        <div class="dropdown">
+            <button class="btn btn-menu dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                ☰ Menu
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contactus">Contact</a>
-                    </li>
-                </ul>
-            </div>
+            <ul class="dropdown-menu" aria-labelledby="loginDropdown">
+                <li><a href="/login" id="login-logout-link">Login</a></li>
+                <li class="d-none" id="logout-link">
+                    <a href="#" onclick="logoutUser()">Logout</a>
+                </li>
+
+                <li><a href="/products">Products</a></li>
+                <li><a href="/locations">Locations</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
         </div>
-    </nav>
+    </div>
 
     <!-- Header Section -->
     <header class="text-center py-5">
@@ -151,11 +144,34 @@
     <!-- Footer -->
     <footer class="text-center py-4 bg-dark text-light">
         <p>&copy; 2024 Expresso Yourself. Powered by coffee and creativity.</p>
-        <p>Need help? <a href="/contactus" class="text-warning">Contact us</a>.</p>
+        <p>Need help? <a href="/contact" class="text-warning">Contact us</a>.</p>
     </footer>
 
     <!-- Bootstrap JavaScript Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+            const loginLink = document.getElementById('login-logout-link');
+            const logoutLink = document.getElementById('logout-link');
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn === 'true') {
+                loginLink.classList.add('d-none');
+                logoutLink.classList.remove('d-none');
+            } else {
+                loginLink.classList.remove('d-none');
+                logoutLink.classList.add('d-none');
+            }
+        });
+
+        function logoutUser() {
+            localStorage.removeItem('isLoggedIn');
+            alert('You have logged out successfully.');
+            window.location.href = '/';
+        }
+</script>
 
 </html>
