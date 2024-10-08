@@ -10,7 +10,7 @@ router.get('/getCategories', productController.get_categories);
 router.get('/getMapsAPIKey', locationController.getApiKey);
 router.get('/getMarkers',locationController.getLocations);
 
-router.get('/cart/:user',orderController.getUserCart);
+// router.get('/cart/:user',orderController.getUserCart);
 router.get('/getExchangeAPIKey', orderController.getExchangeAPIKey);
 
 module.exports = router;
