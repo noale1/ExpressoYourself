@@ -62,6 +62,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th>Invition</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
@@ -102,6 +103,7 @@
                     suppliers.forEach(supplier => {
                         tbody.append(`
                             <tr>
+                                <td><a href="/admin/createInvitaion/${supplier.name}" class="btn btn-link text-primary">add</a></td>
                                 <td>${supplier.name}</td>
                                 <td>${supplier.contactInfo.email}</td>
                                 <td>${supplier.contactInfo.phone}</td>

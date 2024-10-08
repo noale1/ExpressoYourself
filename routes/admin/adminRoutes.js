@@ -67,7 +67,7 @@ router.put('/invitations/:id', invitationController.update_invitation);
 router.delete('/invitations/:id', invitationController.delete_invitation);
 router.get('/invitations', invitationController.get_all_invitations);
 router.get('/invitaionManagment', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'AdminInvitation.html')) });
-router.get('/createinvitaion/:id', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'AddInvatation.html')) });
+router.get('/createinvItaion/:id', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'AddInvatation.html')) });
 
 
 
