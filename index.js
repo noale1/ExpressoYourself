@@ -3,10 +3,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const Product = require('./models/product.js');
+const uploadController = require('./controllers/uploadController');
 
 const app = express();
 // Middleware
 app.use(express.json());
+
+uploadController.delete_unused_files();
 
 // Serve static files from the "views" directory
 app.use(express.static(path.join(__dirname, 'views')));
