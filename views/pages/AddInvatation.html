@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Invitation - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Create Invitation</h1>
+        <p>Select a product from the supplier and set the quantity.</p>
+    </header>
+
+    <div class="container mt-4">
+        <form id="createInvitationForm">
+            <div class="mb-3">
+                <label for="product" class="form-label">Product</label>
+                <select class="form-select" id="product" name="product" required>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-success">Create Invitation</button>
+        </form>
+
+        <div id="products-container" class="row mt-5">
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <script>
+        $(document).ready(function () {
+            const supplierName = decodeURIComponent(window.location.pathname.split('/').pop()); 
+            
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function (data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+
+            $.ajax({
+                url: '/components/adminFooter.html',
+                method: 'GET',
+                success: function (data) {
+                    $('#footer-container').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading footer:', error);
+                }
+            });
+            
+            loadProducts({ supplier: supplierName });
+
+            async function loadProducts(params = {}) {
+                const queryString = new URLSearchParams(params).toString();
+                let supplierProductIds = null;
+
+                if (params.supplier) {
+                    await $.ajax({
+                        url: `/admin/getSupplier?supplier_name=${params.supplier}`,
+                        method: 'GET',
+                        success: function (response) {
+                            supplierProductIds = response.products.map(product => product.product._id);
+                        },
+                        error: function () {
+                            alert('Cannot find the supplier. Showing all products.');
+                        }
+                    });
+                }
+
+                $.ajax({
+                    url: `/api/getProducts?${queryString}`,
+                    method: 'GET',
+                    success: function (products) {
+                        const productSelect = $('#product');
+                        const productsContainer = $('#products-container');
+                        productSelect.empty();  
+                        productsContainer.empty();  
+
+                        products.forEach(product => {
+                            if (supplierProductIds && supplierProductIds.includes(product._id)) {
+                                productSelect.append(`<option value="${product._id}">${product.name}</option>`);
+
+                                const productCard = `
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card custom-card">
+                                            <img class="card-img-top" src="${product.imageUrl || '../images/default_beans.jpg'}" alt="${product.name}">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${product.name}</h5>
+                                                <p class="card-text">${product.description}</p>
+                                                <p class="card-text">Price: $${product.price.toFixed(2)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                productsContainer.append(productCard);
+                            }
+                        });
+                    },
+                    error: function (error) {
+                        console.error('Error fetching products:', error);
+                    }
+                });
+            }
+            $('#createInvitationForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const invitationData = {
+                    supplierName: supplierName,
+                    productId: $('#product').val(),
+                    quantity: Number($('#quantity').val())
+                };
+
+                $.ajax({
+                    url: '/admin/invitations',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(invitationData),
+                    success: function () {
+                        alert('Invitation created successfully!');
+                        window.location.href = `/admin/invitaionManagment`;  
+                    },
+                    error: function () {
+                        alert('Error creating invitation.');
+                    }
+                });
+            });
+        });
+
+    </script>
+</body>
+
+</html>
