@@ -12,21 +12,23 @@ exports.list_orders = async (req, res) => {
 
 
 exports.checkout = async (req, res) => {
-    const cart = req.body.cart;  
+    const cart = req.body.cart;
+    const userDetails = req.body.userDetails; 
     const token = req.headers['cookie']?.split('=')[1]
     const usernamefromjwt = auth.getUserFromToken(token)
-    
+    console.log(usernamefromjwt)
     let totalPrice = 0;
     let user;  
 
     try {        
-        user = await User.findById({username: usernamefromjwt}); 
-
+        user = await User.findOne({username: usernamefromjwt}); 
+        console.log('user',user)
         if (!user) {
             return res.status(403).send('Invalid token');
         }
         
     } catch (err) {
+      console.log(err)
         return res.status(403).send('Invalid token');
     }
 
@@ -89,12 +91,13 @@ exports.getUserHistoryOrders = async (req, res) => {
     const token = req.headers['cookie']?.split('=')[1]
     const username = auth.getUserFromToken(token) // Attach user info to request
 
-    const userId = await User.findById({ username: username });
+    const userId = await User.find({ username });
 
 
     try {
         // Find the order by user (or session ID)
         const orders = await Order.findById({ user: userId }); 
+        console.log(orders);
         if (!orders) {
             return res.status(404).json({ message: 'No active orders found' });
         }
