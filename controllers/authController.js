@@ -28,7 +28,7 @@ exports.login = async (req, res) => {
             maxAge: 10800000 // 3 hour in milliseconds
         });
         console.log("[+] User Logged In: ",email, user.username,  password);
-        res.json({ message: 'Login successful, Welcome '+user.username,  is_admin: user.isAdmin});
+        res.json({ message: 'Login successful, Welcome '+user.username,  is_admin: user.isAdmin, is_supplier: user.isSupplier});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

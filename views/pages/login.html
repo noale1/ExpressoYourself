@@ -62,7 +62,13 @@
                 if(data.is_admin) {
                     window.location.href = '/admin';
                 } else {
-                    window.location.href = '/';
+                    if(data.is_supplier){
+                        window.location.href = '/private/supplier/invitaionManagment';
+                    }
+                    else{
+                        window.location.href = '/';
+                    }
+                    
                 }
                 
                 localStorage.setItem('isLoggedIn', 'true');
