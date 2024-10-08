@@ -168,7 +168,7 @@
             let supplierProductIds = null;
 
             if (params.supplier){
-                 $.ajax({
+                await $.ajax({
                         url: `/admin/getSupplier?supplier_name=${params.supplier}`,
                         method: 'GET',
                         success: function(response) {
