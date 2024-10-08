@@ -9,8 +9,8 @@ const invitationController = require('../../controllers/invitationController');
 const RELATIVE_PAGES_PATH = '../../views/pages';
 
 
-//router.use( auth.authenticateToken )
-//router.use( supplierMidWare.isSupplier  );
+router.use( auth.authenticateToken )
+router.use( supplierMidWare.isSupplier  );
 
 // inviations
 router.patch('/invitations/:id/status', invitationController.update_invitation_status);
