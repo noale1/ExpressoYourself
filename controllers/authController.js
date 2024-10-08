@@ -18,7 +18,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid Credentails!' });
         }
 
-        const token = jwt.sign({ userId: user._id, username: user.username, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ userId: user._id, username: user.username, isAdmin: user.isAdmin, isSupplier: user.isSupplier }, process.env.JWT_SECRET, {
             expiresIn: '3h', // Token expiration
         });
 
@@ -56,7 +56,7 @@ exports.register = async (req, res) => {
 function getUserFromToken(token) {
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) return null; // Token is invalid
-    return user.username;// Email format validation
+    return user.username;
     })
     return "";
 };
