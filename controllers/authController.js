@@ -2,6 +2,7 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { isAdmin } = require('../middlewares/admin_midware');
+const router = require('../routes/admin/adminRoutes');
 
 // Login 
 exports.login = async (req, res) => {
@@ -18,7 +19,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid Credentails!' });
         }
 
-        const token = jwt.sign({ userId: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ userId: user._id, username: user.username, isAdmin: user.isAdmin, isSupplier: user.isSupplier }, process.env.JWT_SECRET, {
             expiresIn: '3h', // Token expiration
         });
 
@@ -50,5 +51,14 @@ exports.register = async (req, res) => {
         }
 
         return res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getUserFromToken = (token) => {
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET); // Synchronous version
+        return user.username; // Return the username if the token is valid
+    } catch (err) {
+        return null; // Token is invalid or error occurred
     }
 };

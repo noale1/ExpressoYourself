@@ -2,6 +2,7 @@ const Order = require('../models/order');
 const User = require('../models/user');
 const Product = require('../models/product');
 const jwt = require('jsonwebtoken');
+const auth = require("../controllers/authController")
 
 // List all orders
 exports.list_orders = async (req, res) => {
@@ -11,24 +12,23 @@ exports.list_orders = async (req, res) => {
 
 
 exports.checkout = async (req, res) => {
-    const cart = req.body.cart; 
+    const cart = req.body.cart;
     const userDetails = req.body.userDetails; 
-    const token = req.headers['cookie']?.split('=')[1];
-    
+    const token = req.headers['cookie']?.split('=')[1]
+    const usernamefromjwt = auth.getUserFromToken(token)
+    console.log(usernamefromjwt)
     let totalPrice = 0;
     let user;  
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.userId;
-        
-        user = await User.findById(userId); 
-
+    try {        
+        user = await User.findOne({username: usernamefromjwt}); 
+        console.log('user',user)
         if (!user) {
             return res.status(403).send('Invalid token');
         }
         
     } catch (err) {
+      console.log(err)
         return res.status(403).send('Invalid token');
     }
 
@@ -86,16 +86,22 @@ exports.checkout = async (req, res) => {
     }
 };
 
-exports.getUserCart = async (req, res) => {
-    const user = req.params.user;
+exports.getUserHistoryOrders = async (req, res) => {
+    // const username = req.params.username;
+    const token = req.headers['cookie']?.split('=')[1]
+    const username = auth.getUserFromToken(token) // Attach user info to request
+
+    const userId = await User.find({ username });
+
 
     try {
         // Find the order by user (or session ID)
-        const order = await Order.findOne({ user }); 
-        if (!order) {
-            return res.status(404).json({ message: 'No active order found' });
+        const orders = await Order.findById({ user: userId }); 
+        console.log(orders);
+        if (!orders) {
+            return res.status(404).json({ message: 'No active orders found' });
         }
-        res.json(order);
+        res.json(orders);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching order' });
     }

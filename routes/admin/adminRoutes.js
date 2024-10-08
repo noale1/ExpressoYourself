@@ -33,6 +33,11 @@ router.get('/deleteSupplier', supplierController.delete_supplier);
 router.get('/getSupplier', supplierController.get_supplier);
 router.post('/addProdectToSupplier', supplierController.add_product_to_supplier);
 
+
+// order routes
+router.get('/listOrders', orderController.list_orders);
+
+
 // Product Routes
 router.get('/products', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminProducts.html')) });
 router.get('/addProducts', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'addProduct.html')) });

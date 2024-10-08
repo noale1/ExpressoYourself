@@ -15,4 +15,8 @@ router.use('/supplier',supplierRoutes);
 router.get('/order', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'order.html')) });
 router.post('/order',orderController.checkout);
 
+// history page
+router.get('/listOrders', orderController.getUserHistoryOrders);
+router.get('/orderHistory', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'orderHistory.html')) });
+
 module.exports = router;
