@@ -168,21 +168,22 @@
 
     function logoutUser() {
         localStorage.clear();
-            fetch('/logout', {
-                method: 'POST',
-                credentials: 'include'  // Include the JWT cookie in the request
-            }).then(response => {
-                if (response.ok) {
+
+        $.ajax({
+            url: '/logout',
+            type: 'POST',
+            xhrFields: {
+                withCredentials: true // Include credentials (like the JWT cookie)
+            },
+            success: function() {
                 alert('You have logged out successfully.');
                 // Redirect the user to the login page or home after logout
                 window.location.href = '/';
-                } else {
-                console.error('Logout failed');
-                }
-            }).catch(error => {
-                console.error('Error during logout:', error);
-            });
-            
-        }
+            },
+            error: function(xhr, status, error) {
+                console.error('Logout failed:', error);
+            }
+        });
+    }
 </script>
 </html>

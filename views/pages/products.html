@@ -343,22 +343,23 @@
         });
 
         function logoutUser() {
-            localStorage.clear();;
-            fetch('/logout', {
-                method: 'POST',
-                credentials: 'include'  // Include the JWT cookie in the request
-            }).then(response => {
-                if (response.ok) {
-                alert('You have logged out successfully.');
-                // Redirect the user to the login page or home after logout
-                window.location.href = '/';
-                } else {
-                console.error('Logout failed');
+            localStorage.clear();
+
+            $.ajax({
+                url: '/logout',
+                type: 'POST',
+                xhrFields: {
+                    withCredentials: true // Include credentials (like the JWT cookie)
+                },
+                success: function() {
+                    alert('You have logged out successfully.');
+                    // Redirect the user to the login page or home after logout
+                    window.location.href = '/';
+                },
+                error: function(xhr, status, error) {
+                    console.error('Logout failed:', error);
                 }
-            }).catch(error => {
-                console.error('Error during logout:', error);
             });
-            
         }
 
         function getCoffeeTipOfTheDay() {

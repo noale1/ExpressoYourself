@@ -47,23 +47,23 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn custom-btn" onclick="checkout()">Checkout</button>
+                    <button type="button" class="btn custom-btn" id="checkout-btn">Checkout</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <button id="openFilterBtn" class="btn btn-default" type="button" onclick="toggleFilters()">
+    <button id="openFilterBtn" class="btn btn-default" type="button">
         Open Filters
     </button>
 
     <div class="collapse" id="filterMenuCollapse">
         <div id="filter-menu">
-            <button id="closeFilterBtn" class="btn btn-default" type="button" onclick="toggleFilters()">
+            <button id="closeFilterBtn" class="btn btn-default" type="button">
                 Close Filters
             </button>
             <h5>Filter Products</h5>
-            <form id="filter-form", onsubmit="applyFilter(); return false;">
+            <form id="filter-form">
                 <div class="mb-3">
                     <label for="minPrice" class="form-label">Min Price</label>
                     <input type="number" step="0.01" class="form-control" id="minPrice" name="minPrice" maxlength="10">
@@ -113,7 +113,7 @@
     <script>
         let cart = [];
 
-        document.addEventListener('DOMContentLoaded', function () {
+        $(document).ready(function() {
             const params = new URLSearchParams(window.location.search);
             const supplier = params.get('supplier'); 
 
@@ -123,157 +123,8 @@
             loadProducts(paramsToPass);
             loadCategories();
             loadSuppliers();
-        });
 
-	    function loadSuppliers() {
-            fetch('/admin/listAllSuppliers')
-                .then(response => response.json())
-                .then(data => {
-                    const suppliers = data;
-                    const supplierSelect = document.getElementById('supplier');
-                    suppliers.forEach(supplier => {
-                        const option = document.createElement('option');
-                        option.value = supplier.name;
-                        option.textContent = supplier.name;
-                        supplierSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching suppliers:', error));
-        }
-
-        function loadCategories() {
-            fetch('/api/getCategories')
-                .then(response => response.json())
-                .then(data => {
-                    const categories = data.categories;  // Access the 'categories' array
-                    const categorySelect = document.getElementById('category');
-
-                    categories.forEach(category => {
-                        const option = document.createElement('option');
-                        option.value = category;
-                        option.textContent = category;
-                        categorySelect.appendChild(option);  // Append each category to the select element
-                    });
-                })
-                .catch(error => console.error('Error fetching categories:', error));
-        }
-        
-        async function loadProducts(params = {}) {
-            const queryString = new URLSearchParams(params).toString();
-            let supplierProductIds = null;
-
-            if (params.supplier){
-                await $.ajax({
-                        url: `/admin/getSupplier?supplier_name=${params.supplier}`,
-                        method: 'GET',
-                        success: function(response) {
-                            supplierProductIds = response.products.map(product => product.product._id);
-                            console.log(productIds); 
-                        },
-                        error: function(err) {
-                            alert('Cant find the suppliers show all suppliers');
-                        }
-                    });
-            }
-
-
-            fetch(`/api/getProducts?${queryString}`)
-                .then(response => response.json())
-                .then(products => {
-                    const productsContainer = document.getElementById('products-container');
-                    products.forEach(product => {
-                        let toAdd = true;
-                        if (supplierProductIds) {
-                            if (!supplierProductIds.includes(product._id)) 
-                            {
-                                toAdd=false;
-                            }
-                        }
-
-                        if (toAdd){
-                            const productCard = `
-                                    <div class="col-md-4 mb-4">
-                                        <a href="/admin/productPage/${product._id}">
-                                            <div class="card custom-card">
-                                                <img class="card-img-top" src="${product.imageUrl || '../images/default_beans.jpg'}" alt="${product.name}">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">${product.name}</h5>
-                                                    <p class="card-text">${product.description}</p>
-                                                    <p class="card-text">Price: $${product.price.toFixed(2)}</p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                            `;
-                            productsContainer.innerHTML += productCard;
-                        }
-                    });
-                })
-                .catch(error => console.error('Error fetching products:', error));
-        };
-
-        function addToCart(id, name, price) {
-            const existingItem = cart.find(item => item.id === id);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                cart.push({ id, name, price, quantity: 1 });
-            }
-            updateCart();
-            saveCart();
-        }
-
-
-        function checkout() {
-            if (cart.length !== 0){
-                localStorage.setItem('cart', JSON.stringify(cart));
-                window.location.href = '/private/order';
-            }else{
-                alert('Cart Empty');
-            }
-        }
-
-
-        function applyFilter() {
-            // Get filter values from form inputs
-            const minPrice = document.getElementById('minPrice').value;
-            const maxPrice = document.getElementById('maxPrice').value;
-            const category = document.getElementById('category').value;
-            const inStock = document.getElementById('inStock').checked;
-            const descriptionContains = document.getElementById('descriptionContains').value;
-            const supplier = document.getElementById('supplier').value;
-            
-            // Build the params object based on the filter values
-            const params = {};
-            if (minPrice) params.minPrice = minPrice;
-            if (maxPrice) params.maxPrice = maxPrice;
-            if (category) params.category = category;
-            if (inStock) params.inStock = inStock;
-            if (descriptionContains) params.descriptionContains = descriptionContains;
-            if (supplier !== 'All Suppliers') params.supplier = supplier;
-            
-            document.getElementById('products-container').innerHTML = '';
-
-            // Call loadProducts with the filter parameters
-            loadProducts(params);
-        }
-    
-        function toggleFilters() {
-            const openFilterBtn = document.getElementById('openFilterBtn');
-            const filterMenuCollapse = new bootstrap.Collapse(document.getElementById('filterMenuCollapse'), {
-                toggle: false  
-            });
-
-            if (openFilterBtn.style.display === 'none') {
-                openFilterBtn.style.display = 'block';
-                filterMenuCollapse.hide();
-            } else {
-                openFilterBtn.style.display = 'none';
-                filterMenuCollapse.show();
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
+            // Load navbar and footer
             $.ajax({
                 url: '/components/adminNavbar.html',
                 method: 'GET',
@@ -291,10 +142,170 @@
                     $('#footer-container').html(data);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error loading navbar:', error);
+                    console.error('Error loading footer:', error);
                 }
             });
+
+            // Submit form via jQuery
+            $('#filter-form').on('submit', function(event) {
+                event.preventDefault();
+                applyFilter();
+            });
+
+            // Bind the toggle filter click events
+            $('#openFilterBtn, #closeFilterBtn').on('click', function() {
+                toggleFilters();
+            });
+
+            // Bind the checkout button
+            $('#checkout-btn').on('click', function() {
+                checkout();
+            });
         });
+
+        function loadSuppliers() {
+            $.ajax({
+                url: '/admin/listAllSuppliers',
+                method: 'GET',
+                success: function(suppliers) {
+                    const supplierSelect = $('#supplier');
+                    suppliers.forEach(supplier => {
+                        supplierSelect.append($('<option>', { value: supplier.name, text: supplier.name }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching suppliers:', error);
+                }
+            });
+        }
+
+        function loadCategories() {
+            $.ajax({
+                url: '/api/getCategories',
+                method: 'GET',
+                success: function(data) {
+                    const categories = data.categories;
+                    const categorySelect = $('#category');
+
+                    categories.forEach(category => {
+                        categorySelect.append($('<option>', { value: category, text: category }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching categories:', error);
+                }
+            });
+        }
+
+        async function loadProducts(params = {}) {
+            const queryString = new URLSearchParams(params).toString();
+            let supplierProductIds = null;
+
+            if (params.supplier){
+                await $.ajax({
+                        url: `/admin/getSupplier?supplier_name=${params.supplier}`,
+                        method: 'GET',
+                        success: function(response) {
+                            supplierProductIds = response.products.map(product => product.product._id);
+                            console.log(supplierProductIds); 
+                        },
+                        error: function(err) {
+                            alert('Cant find the suppliers, showing all products.');
+                        }
+                    });
+            }
+
+            $.ajax({
+                url: `/api/getProducts?${queryString}`,
+                method: 'GET',
+                success: function(products) {
+                    const productsContainer = $('#products-container');
+                    products.forEach(product => {
+                        let toAdd = true;
+                        if (supplierProductIds && !supplierProductIds.includes(product._id)) {
+                            toAdd = false;
+                        }
+
+                        if (toAdd) {
+                            const productCard = `
+                                <div class="col-md-4 mb-4">
+                                    <a href="/admin/productPage/${product._id}">
+                                        <div class="card custom-card">
+                                            <img class="card-img-top" src="${product.imageUrl || '../images/default_beans.jpg'}" alt="${product.name}">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${product.name}</h5>
+                                                <p class="card-text">${product.description}</p>
+                                                <p class="card-text">Price: $${product.price.toFixed(2)}</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            `;
+                            productsContainer.append(productCard);
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching products:', error);
+                }
+            });
+        };
+
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.id === id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
+            updateCart();
+            saveCart();
+        }
+
+        function checkout() {
+            if (cart.length !== 0) {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                window.location.href = '/private/order';
+            } else {
+                alert('Cart Empty');
+            }
+        }
+
+        function applyFilter() {
+            const minPrice = $('#minPrice').val();
+            const maxPrice = $('#maxPrice').val();
+            const category = $('#category').val();
+            const inStock = $('#inStock').is(':checked');
+            const descriptionContains = $('#descriptionContains').val();
+            const supplier = $('#supplier').val();
+
+            const params = {};
+            if (minPrice) params.minPrice = minPrice;
+            if (maxPrice) params.maxPrice = maxPrice;
+            if (category) params.category = category;
+            if (inStock) params.inStock = inStock;
+            if (descriptionContains) params.descriptionContains = descriptionContains;
+            if (supplier !== 'All Suppliers') params.supplier = supplier;
+
+            $('#products-container').html('');
+
+            loadProducts(params);
+        }
+
+        function toggleFilters() {
+            const openFilterBtn = $('#openFilterBtn');
+            const filterMenuCollapse = new bootstrap.Collapse($('#filterMenuCollapse'), {
+                toggle: false
+            });
+
+            if (openFilterBtn.is(':visible')) {
+                openFilterBtn.hide();
+                filterMenuCollapse.show();
+            } else {
+                openFilterBtn.show();
+                filterMenuCollapse.hide();
+            }
+        }
     </script>
 
 </body>

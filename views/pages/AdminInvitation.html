@@ -23,7 +23,7 @@
             <div class="col-md-3">
                 <div id="filter-menu" class="p-4">
                     <h5>Filter Invitations</h5>
-                    <form id="filter-form" onsubmit="applyFilter(); return false;">
+                    <form id="filter-form">
                         <div class="mb-3">
                             <label for="statusFilter" class="form-label">Invitation Status</label>
                             <select class="form-select" id="statusFilter" name="status">
@@ -108,6 +108,11 @@
                 error: function (err) {
                     alert('Error loading invitations: ' + err.responseText);
                 }
+            });
+
+            $('#filter-form').on('submit', function(event) {
+                event.preventDefault(); 
+                applyFilter();          
             });
         }
 

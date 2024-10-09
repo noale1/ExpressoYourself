@@ -63,6 +63,7 @@
             z-index: 1; /* Ensure alert is above other elements */
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -81,7 +82,7 @@
             <ul class="dropdown-menu" aria-labelledby="loginDropdown">
                 <li><a href="/login" id="login-logout-link">Login</a></li>
                 <li class="d-none" id="logout-link">
-                    <a href="#" onclick="logoutUser()">Logout</a>
+                    <a href="#" id="logout-anchor">Logout</a>
                 </li>
 
                 <li><a href="/products">Products</a></li>
@@ -143,92 +144,82 @@
     <!-- Bootstrap JavaScript Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('contactForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+        $(document).ready(function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const loginLink = $('#login-logout-link');
+            const logoutLink = $('#logout-link');
 
-            // Gather form data
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
+            if (isLoggedIn === 'true') {
+                loginLink.addClass('d-none');
+                logoutLink.removeClass('d-none');
+            } else {
+                loginLink.removeClass('d-none');
+                logoutLink.addClass('d-none');
+            }
 
-            // Create JSON object
-            const data = {
-                name: name,
-                email: email,
-                message: message
-            };
+            // Submit form using jQuery
+            $('#contactForm').on('submit', function(event) {
+                event.preventDefault();
 
-            // Send the POST request
-            fetch('/add_Message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (response.ok) {
-                    showAlert('Message sent successfully!', 'success');
-                    // Clear the form fields after successful submission
-                    document.getElementById('contactForm').reset();
-                } else {
-                    showAlert('Failed to send message. Please try again.', 'danger');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showAlert('An error occurred. Please try again later.', 'danger');
+                // Gather form data
+                const data = {
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    message: $('#message').val()
+                };
+
+                // Send the POST request using jQuery AJAX
+                $.ajax({
+                    url: '/add_Message',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        showAlert('Message sent successfully!', 'success');
+                        $('#contactForm')[0].reset(); // Clear form
+                    },
+                    error: function(xhr, status, error) {
+                        showAlert('Failed to send message. Please try again.', 'danger');
+                    }
+                });
+            });
+
+            // Bind the logout click event
+            $('#logout-anchor').on('click', function(event) {
+                event.preventDefault();
+                logoutUser();
             });
         });
 
         function showAlert(message, type) {
-            // Create alert div
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-            alertDiv.role = 'alert';
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            const alertDiv = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             `;
-            // Append alert to the alert container
-            document.getElementById('alertContainer').innerHTML = ''; // Clear previous alerts
-            document.getElementById('alertContainer').appendChild(alertDiv);
+            $('#alertContainer').html(alertDiv); // Add the alert to the container
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const loginLink = document.getElementById('login-logout-link');
-            const logoutLink = document.getElementById('logout-link');
-
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-
-            if (isLoggedIn === 'true') {
-                loginLink.classList.add('d-none');
-                logoutLink.classList.remove('d-none');
-            } else {
-                loginLink.classList.remove('d-none');
-                logoutLink.classList.add('d-none');
-            }
-        });
 
         function logoutUser() {
             localStorage.clear();
-            fetch('/logout', {
+            $.ajax({
+                url: '/logout',
                 method: 'POST',
-                credentials: 'include'  // Include the JWT cookie in the request
-            }).then(response => {
-                if (response.ok) {
-                alert('You have logged out successfully.');
-                // Redirect the user to the login page or home after logout
-                window.location.href = '/';
-                } else {
-                console.error('Logout failed');
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function() {
+                    alert('You have logged out successfully.');
+                    window.location.href = '/';
+                },
+                error: function(xhr, status, error) {
+                    console.error('Logout failed:', error);
                 }
-            }).catch(error => {
-                console.error('Error during logout:', error);
             });
-            
         }
     </script>
+
 </body>
 
 </html>

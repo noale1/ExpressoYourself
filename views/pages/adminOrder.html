@@ -39,7 +39,7 @@
             <div class="col-md-3">
                 <div id="filter-menu" class="p-4">
                     <h5>Filter Orders</h5>
-                    <form id="filter-form" onsubmit="applyFilter(); return false;">
+                    <form id="filter-form">
                         <div class="mb-3">
                             <label for="username" class="form-label">User Name</label>
                             <input type="text" class="form-control" id="username" name="username" maxlength="50">
@@ -61,7 +61,7 @@
                             <input type="date" class="form-control" id="orderDate" name="orderDate">
                         </div>
                         <button type="submit" class="btn btn-primary">Apply Filter</button>
-                        <button type="button" class="btn btn-secondary" onclick="resetFilter()">Reset</button>
+                        <button type="button" class="btn btn-secondary" id="reset-button">Reset</button>
                     </form>
                 </div>
             </div>
@@ -106,14 +106,17 @@
 
             fetchOrders();
 
-            window.applyFilter = function () {
-                fetchOrders();
-            };
+            $('#filter-form').on('submit', function(event) {
+                event.preventDefault();
+                fetchOrders();         
+            });
+                    
+            
 
-            window.resetFilter = function () {
+            $('#reset-button').on('click', function() {
                 $('#filter-form')[0].reset();
                 fetchOrders();
-            };
+            });
         });
 
         function fetchOrders() {
@@ -137,7 +140,9 @@
                             getOrdersWithFilters(filters);
                         } else {
                             alert('No user found with the provided username.');
-                            $('#order-list').empty();
+                            const orderList = $('#ordersAccordion')
+                            orderList.empty();
+                            orderList.append('<p>No orders found.</p>');
                         }
                     },
                     error: function (err) {

@@ -137,7 +137,10 @@
 
         $(document).ready(function () {
             loadInvitations();  
-
+            $('#filter-form').on('submit', function(event) {
+                event.preventDefault();
+                fetchOrders();         
+            });
         });
     </script>
 </body>

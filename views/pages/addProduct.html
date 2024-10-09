@@ -49,7 +49,6 @@
             <div class="mb-3">
                 <label for="supplier" class="form-label">Supplier</label>
                 <select class="form-select" id="supplier" name="supplier" required>
-                    <!-- Options will be populated dynamically -->
                 </select>
             </div>
             <button type="submit" class="btn btn-success">Add Product</button>
@@ -60,7 +59,28 @@
 
     <script>
         $(document).ready(function () {
-            // Fetch available suppliers
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function(data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+
+            $.ajax({
+                url: '/components/adminFooter.html',
+                method: 'GET',
+                success: function(data) {
+                    $('#footer-container').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+
             $.get('/admin/listAllSuppliers', function (suppliers) {
                 const supplierSelect = $('#supplier');
                 suppliers.forEach(supplier => {
@@ -108,7 +128,6 @@
             });
 
             function addProduct(productData, supplierName) {
-                // Send product data as JSON
                 $.ajax({
                     url: '/admin/addProducts',
                     method: 'POST',
@@ -116,7 +135,7 @@
                     data: JSON.stringify(productData),
                     success: function (productResponse) {
                         const productId =  productResponse.product._id;;
-                        // Add product to supplier
+
                         $.ajax({
                             url: '/admin/addProdectToSupplier',
                             method: 'POST',
@@ -138,28 +157,6 @@
             }
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            $.ajax({
-                url: '/components/adminNavbar.html',
-                method: 'GET',
-                success: function(data) {
-                    $('#navbar-container').html(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading navbar:', error);
-                }
-            });
-            $.ajax({
-                url: '/components/adminFooter.html',
-                method: 'GET',
-                success: function(data) {
-                    $('#footer-container').html(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading navbar:', error);
-                }
-            });
-        });
     </script>
 </body>
 

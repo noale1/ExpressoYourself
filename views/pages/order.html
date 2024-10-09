@@ -7,6 +7,7 @@
     <title>Checkout - Expresso Yourself</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -119,7 +120,7 @@
                 </div>
 
                 <hr class="my-4">
-                <button class="w-100 btn custom-btn" type="submit">Complete Checkout</button>
+                <button class="w-100 btn custom-btn" id="checkout-submit">Complete Checkout</button>
             </div>
         </div>
     </section>
@@ -131,48 +132,99 @@
     </footer>
 
     <script type="module">
-        
         import CurrencyController from "../../controllers/currencyController.js";
-        async function getExchangeAPIKey() {
-             const response = await fetch('/api/getExchangeAPIKey');
-             const reader = response.body.getReader();
-             const decoder = new TextDecoder('utf-8');
-             let result = '';
-             let done = false;
- 
-             while (!done) {
-                 const { value, done: doneReading } = await reader.read();
-                 done = doneReading;
-                 result += decoder.decode(value, { stream: !done });
-             }
- 
-             const parsedResult = JSON.parse(result);
-             return parsedResult.apiKey;
-         }
-
+        
         let currencyController = new CurrencyController();
-         
-        getExchangeAPIKey().then(apiKey => {
-            const EXCHANGE_API_KEY = apiKey;
-            currencyController = new CurrencyController(EXCHANGE_API_KEY);
-            console.log('Currency controller initialized with API key:', EXCHANGE_API_KEY);
+
+        // Using jQuery for document ready
+        $(document).ready(function() {
+            // Get exchange API key and initialize the currency controller
+            $.get('/api/getExchangeAPIKey', function(apiKey) {
+                currencyController = new CurrencyController(apiKey);
+                console.log('Currency controller initialized with API key:', apiKey);
+            });
+
+            // Update total when currency changes
+            $('#currency').on('change', function() {
+                updateCartTotal($(this).val());
+            });
+
+            // Load initial cart data and update totals
+            updateCartTotal($('#currency').val());
+
+            // Submit form via jQuery on button click
+            $('#checkout-submit').on('click', function(event) {
+                event.preventDefault();
+                const checkoutForm = $('#checkout-form')[0];
+
+                if (!checkoutForm.checkValidity()) {
+                    alert('Please fill in all required fields correctly.');
+                    checkoutForm.reportValidity();
+                    return;
+                }
+
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                if (cart.length === 0) {
+                    alert('Your cart is empty.');
+                    return;
+                }
+
+                const userDetails = {
+                    firstName: $('#firstName').val(),
+                    lastName: $('#lastName').val(),
+                    email: $('#email').val(),
+                    address: $('#address').val(),
+                    city: $('#city').val(),
+                    country: $('#country').val(),
+                    zip: $('#zip').val()
+                };
+
+                const paymentDetails = {
+                    cardName: $('#cardName').val(),
+                    cardNumber: $('#cardNumber').val(),
+                    cardExpiry: $('#cardExpiry').val(),
+                    cardCVV: $('#cardCVV').val()
+                };
+
+                const checkoutData = {
+                    cart: cart,
+                    userDetails: userDetails,
+                    paymentDetails: paymentDetails
+                };
+
+                // Send POST request using jQuery AJAX
+                $.ajax({
+                    url: '/private/order',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(checkoutData),
+                    success: function(response) {
+                        localStorage.removeItem('cart');
+                        alert('Checkout successful!');
+                        window.location.href = '/';
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Checkout failed:', error);
+                        alert('Checkout failed!');
+                    }
+                });
+            });
         });
 
-        
+        // Function to update cart total
         async function updateCartTotal(selectedCurrency) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const orderSummary = document.getElementById('order-summary');
-            orderSummary.innerHTML = '';
+            const orderSummary = $('#order-summary');
+            orderSummary.empty();
 
             if (cart.length === 0) {
-                orderSummary.innerHTML = '<p>Your cart is empty.</p>';
+                orderSummary.html('<p>Your cart is empty.</p>');
                 return;
             }
 
             let totalInUSD = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
             const convertedTotal = await currencyController.convertCurrency(totalInUSD, 'USD', selectedCurrency);
             const exchangeRate = await currencyController.currencyModel.fetchExchangeRate('USD', selectedCurrency);
-            // const convertedTotal = (totalInUSD * exchangeRate).toFixed(2);
 
             // Render cart items
             cart.forEach(item => {
@@ -184,7 +236,7 @@
                     </div>
                     <span class="text-muted">${currencyController.currencyModel.currencySymbols[selectedCurrency]}${(item.price * item.quantity * exchangeRate).toFixed(2)} ${selectedCurrency}</span>
                 </li>`;
-                orderSummary.insertAdjacentHTML('beforeend', orderItem);
+                orderSummary.append(orderItem);
             });
 
             // Render total
@@ -193,86 +245,8 @@
                 <span>Total (${selectedCurrency})</span>
                 <strong>${currencyController.currencyModel.currencySymbols[selectedCurrency]}${convertedTotal} ${selectedCurrency}</strong>
             </li>`;
-            orderSummary.insertAdjacentHTML('beforeend', totalLine);
+            orderSummary.append(totalLine);
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load cart and set initial total
-            const currencyDropdown = document.getElementById('currency');
-            updateCartTotal(currencyDropdown.value);
-
-            // Update total when currency is changed
-            currencyDropdown.addEventListener('change', function () {
-                updateCartTotal(this.value);
-            });
-        });
-
-        // Checkout form submission
-        document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
-            event.preventDefault();
-            const checkoutForm = document.getElementById('checkout-form');
-
-            if (!checkoutForm.checkValidity()) {
-                alert('Please fill in all required fields correctly.');
-                checkoutForm.reportValidity(); // Show validation errors
-                return;
-            }
-
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (cart.length === 0) {
-                alert('Your cart is empty.');
-                return;
-            }
-
-            const userDetails = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                country: document.getElementById('country').value,
-                zip: document.getElementById('zip').value
-            };
-
-
-            const paymentDetails = {
-                cardName: document.getElementById('cardName').value,
-                cardNumber: document.getElementById('cardNumber').value,
-                cardExpiry: document.getElementById('cardExpiry').value,
-                cardCVV: document.getElementById('cardCVV').value
-            };
-
-            const checkoutData = {
-                cart: cart,
-                userDetails: userDetails,
-                paymentDetails: paymentDetails
-            };
-            
-            fetch('/private/order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(checkoutData)
-            })
-            .then(response => {
-                if (response.status !== 200) {
-                    throw new Error('Checkout failed');
-                }
-                // If status is 200, remove the cart from localStorage
-                localStorage.removeItem('cart');
-                alert('Checkout successful!');
-                
-                // Redirect to the homepage
-                window.location.href = '/';
-            })
-            .catch(error => {
-                console.error('Error during checkout:', error);
-                console.log(error);
-                alert('Checkout failed2!');
-            });
-
-        });
     </script>
 
 </body>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/login_styles.css">
     <title>Login - Coffee E-Shop</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -28,57 +29,49 @@
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
+        $(document).ready(function() {
+            // Submit form via jQuery
+            $('#loginForm').on('submit', function(event) {
+                event.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = '';
-            errorMessage.style.display = 'none'; 
+                const email = $('#email').val();
+                const password = $('#password').val();
+                const errorMessage = $('#error-message');
+                errorMessage.text('');
+                errorMessage.hide();
 
-            // Create a JSON object
-            const data = {
-                email: email,
-                password: password
-            };
+                // Create a JSON object
+                const data = {
+                    email: email,
+                    password: password
+                };
 
-            // Send a POST request
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                cache: 'no-cache',
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if(data.is_admin) {
-                    window.location.href = '/admin';
-                } else {
-                    if(data.is_supplier){
-                        window.location.href = '/private/supplier/invitaionManagment';
+                // Send a POST request using jQuery AJAX
+                $.ajax({
+                    url: '/login',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    cache: false,
+                    data: JSON.stringify(data),
+                    success: function(data) {
+                        if(data.is_admin) {
+                            window.location.href = '/admin';
+                        } else if (data.is_supplier) {
+                            window.location.href = '/private/supplier/invitaionManagment';
+                        } else {
+                            window.location.href = '/';
+                        }
+                        localStorage.setItem('isLoggedIn', 'true');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                        errorMessage.text('Invalid login credentials. Please try again.');
+                        errorMessage.show();
                     }
-                    else{
-                        window.location.href = '/';
-                    }
-                    
-                }
-                
-                localStorage.setItem('isLoggedIn', 'true');
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                errorMessage.textContent = 'Invalid login credentials. Please try again.';
-                errorMessage.style.display = 'block';
+                });
             });
         });
     </script>
 </body>
 </html>
+
