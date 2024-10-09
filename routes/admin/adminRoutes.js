@@ -36,6 +36,8 @@ router.post('/addProdectToSupplier', supplierController.add_product_to_supplier)
 
 // order routes
 router.get('/listOrders', orderController.list_orders);
+router.get('/orderHistory', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'adminOrder.html')) });
+
 
 
 // Product Routes
