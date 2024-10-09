@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us | Expresso Yourself</title>
-    <!-- Bootstrap CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/page_bottom.css">
+
     <style>
         .video-bg {
             position: fixed;
@@ -16,7 +17,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            z-index: -1; 
+            z-index: -1;
             opacity: 0.2;
         }
 
@@ -34,12 +35,14 @@
 
         .overlay {
             position: relative;
-            background-color: rgba(0, 0, 0, 0.7); 
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 3rem;
         }
 
-        h1, h2, h3 {
-            color: #6a5b4e; 
+        h1,
+        h2,
+        h3 {
+            color: #6a5b4e;
         }
 
         .team-member img {
@@ -50,9 +53,9 @@
         }
 
         footer {
-            background-color: rgba(0, 0, 0, 0.7); /* Ensure footer is readable with overlay */
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Ensure footer is readable with overlay */
         }
-        
     </style>
 </head>
 
@@ -70,6 +73,7 @@
                 ☰ Menu
             </button>
             <ul class="dropdown-menu" aria-labelledby="loginDropdown">
+                <li><a href="/">Home</a></li>
                 <li><a href="/login" id="login-logout-link">Login</a></li>
                 <li class="d-none" id="logout-link">
                     <a href="#" onclick="logoutUser()">Logout</a>
@@ -96,10 +100,14 @@
                 <div class="col-md-8" style="color: rgb(154, 154, 137);">
                     <h2>About Us</h2>
                     <p class="mb-4">
-                        Welcome to <strong>Expresso Yourself</strong>—where your coffee cravings meet creativity! We’re not just another coffee shop. We're four students from the <strong>College of Management</strong> who turned our passion for caffeine into a thriving online coffee hub.
+                        Welcome to <strong>Expresso Yourself</strong>—where your coffee cravings meet creativity! We’re
+                        not just another coffee shop. We're four students from the <strong>College of
+                            Management</strong> who turned our passion for caffeine into a thriving online coffee hub.
                     </p>
                     <p>
-                        It all started with late-night study sessions, countless espresso shots, and a dream of something bigger. Now, we're here to serve you the best blends, freshest roasts, and a dash of humor to keep your spirits high—because life's too short for bad coffee!
+                        It all started with late-night study sessions, countless espresso shots, and a dream of
+                        something bigger. Now, we're here to serve you the best blends, freshest roasts, and a dash of
+                        humor to keep your spirits high—because life's too short for bad coffee!
                     </p>
                 </div>
             </div>
@@ -114,77 +122,127 @@
                 <div class="team-member">
                     <img src="../images/Yoav.png" alt="Yoav">
                     <h3 class="mt-3">Yoav</h3>
-                    <p>The brew master with a knack for turning beans into brilliance. Yoav’s love for espresso is only matched by his determination to ace his classes (most of the time).</p>
+                    <p>The brew master with a knack for turning beans into brilliance. Yoav’s love for espresso is only
+                        matched by his determination to ace his classes (most of the time).</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="team-member">
                     <img src="../images/noa.png" alt="Noa">
                     <h3 class="mt-3">Noa</h3>
-                    <p>When Noa’s not busy brewing ideas, she’s making sure every cup served by Expresso Yourself is as smooth as her study playlists.</p>
+                    <p>When Noa’s not busy brewing ideas, she’s making sure every cup served by Expresso Yourself is as
+                        smooth as her study playlists.</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="team-member">
                     <img src="../images/Itay.png" alt="Itay">
                     <h3 class="mt-3">Itay</h3>
-                    <p>Itay is our resident tech guru, keeping our website running smoother than a fresh pour-over. He might just be fueled by pure caffeine.</p>
+                    <p>Itay is our resident tech guru, keeping our website running smoother than a fresh pour-over. He
+                        might just be fueled by pure caffeine.</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="team-member">
                     <img src="../images/Daniel.png" alt="Daniel">
                     <h3 class="mt-3">Daniel</h3>
-                    <p>Daniel’s the one who keeps us sane—mostly. His coffee tasting notes are as detailed as his management plans. If you need coffee advice, Daniel’s your guy.</p>
+                    <p>Daniel’s the one who keeps us sane—mostly. His coffee tasting notes are as detailed as his
+                        management plans. If you need coffee advice, Daniel’s your guy.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="text-center py-4 bg-dark text-light">
-        <p>&copy; 2024 Expresso Yourself. Powered by coffee and creativity.</p>
-        <p>Need help? <a href="/contact" class="text-warning">Contact us</a>.</p>
+
+    <footer class="enhanced-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>Expresso Yourself is your go-to place for premium coffee and a great experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/products">Products</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p>Phone: +972 54-8740682</p>
+                    <p>Email: info@expressoyourself.com</p>
+                </div>
+            </div>
+            <aside>
+                <h4>Coffee Tip of the Day</h4>
+                <p id="coffee-tip"></p>
+            </aside>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Expresso Yourself | All Rights Reserved</p>
+            </div>
+        </div>
     </footer>
 
-    <!-- Bootstrap JavaScript Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-            const loginLink = document.getElementById('login-logout-link');
-            const logoutLink = document.getElementById('logout-link');
+        const loginLink = document.getElementById('login-logout-link');
+        const logoutLink = document.getElementById('logout-link');
 
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-            if (isLoggedIn === 'true') {
-                loginLink.classList.add('d-none');
-                logoutLink.classList.remove('d-none');
-            } else {
-                loginLink.classList.remove('d-none');
-                logoutLink.classList.add('d-none');
-            }
-        });
+        if (isLoggedIn === 'true') {
+            loginLink.classList.add('d-none');
+            logoutLink.classList.remove('d-none');
+        } else {
+            loginLink.classList.remove('d-none');
+            logoutLink.classList.add('d-none');
+        }
+    });
 
-        function logoutUser() {
-            localStorage.clear();
-            fetch('/logout', {
-                method: 'POST',
-                credentials: 'include'  // Include the JWT cookie in the request
-            }).then(response => {
-                if (response.ok) {
+    function logoutUser() {
+        localStorage.clear();
+        fetch('/logout', {
+            method: 'POST',
+            credentials: 'include'  // Include the JWT cookie in the request
+        }).then(response => {
+            if (response.ok) {
                 alert('You have logged out successfully.');
                 // Redirect the user to the login page or home after logout
                 window.location.href = '/';
-                } else {
+            } else {
                 console.error('Logout failed');
-                }
-            }).catch(error => {
-                console.error('Error during logout:', error);
-            });
-            
-        }
+            }
+        }).catch(error => {
+            console.error('Error during logout:', error);
+        });
+
+    }
+
+    function getCoffeeTipOfTheDay() {
+        const tips = [
+            "Start your week right! Drinking coffee can boost your metabolism and help you burn fat.",
+            "For the best flavor, store your coffee beans in an airtight container at room temperature.",
+            "Did you know? Coffee is actually a fruit! The 'beans' are the pits of coffee cherries.",
+            "Espresso doesn't have more caffeine than regular coffee - it's just more concentrated.",
+            "Cold brew isn't just for summer! It's less acidic than hot coffee, making it easier on your stomach.",
+            "The world's most expensive coffee, Kopi Luwak, comes from civet cat droppings. Fancy a cup?",
+            "Coffee naps are real! Drinking coffee before a 20-minute nap can make you feel more alert afterwards."
+        ];
+
+        const today = new Date().getDay();
+        return tips[today === 0 ? 6 : today - 1]; // Sunday is 0, so we adjust the index
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const tipElement = document.getElementById('coffee-tip');
+        tipElement.textContent = getCoffeeTipOfTheDay();
+    });
 </script>
 
 </html>
