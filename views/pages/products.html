@@ -226,6 +226,9 @@
                     productsContainer.empty(); // Clear existing products
 
                     products.forEach(product => {
+                        // Check if the product is in stock
+                        const inStockText = product.inStock ? '' : '<p class="text-danger">Not in Stock</p>';
+
                         const productCard = `
                             <div class="col-md-4 mb-4">
                                 <div class="card custom-card" style="height: 400px">
@@ -234,7 +237,8 @@
                                         <h5 class="card-title">${product.name}</h5>
                                         <p class="card-text">${product.description}</p>
                                         <p class="card-text">Price: $${product.price.toFixed(2)}</p>
-                                        <a href="#" class="image-link-button" data-id="${product._id}" data-name="${product.name}" data-price="${product.price}">
+                                        ${inStockText}  <!-- Display stock status here -->
+                                        <a href="#" class="image-link-button" data-id="${product._id}" data-name="${product.name}" data-price="${product.price}" ${product.inStock ? '' : 'disabled'}>
                                             <img src="../images/shopping_cart.webp" alt="Add to Cart">
                                         </a>
                                     </div>
@@ -250,7 +254,9 @@
                         const id = $(this).data('id');
                         const name = $(this).data('name');
                         const price = $(this).data('price');
-                        addToCart(id, name, price);
+                        if ($(this).attr('disabled') !== 'disabled') {
+                            addToCart(id, name, price);
+                        }
                     });
                 },
                 error: function(error) {
@@ -258,6 +264,7 @@
                 }
             });
         }
+
 
         function addToCart(id, name, price) {
             const existingItem = cart.find(item => item.id === id);
