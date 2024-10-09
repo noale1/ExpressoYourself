@@ -1,13 +1,13 @@
 const fallbackRates = {
-    'USD': 1,       // US Dollar
-    'EUR': 0.85,    // Euro
-    'NIS': 3.75,    // New Israeli Shekel
-    'JPY': 110.57,   // Japanese Yen
+    'USD': 1,
+    'EUR': 0.85,
+    'NIS': 3.75,
+    'JPY': 110.57,
   };
   
   class CurrencyModel {
     constructor(apiKey) {
-      this.apiKey = apiKey;  // API key for the currency API
+      this.apiKey = apiKey;
     }
 
     currencySymbols = {
@@ -32,7 +32,7 @@ const fallbackRates = {
         }
       } catch (error) {
         console.warn('API call failed, using fallback rates:', error.message);
-        return fallbackRates[toCurrency]; // Use fallback rate if API call fails
+        return fallbackRates[toCurrency];
       }
     }
   }
