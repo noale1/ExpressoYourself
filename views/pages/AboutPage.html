@@ -76,7 +76,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/login" id="login-logout-link">Login</a></li>
                 <li class="d-none" id="logout-link">
-                    <a href="#" onclick="logoutUser()">Logout</a>
+                    <a href="#" id="logout-anchor">Logout</a>
                 </li>
 
                 <li><a href="/products">Products</a></li>
@@ -189,39 +189,48 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const loginLink = document.getElementById('login-logout-link');
-        const logoutLink = document.getElementById('logout-link');
+$(document).ready(function() {
+        const loginLink = $('#login-logout-link');
+        const logoutLink = $('#logout-link');
+
+        const tipElement = $('#coffee-tip');
+        tipElement.text(getCoffeeTipOfTheDay());
 
         const isLoggedIn = localStorage.getItem('isLoggedIn');
 
         if (isLoggedIn === 'true') {
-            loginLink.classList.add('d-none');
-            logoutLink.classList.remove('d-none');
+            loginLink.addClass('d-none');
+            logoutLink.removeClass('d-none');
         } else {
-            loginLink.classList.remove('d-none');
-            logoutLink.classList.add('d-none');
+            loginLink.removeClass('d-none');
+            logoutLink.addClass('d-none');
         }
+        
+        $('#logout-anchor').on('click', function(event) {
+        event.preventDefault();  
+        logoutUser();            
+    });
     });
 
     function logoutUser() {
         localStorage.clear();
-        fetch('/logout', {
-            method: 'POST',
-            credentials: 'include'  // Include the JWT cookie in the request
-        }).then(response => {
-            if (response.ok) {
+        $.ajax({
+            url: '/logout',
+            type: 'POST',
+            xhrFields: {
+                withCredentials: true // Include credentials (like the JWT cookie)
+            },
+            success: function() {
                 alert('You have logged out successfully.');
                 // Redirect the user to the login page or home after logout
                 window.location.href = '/';
-            } else {
-                console.error('Logout failed');
+            },
+            error: function(xhr, status, error) {
+                console.error('Logout failed:', error);
             }
-        }).catch(error => {
-            console.error('Error during logout:', error);
         });
-
     }
 
     function getCoffeeTipOfTheDay() {
@@ -238,11 +247,6 @@
         const today = new Date().getDay();
         return tips[today === 0 ? 6 : today - 1]; // Sunday is 0, so we adjust the index
     }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const tipElement = document.getElementById('coffee-tip');
-        tipElement.textContent = getCoffeeTipOfTheDay();
-    });
 </script>
 
 </html>

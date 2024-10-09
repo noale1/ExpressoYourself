@@ -102,51 +102,23 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+
+    $(document).ready(function () {
       loadProducts();
-    });
+      const tipElement = $('#coffee-tip');
+      tipElement.text(getCoffeeTipOfTheDay());
 
-    document.addEventListener("DOMContentLoaded", function () {
-            $.ajax({
-            url: '/components/navbar.html',
-            method: 'GET',
-            success: function(data) {
-                $('#navbar-container').html(data);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error loading navbar:', error);
-            }
-            });
-    });
+      $.ajax({
+        url: '/components/navbar.html',
+        method: 'GET',
+        success: function(data) {
+            $('#navbar-container').html(data);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error loading navbar:', error);
+        }
+      });
 
-    function loadProducts(params = {}) {
-      const queryString = new URLSearchParams(params).toString();
-
-      fetch(`/api/getProducts?${queryString}`)
-        .then(response => response.json())
-        .then(products => {
-          const productsContainer = document.getElementById('products-container');
-          products.slice(0, 3).forEach(product => {
-            const productCard = `
-                            <div class="col-md-4 mb-4">
-                                <div class="card custom-card" style="height: 350px">
-                                    <img class="card-img-top" src="${product.imageUrl || '../images/default_beans.jpg'}" alt="${product.name}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${product.name}</h5>
-                                        <p class="card-text">${product.description}</p>
-                                        <p class="card-text">Price: $${product.price.toFixed(2)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-            productsContainer.innerHTML += productCard;
-          });
-        })
-        .catch(error => console.error('Error fetching products:', error));
-    };
-
-
-    document.addEventListener('DOMContentLoaded', function () {
       const loginLink = document.getElementById('login-logout-link');
       const logoutLink = document.getElementById('logout-link');
 
@@ -159,25 +131,56 @@
         loginLink.classList.remove('d-none');
         logoutLink.classList.add('d-none');
       }
+            
     });
 
-    function logoutUser() {
-      localStorage.clear();
-            fetch('/logout', {
-                method: 'POST',
-                credentials: 'include'  
-            }).then(response => {
-                if (response.ok) {
+    function loadProducts(params = {}) {
+      const queryString = $.param(params);  // Convert params to query string
+
+      $.ajax({
+          url: `/api/getProducts?${queryString}`,
+          method: 'GET',
+          success: function(products) {
+              const productsContainer = $('#products-container');
+              products.slice(0, 3).forEach(product => {
+                  const productCard = `
+                      <div class="col-md-4 mb-4">
+                          <div class="card custom-card" style="height: 350px">
+                              <img class="card-img-top" src="${product.imageUrl || '../images/default_beans.jpg'}" alt="${product.name}">
+                              <div class="card-body">
+                                  <h5 class="card-title">${product.name}</h5>
+                                  <p class="card-text">${product.description}</p>
+                                  <p class="card-text">Price: $${product.price.toFixed(2)}</p>
+                              </div>
+                          </div>
+                      </div>
+                  `;
+                  productsContainer.append(productCard);
+              });
+          },
+          error: function(error) {
+              console.error('Error fetching products:', error);
+          }
+      });
+    }
+
+function logoutUser() {
+        localStorage.clear();
+        $.ajax({
+            url: '/logout',
+            type: 'POST',
+            xhrFields: {
+                withCredentials: true // Include credentials (like the JWT cookie)
+            },
+            success: function() {
                 alert('You have logged out successfully.');
                 window.location.href = '/';
-                } else {
-                console.error('Logout failed');
-                }
-            }).catch(error => {
-                console.error('Error during logout:', error);
-            });
-            
-        }
+            },
+            error: function(xhr, status, error) {
+                console.error('Logout failed:', error);
+            }
+        });
+    }
 
         function getCoffeeTipOfTheDay() {
             const tips = [
@@ -194,10 +197,6 @@
             return tips[today === 0 ? 6 : today - 1]; // Sunday is 0, so we adjust the index
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const tipElement = document.getElementById('coffee-tip');
-            tipElement.textContent = getCoffeeTipOfTheDay();
-        });
   </script>
 </body>
 

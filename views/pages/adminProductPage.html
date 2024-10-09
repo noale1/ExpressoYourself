@@ -61,7 +61,7 @@
         $(document).ready(function() {
             // Extract product ID from the URI
             const productId = window.location.pathname.split('/').pop();
-
+            
             // Fetch product data and prefill the form
             $.ajax({
                 url: `/admin/getProductByID/${productId}`,
@@ -157,9 +157,7 @@
                     });
                 }
             });
-        });
 
-        document.addEventListener("DOMContentLoaded", function () {
             $.ajax({
                 url: '/components/adminNavbar.html',
                 method: 'GET',
@@ -170,6 +168,7 @@
                     console.error('Error loading navbar:', error);
                 }
             });
+            
             $.ajax({
                 url: '/components/adminFooter.html',
                 method: 'GET',
@@ -181,6 +180,7 @@
                 }
             });
         });
+
     </script>
 </body>
 

@@ -66,6 +66,28 @@
 
     <script>
         $(document).ready(function () {
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function(data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+            
+            $.ajax({
+                url: '/components/adminFooter.html',
+                method: 'GET',
+                success: function(data) {
+                    $('#footer-container').html(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+
             $('#addSupplierForm').on('submit', function (e) {
                 e.preventDefault(); 
 
@@ -101,28 +123,6 @@
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            $.ajax({
-                url: '/components/adminNavbar.html',
-                method: 'GET',
-                success: function(data) {
-                    $('#navbar-container').html(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading navbar:', error);
-                }
-            });
-            $.ajax({
-                url: '/components/adminFooter.html',
-                method: 'GET',
-                success: function(data) {
-                    $('#footer-container').html(data);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading navbar:', error);
-                }
-            });
-        });
     </script>
 </body>
 
