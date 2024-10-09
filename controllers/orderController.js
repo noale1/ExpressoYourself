@@ -3,11 +3,49 @@ const User = require('../models/user');
 const Product = require('../models/product');
 const jwt = require('jsonwebtoken');
 const auth = require("../controllers/authController")
+const mongoose = require('mongoose');
 
 // List all orders
 exports.list_orders = async (req, res) => {
-    const orders = await Order.find();
-    res.json(orders);
+  try {
+    const { productName, minPrice, maxPrice, orderDate, userId } = req.query;
+
+    let query = {};
+
+    if (productName) {
+        query['items.productName'] = { $regex: new RegExp(productName.trim(), 'i') };
+    }
+
+    if (minPrice || maxPrice) {
+        query.totalPrice = {};
+        if (minPrice) query.totalPrice.$gte = parseFloat(minPrice);
+        if (maxPrice) query.totalPrice.$lte = parseFloat(maxPrice);
+    }
+
+    if (orderDate) {
+        const parsedDate = new Date(orderDate);
+        if (!isNaN(parsedDate)) {
+            query.orderDate = { 
+                $gte: new Date(parsedDate.setUTCHours(0, 0, 0, 0)), 
+                $lt: new Date(parsedDate.setUTCHours(23, 59, 59, 999))
+            };
+        }
+    }
+
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+        query.user = userId;
+    }
+
+    const orders = await Order.find(query).populate({
+      path: 'user',
+      model: 'User',
+  });;
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 

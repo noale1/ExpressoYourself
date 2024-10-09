@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .order-card {
+            cursor: pointer;
+        }
+
+        .order-details {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .scrollable {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+        <h1 class="display-4">Order Management</h1>
+        <p>Manage orders for Expresso Yourself Coffee Shop.</p>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div id="filter-menu" class="p-4">
+                    <h5>Filter Orders</h5>
+                    <form id="filter-form" onsubmit="applyFilter(); return false;">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">User Name</label>
+                            <input type="text" class="form-control" id="username" name="username" maxlength="50">
+                        </div>
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" name="productName" maxlength="50">
+                        </div>
+                        <div class="mb-3">
+                            <label for="minPrice" class="form-label">Min Price</label>
+                            <input type="number" step="0.01" class="form-control" id="minPrice" name="minPrice">
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxPrice" class="form-label">Max Price</label>
+                            <input type="number" step="0.01" class="form-control" id="maxPrice" name="maxPrice">
+                        </div>
+                        <div class="mb-3">
+                            <label for="orderDate" class="form-label">Order Date</label>
+                            <input type="date" class="form-control" id="orderDate" name="orderDate">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetFilter()">Reset</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="container mt-4">
+                    <h5>Orders</h5>
+                    <div id="order-list" class="scrollable">
+                        <div class="accordion" id="ordersAccordion">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-container"></div>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/components/adminNavbar.html',
+                method: 'GET',
+                success: function (data) {
+                    $('#navbar-container').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading navbar:', error);
+                }
+            });
+
+            $.ajax({
+                url: '/components/adminFooter.html',
+                method: 'GET',
+                success: function (data) {
+                    $('#footer-container').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading footer:', error);
+                }
+            });
+
+            fetchOrders();
+
+            window.applyFilter = function () {
+                fetchOrders();
+            };
+
+            window.resetFilter = function () {
+                $('#filter-form')[0].reset();
+                fetchOrders();
+            };
+        });
+
+        function fetchOrders() {
+            const filters = {
+                productName: $('#productName').val(),
+                minPrice: $('#minPrice').val(),
+                maxPrice: $('#maxPrice').val(),
+                orderDate: $('#orderDate').val(),
+            };
+
+            const username = $('#username').val().trim();
+            if (username) {
+                $.ajax({
+                    url: '/admin/getUsers',
+                    method: 'GET',
+                    success: function (data) {
+                        const users = data.users;
+                        const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+                        if (user) {
+                            filters.userId = user._id;
+                            getOrdersWithFilters(filters);
+                        } else {
+                            alert('No user found with the provided username.');
+                            $('#order-list').empty();
+                        }
+                    },
+                    error: function (err) {
+                        alert('Error fetching users: ' + err.responseText);
+                    }
+                });
+            } else {
+                getOrdersWithFilters(filters);
+            }
+        }
+
+        function getOrdersWithFilters(filters) {
+            $.ajax({
+                url: '/admin/listOrders',
+                method: 'GET',
+                data: filters,
+                success: function (orders) {
+                    renderOrders(orders);
+                },
+                error: function (err) {
+                    alert('Error fetching orders: ' + err.responseText);
+                }
+            });
+        }
+        function renderOrders(orders) {
+            const orderList = $('#ordersAccordion');
+            orderList.empty();
+
+            if (orders.length === 0) {
+                orderList.append('<p>No orders found.</p>');
+                return;
+            }
+
+            orders.forEach((order, index) => {
+                const collapseId = `collapse${index}`;
+                const headingId = `heading${index}`;
+                const username = order.user ? order.user.username : 'User Deleted';
+
+                const orderCard = `
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="${headingId}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}">
+                                <strong>User:</strong> ${username} | 
+                                <strong>Date:</strong> ${new Date(order.orderDate).toLocaleDateString()} | 
+                                <strong>Total:</strong> $${order.totalPrice.toFixed(2)}
+                            </button>
+                        </h2>
+                        <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}" data-bs-parent="#ordersAccordion">
+                            <div class="accordion-body">
+                                <h6>Delivery Details:</h6>
+                                <p>
+                                    <strong>Address:</strong> ${order.deliveryDetails.address}<br>
+                                    <strong>City:</strong> ${order.deliveryDetails.city}<br>
+                                    <strong>Country:</strong> ${order.deliveryDetails.country}<br>
+                                    <strong>ZIP:</strong> ${order.deliveryDetails.zip}
+                                </p>
+                                <h6>Items:</h6>
+                                <table class="table table-sm table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Product Name</th>
+                                            <th>Quantity</th>
+                                            <th>Price ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${order.items.map(item => `
+                                            <tr>
+                                                <td>${item.productName}</td>
+                                                <td>${item.quantity}</td>
+                                                <td>${item.price.toFixed(2)}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                                <h6>Order Date:</h6>
+                                <p>${new Date(order.orderDate).toLocaleString()}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                orderList.append(orderCard);
+            });
+        }
+    </script>
+</body>
+
+</html>
