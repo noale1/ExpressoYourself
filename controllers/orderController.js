@@ -86,7 +86,7 @@ exports.checkout = async (req, res) => {
             if (product.price !== item.price) {
               return res.status(500).send(`Product price changed for ${product.name}`);
             }
-            if (product.quantity <= item.quantity) {
+            if (product.quantity < item.quantity) {
               return res.status(500).send(`Not enough stock for product ${product.name}, there is only ${product.quantity}`);
             }
         }
