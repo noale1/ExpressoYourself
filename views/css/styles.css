@@ -145,6 +145,7 @@
     font-weight: bold;
     text-decoration: none;
     transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .dropdown-menu a:hover {

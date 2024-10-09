@@ -7,6 +7,7 @@
   <title>Expresso Yourself</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/page_bottom.css">
 </head>
 
 <body>
@@ -65,20 +66,37 @@
     </blockquote>
   </section>
 
-  <section class="text-light py-5" style="background-color: #a0b598;">
+  <footer class="enhanced-footer">
     <div class="container">
-      <h2 class="text-center mb-4">About Us</h2>
-      <p class="text-center">We are a group of four Israel's that are passionate about coffee.
-        We decided to take our love to the next level and open a coffee bean online store.
-        It's important to us that our products will be of the highest quality and from the best sources possible.</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Expresso Yourself is your go-to place for premium coffee and a great experience.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/products">Products</a></li>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>Phone: +972 54-8740682</p>
+                <p>Email: info@expressoyourself.com</p>
+            </div>
+        </div>
+        <aside>
+            <h4>Coffee Tip of the Day</h4>
+            <p id="coffee-tip"></p>
+        </aside>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Expresso Yourself | All Rights Reserved</p>
+        </div>
     </div>
-  </section>
-
-  <footer class="footer text-center">
-    <div class="container">
-      <p>© Expresso Yourself | All Rights Reserved</p>
-    </div>
-  </footer>
+</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -146,11 +164,10 @@
       localStorage.clear();
             fetch('/logout', {
                 method: 'POST',
-                credentials: 'include'  // Include the JWT cookie in the request
+                credentials: 'include'  
             }).then(response => {
                 if (response.ok) {
                 alert('You have logged out successfully.');
-                // Redirect the user to the login page or home after logout
                 window.location.href = '/';
                 } else {
                 console.error('Logout failed');
@@ -160,6 +177,26 @@
             });
             
         }
+
+        function getCoffeeTipOfTheDay() {
+            const tips = [
+                "Start your week right! Drinking coffee can boost your metabolism and help you burn fat.",
+                "For the best flavor, store your coffee beans in an airtight container at room temperature.",
+                "Did you know? Coffee is actually a fruit! The 'beans' are the pits of coffee cherries.",
+                "Espresso doesn't have more caffeine than regular coffee - it's just more concentrated.",
+                "Cold brew isn't just for summer! It's less acidic than hot coffee, making it easier on your stomach.",
+                "The world's most expensive coffee, Kopi Luwak, comes from civet cat droppings. Fancy a cup?",
+                "Coffee naps are real! Drinking coffee before a 20-minute nap can make you feel more alert afterwards."
+            ];
+
+            const today = new Date().getDay();
+            return tips[today === 0 ? 6 : today - 1]; // Sunday is 0, so we adjust the index
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const tipElement = document.getElementById('coffee-tip');
+            tipElement.textContent = getCoffeeTipOfTheDay();
+        });
   </script>
 </body>
 

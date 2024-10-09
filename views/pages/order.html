@@ -36,14 +36,13 @@
         </div>
     </nav>
 
-    <header class="text-light py-5 text-center" style="background-color: #a0b598;">
+    <header class="text-light py-5 text-center" style="background-color: #8d7f6b;">
         <h1 class="display-4">Checkout</h1>
         <p>Thanks for shopping with Expresso Yourself! Looking forward to drinking coffee with you again!</p>
     </header>
 
     <section class="container py-5">
         <div class="row">
-            <!-- Billing Information -->
             <div class="col-md-7">
                 <h3>Billing Information</h3>
                 <form id="checkout-form">
@@ -77,7 +76,6 @@
                         </select>
                     </div>
 
-                    <!-- Payment Information -->
                     <h4 class="mb-3">Payment</h4>
                     <div class="mb-3">
                         <input type="text" class="form-control" id="cardName" placeholder="Name on Card" maxlength="50" required>
@@ -102,12 +100,10 @@
                 </form>
             </div>
 
-            <!-- Order Summary -->
             <div class="col-md-5">
                 <h3>Order Summary</h3>
                 <ul class="list-group mb-3 order-summary" id="order-summary"></ul>
 
-                <!-- Currency Dropdown -->
                 <div class="mb-3">
                     <label for="currency" class="form-label">Select Currency:</label>
                     <select id="currency" class="form-select">
@@ -259,7 +255,6 @@
                 if (response.status !== 200) {
                     throw new Error('Checkout failed');
                 }
-                // If status is 200, remove the cart from localStorage
                 localStorage.removeItem('cart');
                 alert('Checkout successful!');
                 
