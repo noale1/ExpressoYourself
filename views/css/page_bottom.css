@@ -26,6 +26,7 @@
 }
 
 .footer-section h3 {
+    text-shadow: 1px 1px 2px #ecf0f1;
     color: #312d28;
     margin-bottom: 10px;
     font-size: 1.2em;
