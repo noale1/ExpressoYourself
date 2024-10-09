@@ -77,3 +77,12 @@ exports.getUserFromToken = (token) => {
         return null; // Token is invalid or error occurred
     }
 };
+
+exports.getUserIdFromToken = (token) => {
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET); // Synchronous version
+        return user.userId; // Return the username if the token is valid
+    } catch (err) {
+        return null; // Token is invalid or error occurred
+    }
+};

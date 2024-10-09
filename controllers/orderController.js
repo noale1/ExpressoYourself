@@ -5,10 +5,8 @@ const jwt = require('jsonwebtoken');
 const auth = require("../controllers/authController")
 const mongoose = require('mongoose');
 
-// List all orders
-exports.list_orders = async (req, res) => {
-  try {
-    const { productName, minPrice, maxPrice, orderDate, userId } = req.query;
+async function search_orders(productName, minPrice, maxPrice, orderDate, userId, req, res){
+  try { 
 
     let query = {};
 
@@ -39,13 +37,20 @@ exports.list_orders = async (req, res) => {
     const orders = await Order.find(query).populate({
       path: 'user',
       model: 'User',
-  });;
+    });;
 
     res.status(200).json(orders);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
   }
+};
+
+// List all orders
+exports.list_orders = async (req, res) => {
+    const { productName, minPrice, maxPrice, orderDate, userId } = req.query;
+    await search_orders(productName, minPrice, maxPrice, orderDate, userId, req ,res)
+    
 };
 
 
@@ -127,22 +132,10 @@ exports.checkout = async (req, res) => {
 exports.getUserHistoryOrders = async (req, res) => {
     // const username = req.params.username;
     const token = req.headers['cookie']?.split('=')[1]
-    const username = auth.getUserFromToken(token) // Attach user info to request
+    const userId = auth.getUserIdFromToken(token) // Attach user info to request
+    const { productName, minPrice, maxPrice, orderDate } = req.query;
 
-    const userId = await User.find({ username });
-
-
-    try {
-        // Find the order by user (or session ID)
-        const orders = await Order.findById({ user: userId }); 
-        console.log(orders);
-        if (!orders) {
-            return res.status(404).json({ message: 'No active orders found' });
-        }
-        res.json(orders);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching order' });
-    }
+    await search_orders(productName, minPrice, maxPrice, orderDate, userId, req ,res)
 };
 
 exports.get_top_saled_product_graph = async (req, res) => {
