@@ -140,7 +140,7 @@
                 const orderCard = document.createElement('div');
                 orderCard.className = 'order-card';
 
-                const orderDate = new Date(order.createdAt).toLocaleDateString();
+                const orderDate = new Date(order.orderDate).toLocaleDateString();
 
                 orderCard.innerHTML = `
                     <h5>Order #${order._id}</h5>
