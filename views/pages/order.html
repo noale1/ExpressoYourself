@@ -128,23 +128,31 @@
         
         let currencyController = new CurrencyController();
 
-        // Using jQuery for document ready
         $(document).ready(function() {
-            // Get exchange API key and initialize the currency controller
+            const loginLink = $('#login-logout-link');
+            const logoutLink = $('#logout-link');
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn === 'true') {
+                loginLink.addClass('d-none');
+                logoutLink.removeClass('d-none');
+            } else {
+                loginLink.removeClass('d-none');
+                logoutLink.addClass('d-none');
+            }
+            
             $.get('/api/getExchangeAPIKey', function(apiKey) {
                 currencyController = new CurrencyController(apiKey);
                 console.log('Currency controller initialized with API key:', apiKey);
             });
 
-            // Update total when currency changes
             $('#currency').on('change', function() {
                 updateCartTotal($(this).val());
             });
 
-            // Load initial cart data and update totals
             updateCartTotal($('#currency').val());
 
-            // Submit form via jQuery on button click
             $('#checkout-submit').on('click', function(event) {
                 event.preventDefault();
                 const checkoutForm = $('#checkout-form')[0];
@@ -184,7 +192,6 @@
                     paymentDetails: paymentDetails
                 };
 
-                // Send POST request using jQuery AJAX
                 $.ajax({
                     url: '/private/order',
                     type: 'POST',

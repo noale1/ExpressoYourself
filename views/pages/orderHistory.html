@@ -197,6 +197,18 @@
             const tipElement = $('#coffee-tip');
             tipElement.text(getCoffeeTipOfTheDay());
 
+            const loginLink = $('#login-logout-link');
+            const logoutLink = $('#logout-link');
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn === 'true') {
+                loginLink.addClass('d-none');
+                logoutLink.removeClass('d-none');
+            } else {
+                loginLink.removeClass('d-none');
+                logoutLink.addClass('d-none');
+            }
             
             fetchOrderHistory();
             window.applyFilter = function () {
