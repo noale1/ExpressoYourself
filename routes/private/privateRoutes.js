@@ -9,6 +9,7 @@ const RELATIVE_PAGES_PATH = '../../views/pages';
 router.use( auth.authenticateToken );
 
 const supplierRoutes = require('./supplierRoutes.js');
+const isAuthenticated = require('../../middlewares/auth_midware');
 router.use('/supplier',supplierRoutes);
 
 // order page
