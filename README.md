@@ -25,10 +25,10 @@ Monday - Friday, 9 AM to 5 PM (unless we're napping... or pretending to pay atte
 
 ### Stalk Us on Social Media
 Follow us for coffee memes, embarrassing college stories, and maybe even the occasional coupon:
-- [Facebook](https://facebook.com/expressoyourself)
-- [Twitter](https://twitter.com/expresso_yourself)
-- [Instagram](https://instagram.com/expresso_yourself)
-- [TikTok](https://tiktok.com/@expressoyourself) (We may or may not have tried coffee dance challenges.)
+- [Facebook](https://facebook.com/expressoyourself)(Not Yet)
+- [Twitter](https://twitter.com/ExpressoY46059)
+- [Instagram](https://instagram.com/expresso_yourself)(Not Yet)
+- [TikTok](https://tiktok.com/@expressoyourself) (We may or may not have tried coffee dance challenges.)(Not Yet)
 
 ### Where We (Don’t) Live
 We don’t have a brick-and-mortar shop yet (still paying off our student loans), but you can always find us online:  
