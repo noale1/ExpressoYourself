@@ -3,7 +3,6 @@ const User = require('../models/user');
 
 
 exports.isSupplier = async (req, res, next) => {
-    // Get the token from the Authorization header
     const token = req.headers['cookie']?.split('=')[1];
     if (!token) return res.redirect(302, '/login');
 
@@ -11,7 +10,7 @@ exports.isSupplier = async (req, res, next) => {
         jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
             if (err) return res.redirect(302, '/login'); // Token is invalid
             if(!user.isSupplier) return res.status(403).json({ message: 'Unpriviledged Account -> kushi' });// Attach user info to request
-            next(); // Proceed to the next middleware or route handler
+            next(); 
         });
     } catch (error) {
         if (error.name === 'JsonWebTokenError') {
