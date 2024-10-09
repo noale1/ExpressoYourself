@@ -11,7 +11,7 @@ exports.isAdmin = async (req, res, next) => {
         jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
             if (err) return res.redirect(302, '/login'); // Token is invalid
             if(!user.isAdmin) return res.status(403).json({ message: 'Unpriviledged Account -> kushi' });// Attach user info to request
-            next(); // Proceed to the next middleware or route handler
+            next(); 
         });
     } catch (error) {
         if (error.name === 'JsonWebTokenError') {
