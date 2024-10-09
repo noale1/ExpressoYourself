@@ -21,7 +21,7 @@
       <ul class="dropdown-menu" aria-labelledby="loginDropdown">
         <li><a href="/login" id="login-logout-link">Login</a></li>
         <li class="d-none" id="logout-link">
-          <a href="#" onclick="logoutUser()">Logout</a>
+          <a href="#" id="logout-link">Logout</a>
         </li>
       
         <li><a href="/products">Products</a></li>
@@ -109,10 +109,10 @@
       const tipElement = $('#coffee-tip');
       tipElement.text(getCoffeeTipOfTheDay());
       
-      $('#logout-link').on('click', function(event) {
-        event.preventDefault(); 
-        logoutUser();
-      });
+      $('#logout-link').click(function(event) {
+            event.preventDefault(); 
+            logoutUser(); 
+        });
 
       $.ajax({
         url: '/components/navbar.html',
@@ -170,23 +170,23 @@
       });
     }
 
-function logoutUser() {
-        localStorage.clear();
-        $.ajax({
-            url: '/logout',
-            type: 'POST',
-            xhrFields: {
-                withCredentials: true // Include credentials (like the JWT cookie)
-            },
-            success: function() {
-                alert('You have logged out successfully.');
-                window.location.href = '/';
-            },
-            error: function(xhr, status, error) {
-                console.error('Logout failed:', error);
-            }
-        });
-    }
+    function logoutUser() {
+          localStorage.clear();
+          $.ajax({
+              url: '/logout',
+              type: 'POST',
+              xhrFields: {
+                  withCredentials: true // Include credentials (like the JWT cookie)
+              },
+              success: function() {
+                  alert('You have logged out successfully.');
+                  window.location.href = '/';
+              },
+              error: function(xhr, status, error) {
+                  console.error('Logout failed:', error);
+              }
+          });
+      }
 
         function getCoffeeTipOfTheDay() {
             const tips = [

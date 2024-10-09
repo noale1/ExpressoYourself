@@ -22,7 +22,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/login" id="login-logout-link">Login</a></li>
                 <li class="d-none" id="logout-link">
-                    <a href="#" onclick="logoutUser()">Logout</a>
+                    <a href="#" id="logout-link">Logout</a>
                 </li>
 
                 <li><a href="/products">Products</a></li>
@@ -153,6 +153,11 @@
 
             updateCartTotal($('#currency').val());
 
+            $('#logout-link').click(function(event) {
+                event.preventDefault(); 
+                logoutUser();
+            });
+
             $('#checkout-submit').on('click', function(event) {
                 event.preventDefault();
                 const checkoutForm = $('#checkout-form')[0];
@@ -204,7 +209,14 @@
                     },
                     error: function(xhr, status, error) {
                         console.error('Checkout failed:', error);
-                        alert('Checkout failed!');
+                        
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            alert(xhr.responseJSON.message); 
+                        } else if (xhr.responseText) {
+                            alert(xhr.responseText); 
+                        } else {
+                            alert('An unknown error occurred.'); 
+                        }
                     }
                 });
             });

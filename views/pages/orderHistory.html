@@ -47,7 +47,7 @@
                 <li><a href="/">Home</a></li>
                 <li><a href="/login" id="login-logout-link">Login</a></li>
                 <li class="d-none" id="logout-link">
-                    <a href="#" onclick="logoutUser()">Logout</a>
+                    <a href="#" id="logout-link">Logout</a>
                 </li>
 
                 <li><a href="/products">Products</a></li>
@@ -69,9 +69,9 @@
             <div class="col-md-3">
                 <div id="filter-menu" class="p-4">
                     <h5>Filter Orders</h5>
-                    <form id="filter-form" onsubmit="applyFilter(); return false;">
+                    <form id="filter-form">
                         <div class="mb-3">
-                            <label for="productName" class="form-label">Product Name</label>
+                            <label for="productName" class="form-label"> Contains</label>
                             <input type="text" class="form-control" id="productName" name="productName" maxlength="50">
                         </div>
                         <div class="mb-3">
@@ -87,7 +87,7 @@
                             <input type="date" class="form-control" id="orderDate" name="orderDate">
                         </div>
                         <button type="submit" class="btn custom-btn">Apply Filter</button>
-                        <button type="button" class="btn btn-secondary" onclick="resetFilter()">Reset</button>
+                        <button type="button" class="btn btn-secondary" id="reset-button">Reset</button>
                     </form>
                 </div>
             </div>
@@ -194,6 +194,15 @@
 
         // Load user profile and order history when page loads
         $(document).ready(function() {
+            $('#logout-link').click(function(event) {
+                event.preventDefault(); 
+                logoutUser();
+            });
+
+            $('#reset-button').click(function() {
+                resetFilter(); // Call the resetFilter function
+            });
+
             const tipElement = $('#coffee-tip');
             tipElement.text(getCoffeeTipOfTheDay());
 
@@ -210,6 +219,11 @@
                 logoutLink.addClass('d-none');
             }
             
+            $('#filter-form').submit(function(event) {
+                event.preventDefault(); 
+                applyFilter(); 
+            });
+
             fetchOrderHistory();
             window.applyFilter = function () {
                 fetchOrderHistory();
