@@ -239,7 +239,7 @@
                                         <p class="card-text">Price: $${product.price.toFixed(2)}</p>
                                         ${inStockText}  <!-- Display stock status here -->
                                         <a href="#" class="image-link-button" data-id="${product._id}" data-name="${product.name}" data-price="${product.price}" ${product.inStock ? '' : 'disabled'}>
-                                            <img src="../images/shopping_cart.webp" alt="Add to Cart">
+                                        ${product.inStock ? ' <img src="../images/shopping_cart.webp" alt="Add to Cart">' : ''}
                                         </a>
                                     </div>
                                 </div>
