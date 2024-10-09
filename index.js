@@ -21,9 +21,10 @@ mongoose.connect(mongoAtlasUri)
     .then(() => console.log('Connected!'))
     .catch(e => console.log(e));
 
+// Handle routes
 const routes = require('./routes');
 app.use('/', routes);
-    // Handle routes
+
 
 // Start the server
 app.listen(3000, () => {

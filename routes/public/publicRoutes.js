@@ -17,11 +17,6 @@ router.get('/about', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_
 //ContactUs Page
 router.get('/contact', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'ContactUs.html')); });
 
-// 404 Page
-router.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, '404.html'));
-});
-
 
 // login and register pages
 router.get('/login', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'login.html')) });
@@ -34,8 +29,6 @@ router.post('/logout', authController.logout);
 router.get('/locations', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'locations.html')); });
 
 
-
-
 router.get('/controllers/currencyController.js', (req, res) => {
     res.sendFile(path.join(__dirname, '../../controllers', 'currencyController.js'));
 });
@@ -43,6 +36,7 @@ router.get('/controllers/currencyController.js', (req, res) => {
 router.get('/models/currency.js', (req, res) => {
     res.sendFile(path.join(__dirname, '../../models', 'currency.js'));
 });
+
 
 
 
