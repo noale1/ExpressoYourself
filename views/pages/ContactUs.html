@@ -34,7 +34,7 @@
 
         .overlay {
             position: relative;
-            background-color: rgba(0, 0, 0, 0.7); /* Dark overlay to improve text readability */
+            background-color: rgba(0, 0, 0, 0.7);
             padding: 3rem;
         }
 
@@ -61,7 +61,7 @@
 
         .alert-dismissible {
             position: relative;
-            z-index: 1; /* Ensure alert is above other elements */
+            z-index: 1;
         }
     </style>
 </head>
@@ -94,14 +94,11 @@
         </div>
     </div>
 
-
-    <!-- Header Section -->
     <header class="text-center py-5">
         <h1 class="display-3">Get in Touch! ☕</h1>
         <p class="lead">We'd love to hear from you!</p>
     </header>
 
-    <!-- Contact Us Section with Background Overlay -->
     <section class="overlay text-center">
         <div class="container">
             <div class="row justify-content-center mb-4">
@@ -113,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Bootstrap Alert Section -->
             <div id="alertContainer" class="mb-4"></div>
 
             <form id="contactForm">
@@ -168,25 +164,21 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JavaScript Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('contactForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault(); 
 
-            // Gather form data
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const message = document.getElementById('message').value;
 
-            // Create JSON object
             const data = {
                 name: name,
                 email: email,
                 message: message
             };
 
-            // Send the POST request
             fetch('/add_Message', {
                 method: 'POST',
                 headers: {
@@ -197,7 +189,6 @@
             .then(response => {
                 if (response.ok) {
                     showAlert('Message sent successfully!', 'success');
-                    // Clear the form fields after successful submission
                     document.getElementById('contactForm').reset();
                 } else {
                     showAlert('Failed to send message. Please try again.', 'danger');
@@ -210,7 +201,6 @@
         });
 
         function showAlert(message, type) {
-            // Create alert div
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
             alertDiv.role = 'alert';
@@ -218,8 +208,7 @@
                 ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
-            // Append alert to the alert container
-            document.getElementById('alertContainer').innerHTML = ''; // Clear previous alerts
+            document.getElementById('alertContainer').innerHTML = ''; 
             document.getElementById('alertContainer').appendChild(alertDiv);
         }
 
