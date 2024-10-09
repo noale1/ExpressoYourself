@@ -8,7 +8,7 @@ exports.list_products = async (req, res) => {
     res.json(products);
 };
 
-// Add a new product
+// Add new product
 exports.add_product = async (req, res) => {
     try {
         const newProduct = new Product(req.body);
@@ -58,7 +58,7 @@ exports.get_products = async(req, res) => {
         const filters = req.query;  
         let query = {};
 
-        // Handle price range filter
+        // Price range filter
         if (filters.minPrice || filters.maxPrice) {
             query.price = {};
             if (filters.minPrice) {
@@ -69,17 +69,17 @@ exports.get_products = async(req, res) => {
             }
         }
 
-        // Handle category filter
+        // HCategory filter
         if (filters.category && filters.category.trim() !== "" && filters.category !== "AllCategories") {
             query.category = filters.category;
         }
 
-        // Handle inStock filter
+        // inStock filter
         if (filters.inStock !== undefined) {
             query.inStock = filters.inStock === 'true'; 
         }
 
-        // Handle descriptionContains filter
+        // descriptionContains filter
         if (filters.descriptionContains && filters.descriptionContains.trim() !== "") {
             query.description = { $regex: filters.descriptionContains, $options: 'i' }; 
         }

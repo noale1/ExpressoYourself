@@ -99,7 +99,7 @@ exports.checkout = async (req, res) => {
             await product.save();
         }
 
-        // calc total amount
+        // calculate total amount
         cart.forEach(item => {
             totalPrice += item.price * item.quantity;
         });
@@ -130,9 +130,8 @@ exports.checkout = async (req, res) => {
 };
 
 exports.getUserHistoryOrders = async (req, res) => {
-    // const username = req.params.username;
     const token = req.headers['cookie']?.split('=')[1]
-    const userId = auth.getUserIdFromToken(token) // Attach user info to request
+    const userId = auth.getUserIdFromToken(token) 
     const { productName, minPrice, maxPrice, orderDate } = req.query;
 
     await search_orders(productName, minPrice, maxPrice, orderDate, userId, req ,res)
