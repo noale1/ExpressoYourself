@@ -2,14 +2,6 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-//TODO: crud for user -> DONE
-//TODO: hash password in the create function -> DONE
-//TODO: validate jwt -> DONE
-//TODO: make jwt secret in the .env -> DONE
-//TODO: enforce auth -> DONE
-//TODO: validate admin 
-//TODO: Logoff
-
 //list all Users
 exports.listAllUsers = async (req, res) => {
     try {
@@ -78,7 +70,7 @@ exports.revokeAdmin = async (req, res) => {
             return res.status(404).json({ message: 'User not found.' });
         }
 
-        user.isAdmin = false; // Remove admin privileges
+        user.isAdmin = false; 
         await user.save();
 
         return res.json({ message: `User ${user.username} has been revoked admin privileges.` });

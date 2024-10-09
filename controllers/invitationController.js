@@ -8,7 +8,7 @@ exports.create_invitation = async (req, res) => {
     const { supplierName, productId, quantity } = req.body;
     
     try {
-        // Validate supplier and product existence
+        // Check if supplier and product exist
         const supplier = await Supplier.findOne({ name: supplierName.trim() });
         if (!supplier) return res.status(404).json({ message: 'Supplier not found' });
 
@@ -109,7 +109,7 @@ exports.get_all_invitations = async (req, res) => {
             filter.status = status;
         }
 
-        // Filter by createdAt (start and end date)
+        // Filter by creation date 
         if (startDate || endDate) {
             filter.createdAt = {};
             if (startDate) {

@@ -46,15 +46,12 @@ exports.update_supplier = async (req, res) => {
         const supplier_name = req.params.supplier_name;
         const updatedData = req.body;
 
-        // Find the supplier by ID and update the fields
         await Supplier.findByIdAndUpdate(supplier_name, updatedData, {runValidators: true });
 
-        // Check if the supplier exists
         if (!updatedSupplier) {
             return res.status(404).json({ message: 'Supplier not found' });
         }
 
-        // Return the updated supplier
         res.status(200).json({message: 'Supplier updated successfully',});
 
     } catch (error) {
@@ -74,12 +71,10 @@ exports.get_supplier = async (req, res) => {
             model: 'Product',
         });
         
-        // Check if the supplier exists
         if (!supplier) {
             return res.status(404).json({ message: 'Supplier not found' });
         }
 
-        // Return the updated supplier
         return res.status(200).json(supplier);
 
     } catch (error) {
@@ -113,7 +108,7 @@ exports.list_all_supplier = async (req, res) => {
 
         // filter by product name 
         let suppliersQuery = Supplier.aggregate([
-            { $match: query },  // Apply other supplier filters (like by name or location)
+            { $match: query }, 
             { 
                 $lookup: {
                     from: 'products',
@@ -202,7 +197,6 @@ exports.removeProductFromAllSuppliers = async (productId) => {
     }
 }
 
-//module.exports = removeProductFromAllSuppliers;
 
 exports.get_suppliers_by_country = async (req, res) => {
     try {

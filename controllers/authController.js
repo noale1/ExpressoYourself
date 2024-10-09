@@ -20,12 +20,12 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id, username: user.username, isAdmin: user.isAdmin, isSupplier: user.isSupplier }, process.env.JWT_SECRET, {
-            expiresIn: '3h', // Token expiration
+            expiresIn: '3h', 
         });
 
         res.cookie('Autherization', token, {
-            httpOnly: true, // Prevents client-side access to the cookie
-            maxAge: 10800000 // 3 hour in milliseconds
+            httpOnly: true, 
+            maxAge: 3600000 // 3 hours in milliseconds
         });
         console.log("[+] User Logged In: ",email, user.username,  password);
         res.json({ message: 'Login successful, Welcome '+user.username,  is_admin: user.isAdmin, is_supplier: user.isSupplier});
@@ -57,13 +57,12 @@ exports.register = async (req, res) => {
 
 exports.logout = async (req, res) => {
     const token = jwt.sign({ userId: "", username:"", isAdmin: "", isSupplier:"" }, process.env.JWT_SECRET, {
-        expiresIn: '0h', // Token expiration
+        expiresIn: '0h', 
     });
     res.cookie('Autherization', token, {
-        httpOnly: true, // Prevents client-side access to the cookie
-        maxAge: 10800000 // 3 hour in milliseconds
+        httpOnly: true, 
+        maxAge: 3600000 // 3 hour in milliseconds
     });
-      // Send response indicating successful logout
     return res.status(200).send('Logged out successfully');
 };
   
@@ -71,19 +70,19 @@ exports.logout = async (req, res) => {
 
 exports.getUserFromToken = (token) => {
     try {
-        const user = jwt.verify(token, process.env.JWT_SECRET); // Synchronous version
-        return user.username; // Return the username if the token is valid
+        const user = jwt.verify(token, process.env.JWT_SECRET); 
+        return user.username; 
     } catch (err) {
-        return null; // Token is invalid or error occurred
+        return null; 
     }
 };
 
 exports.getUserIdFromToken = (token) => {
     try {
-        const user = jwt.verify(token, process.env.JWT_SECRET); // Synchronous version
-        return user.userId; // Return the username if the token is valid
+        const user = jwt.verify(token, process.env.JWT_SECRET); 
+        return user.userId; 
     } catch (err) {
-        return null; // Token is invalid or error occurred
+        return null; 
     }
 };
 
