@@ -78,6 +78,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="profile-container">
         <!-- User Profile Section -->
@@ -89,7 +90,46 @@
                 <p><strong>Member Since:</strong> <span id="userSince">January 2023</span></p>
             </div>
         </div>
-
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                    <div id="filter-menu" class="p-4">
+                        <h5>Filter Orders</h5>
+                        <form id="filter-form" onsubmit="applyFilter(); return false;">
+                            <div class="mb-3">
+                                <label for="productName" class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="productName" name="productName" maxlength="50">
+                            </div>
+                            <div class="mb-3">
+                                <label for="minPrice" class="form-label">Min Price</label>
+                                <input type="number" step="0.01" class="form-control" id="minPrice" name="minPrice">
+                            </div>
+                            <div class="mb-3">
+                                <label for="maxPrice" class="form-label">Max Price</label>
+                                <input type="number" step="0.01" class="form-control" id="maxPrice" name="maxPrice">
+                            </div>
+                            <div class="mb-3">
+                                <label for="orderDate" class="form-label">Order Date</label>
+                                <input type="date" class="form-control" id="orderDate" name="orderDate">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Apply Filter</button>
+                            <button type="button" class="btn btn-secondary" onclick="resetFilter()">Reset</button>
+                        </form>
+                    </div>
+                </div>
+    
+                <div class="col-md-9">
+                    <div class="container mt-4">
+                        <!-- Order History Section -->
+                        <div class="order-history">
+                            <h3>Order History</h3>
+                            <div id="orderHistory"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
         <!-- Order History Section -->
         <div class="order-history">
             <h3>Order History</h3>
@@ -97,6 +137,7 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         async function fetchUserProfile() {
             // Simulate fetching user profile data (you can replace this with an actual API call)
@@ -107,25 +148,31 @@
             };
         }
 
-        async function fetchOrderHistory() {
-            try {
-                const response = await fetch('/private/listOrders', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+        function fetchOrderHistory() {
+            const filters = {
+                productName: $('#productName').val(),
+                minPrice: $('#minPrice').val(),
+                maxPrice: $('#maxPrice').val(),
+                orderDate: $('#orderDate').val(),
+            };
 
-                if (response.ok) {
-                    const orders = await response.json();
-                    displayOrders(orders);
-                } else {
-                    document.getElementById('orderHistory').innerHTML = '<p>No orders found.</p>';
+            $.ajax({
+                url: '/private/listOrders',
+                type: 'GET',
+                data: filters,
+                contentType: 'application/json',
+                success: function(orders) {
+                    if (orders && orders.length > 0) {
+                        displayOrders(orders);
+                    } else {
+                        $('#orderHistory').html('<p>No orders found.</p>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching order history:', error);
+                    $('#orderHistory').html('<p>Error fetching orders.</p>');
                 }
-            } catch (error) {
-                console.error('Error fetching order history:', error);
-                document.getElementById('orderHistory').innerHTML = '<p>Error fetching orders.</p>';
-            }
+            });
         }
 
         function displayOrders(orders) {
@@ -152,13 +199,22 @@
         }
 
         // Load user profile and order history when page loads
-        document.addEventListener('DOMContentLoaded', async () => {
-            const userProfile = await fetchUserProfile();
+        $(document).ready(function() {
+            const userProfile = fetchUserProfile();
             document.getElementById('userName').textContent = userProfile.name;
             document.getElementById('userEmail').textContent = userProfile.email;
             document.getElementById('userSince').textContent = userProfile.memberSince;
-
+            
             fetchOrderHistory();
+            window.applyFilter = function () {
+                fetchOrderHistory();
+            };
+
+            window.resetFilter = function () {
+                $('#filter-form')[0].reset();
+                fetchOrderHistory();
+            };
+
         });
     </script>
 </body>

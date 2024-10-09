@@ -3,11 +3,54 @@ const User = require('../models/user');
 const Product = require('../models/product');
 const jwt = require('jsonwebtoken');
 const auth = require("../controllers/authController")
+const mongoose = require('mongoose');
+
+async function search_orders(productName, minPrice, maxPrice, orderDate, userId, req, res){
+  try { 
+
+    let query = {};
+
+    if (productName) {
+        query['items.productName'] = { $regex: new RegExp(productName.trim(), 'i') };
+    }
+
+    if (minPrice || maxPrice) {
+        query.totalPrice = {};
+        if (minPrice) query.totalPrice.$gte = parseFloat(minPrice);
+        if (maxPrice) query.totalPrice.$lte = parseFloat(maxPrice);
+    }
+
+    if (orderDate) {
+        const parsedDate = new Date(orderDate);
+        if (!isNaN(parsedDate)) {
+            query.orderDate = { 
+                $gte: new Date(parsedDate.setUTCHours(0, 0, 0, 0)), 
+                $lt: new Date(parsedDate.setUTCHours(23, 59, 59, 999))
+            };
+        }
+    }
+
+    if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+        query.user = userId;
+    }
+
+    const orders = await Order.find(query).populate({
+      path: 'user',
+      model: 'User',
+    });;
+
+    res.status(200).json(orders);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+  }
+};
 
 // List all orders
 exports.list_orders = async (req, res) => {
-    const orders = await Order.find();
-    res.json(orders);
+    const { productName, minPrice, maxPrice, orderDate, userId } = req.query;
+    await search_orders(productName, minPrice, maxPrice, orderDate, userId, req ,res)
+    
 };
 
 
@@ -89,22 +132,10 @@ exports.checkout = async (req, res) => {
 exports.getUserHistoryOrders = async (req, res) => {
     // const username = req.params.username;
     const token = req.headers['cookie']?.split('=')[1]
-    const username = auth.getUserFromToken(token) // Attach user info to request
+    const userId = auth.getUserIdFromToken(token) // Attach user info to request
+    const { productName, minPrice, maxPrice, orderDate } = req.query;
 
-    const userId = await User.find({ username });
-
-
-    try {
-        // Find the order by user (or session ID)
-        const orders = await Order.findById({ user: userId }); 
-        console.log(orders);
-        if (!orders) {
-            return res.status(404).json({ message: 'No active orders found' });
-        }
-        res.json(orders);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching order' });
-    }
+    await search_orders(productName, minPrice, maxPrice, orderDate, userId, req ,res)
 };
 
 exports.get_top_saled_product_graph = async (req, res) => {
