@@ -225,8 +225,6 @@
             const convertedTotal = await currencyController.convertCurrency(totalInUSD, 'USD', selectedCurrency);
             const exchangeRate = await currencyController.currencyModel.fetchExchangeRate('USD', selectedCurrency);
 
-            console.log(convertedTotal.toFixed(2));
-
             // Render cart items
             cart.forEach(item => {
                 const orderItem = `
