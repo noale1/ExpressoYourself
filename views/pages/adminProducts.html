@@ -126,7 +126,6 @@
             loadCategories();
             loadSuppliers();
 
-            // Load navbar and footer
             $.ajax({
                 url: '/components/adminNavbar.html',
                 method: 'GET',
@@ -154,18 +153,15 @@
                 }
             });
 
-            // Submit form via jQuery
             $('#filter-form').on('submit', function(event) {
                 event.preventDefault();
                 applyFilter();
             });
 
-            // Bind the toggle filter click events
             $('#openFilterBtn, #closeFilterBtn').on('click', function() {
                 toggleFilters();
             });
 
-            // Bind the checkout button
             $('#checkout-btn').on('click', function() {
                 checkout();
             });

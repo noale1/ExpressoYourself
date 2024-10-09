@@ -141,7 +141,7 @@
     });
 
     function loadProducts(params = {}) {
-      const queryString = $.param(params);  // Convert params to query string
+      const queryString = $.param(params);  
 
       $.ajax({
           url: `/api/getProducts?${queryString}`,
@@ -176,7 +176,7 @@
               url: '/logout',
               type: 'POST',
               xhrFields: {
-                  withCredentials: true // Include credentials (like the JWT cookie)
+                  withCredentials: true 
               },
               success: function() {
                   alert('You have logged out successfully.');

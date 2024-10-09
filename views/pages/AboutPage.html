@@ -83,13 +83,11 @@
         </div>
     </div>
 
-    <!-- Header Section -->
     <header class="text-center py-5">
         <h1 class="display-3">Expresso Yourself ☕</h1>
         <p class="lead">Coffee, Creativity, and the Perfect Shot of Espresso</p>
     </header>
 
-    <!-- About Us Section with Background Overlay -->
     <section class="overlay text-center">
         <div class="container">
             <div class="row justify-content-center mb-4">
@@ -110,7 +108,6 @@
         </div>
     </section>
 
-    <!-- Meet the Team Section -->
     <section class="container text-center py-5">
         <h2 class="mb-5">Meet the Team</h2>
         <div class="row">
@@ -217,11 +214,10 @@ $(document).ready(function() {
             url: '/logout',
             type: 'POST',
             xhrFields: {
-                withCredentials: true // Include credentials (like the JWT cookie)
+                withCredentials: true 
             },
             success: function() {
                 alert('You have logged out successfully.');
-                // Redirect the user to the login page or home after logout
                 window.location.href = '/';
             },
             error: function(xhr, status, error) {

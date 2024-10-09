@@ -195,7 +195,6 @@
                 .innerRadius(0)
                 .outerRadius(radius);
 
-            // Draw pie slices
             g.selectAll('slices')
                 .data(data_ready)
                 .enter()
@@ -203,7 +202,6 @@
                 .attr('d', arc)
                 .attr('fill', d => color(d.data._id));
 
-            // Add title
             svg.append("text")
                 .attr("x", width / 2)
                 .attr("y", 20)

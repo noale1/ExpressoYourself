@@ -88,7 +88,6 @@
                 zoom: 15
             });
 
-            // Fetch location data from your backend
             fetch('/api/getMarkers')
                 .then(response => response.json())
                 .then(data => {
@@ -105,9 +104,7 @@
                 });
         }
 
-        // Load Google Maps API
         function loadGoogleMaps() {
-            // Fetch the API key from an endpoint
             fetch('/api/getMapsAPIKey')
                 .then(response => response.json())
                 .then(data => {
@@ -122,7 +119,6 @@
                 });
         }
 
-        // Load the Google Maps script when the page loads
         loadGoogleMaps();
 
         function getCoffeeTipOfTheDay() {
@@ -176,11 +172,10 @@
             url: '/logout',
             type: 'POST',
             xhrFields: {
-                withCredentials: true // Include credentials (like the JWT cookie)
+                withCredentials: true 
             },
             success: function() {
                 alert('You have logged out successfully.');
-                // Redirect the user to the login page or home after logout
                 window.location.href = '/';
             },
             error: function(xhr, status, error) {

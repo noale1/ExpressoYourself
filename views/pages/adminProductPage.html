@@ -61,10 +61,8 @@
 
     <script>
         $(document).ready(function() {
-            // Extract product ID from the URI
             const productId = window.location.pathname.split('/').pop();
             
-            // Fetch product data and prefill the form
             $.ajax({
                 url: `/admin/getProductByID/${productId}`,
                 method: 'GET',
@@ -76,7 +74,6 @@
                     $('#category').val(product.category);
                     $('#quantity').val(product.quantity);
 
-                    // Show the current product image
                     $('#imageDisplay').attr('src', product.imageUrl || '../images/default_beans.jpg');
                 },
                 error: function(err) {
@@ -84,7 +81,6 @@
                 }
             });
 
-            /// Handle form submission
             $('#updateProductBtn').on('click', function(e) {
                 e.preventDefault();
 
@@ -103,7 +99,6 @@
                     const imageFormData = new FormData();
                     imageFormData.append('image', imageFile);
 
-                    // Upload image first, then update the product
                     $.ajax({
                         url: '/admin/uploadImage',
                         method: 'POST',
@@ -123,7 +118,6 @@
                 }
             });
 
-            // Function to send product update request
             function updateProduct(productData, productId) {
                 $.ajax({
                     url: `/admin/products/${productId}`,
@@ -141,7 +135,6 @@
                 });
             }
             
-            // Handle delete button click
             $('#deleteProductBtn').on('click', function() {
                 if (confirm('Are you sure you want to delete this product?')) {
                     $.ajax({

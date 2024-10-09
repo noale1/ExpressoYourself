@@ -184,18 +184,15 @@
                 logoutLink.addClass('d-none');
             }
 
-            // Submit form using jQuery
             $('#contactForm').on('submit', function(event) {
                 event.preventDefault();
 
-                // Gather form data
                 const data = {
                     name: $('#name').val(),
                     email: $('#email').val(),
                     message: $('#message').val()
                 };
 
-                // Send the POST request using jQuery AJAX
                 $.ajax({
                     url: '/sendMessage',
                     type: 'POST',
@@ -203,7 +200,7 @@
                     data: JSON.stringify(data),
                     success: function(response) {
                         showAlert('Message sent successfully!', 'success');
-                        $('#contactForm')[0].reset(); // Clear form
+                        $('#contactForm')[0].reset(); 
                     },
                     error: function(xhr, status, error) {
                         showAlert('Failed to send message. Please try again.', 'danger');
@@ -211,7 +208,6 @@
                 });
             });
 
-            // Bind the logout click event
             $('#logout-anchor').on('click', function(event) {
                 event.preventDefault();
                 logoutUser();
@@ -225,7 +221,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             `;
-            $('#alertContainer').html(alertDiv); // Add the alert to the container
+            $('#alertContainer').html(alertDiv); 
         }
 
         function logoutUser() {

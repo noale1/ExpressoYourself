@@ -16,7 +16,7 @@
 
         .error-title {
             font-size: 10rem;
-            color: #d9534f; /* Danger color */
+            color: #d9534f; 
         }
 
         .error-message {
@@ -124,11 +124,10 @@ $(document).ready(function() {
             url: '/logout',
             type: 'POST',
             xhrFields: {
-                withCredentials: true // Include credentials (like the JWT cookie)
+                withCredentials: true 
             },
             success: function() {
                 alert('You have logged out successfully.');
-                // Redirect the user to the login page or home after logout
                 window.location.href = '/';
             },
             error: function(xhr, status, error) {
