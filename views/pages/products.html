@@ -282,7 +282,11 @@
                 const cartItem = `
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         ${item.name} - $${item.price.toFixed(2)} x ${item.quantity}
-                        <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.webp"></button>
+                        <div>
+                            <button onclick="decreaseQuantity('${item.id}')" class="btn btn-sm btn-light">-</button>
+                            <button onclick="increaseQuantity('${item.id}')" class="btn btn-sm btn-light">+</button>
+                            <button onclick="removeFromCart('${item.id}')" class="image-link-button btn"><img src="../images/delete.webp"></button>
+                        </div>
                     </li>
                 `;
                 cartItems.append(cartItem);
@@ -299,6 +303,26 @@
             });
         }
 
+        function increaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += 1;
+                updateCart();
+                saveCart();
+            }
+        }
+
+        function decreaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item && item.quantity > 1) {
+                item.quantity -= 1;
+            } else {
+                cart = cart.filter(item => item.id !== id); 
+            }
+            updateCart();
+            saveCart();
+        }
+        
         function removeFromCart(id) {
             cart = cart.filter(item => item.id !== id);
             updateCart();
