@@ -129,11 +129,17 @@
                 method: 'GET',
                 success: function(data) {
                     $('#navbar-container').html(data);
+
+                    $('#logout-button').on('click', function(event) {
+                        event.preventDefault(); 
+                        logoutUser(); 
+                    });
                 },
-                error: function(xhr, status, error) {
+                error: function(error) {
                     console.error('Error loading navbar:', error);
                 }
             });
+
             $.ajax({
                 url: '/components/adminFooter.html',
                 method: 'GET',
@@ -151,6 +157,24 @@
             });
         });
 
+        function logoutUser() {
+            localStorage.clear();
+
+            $.ajax({
+                url: '/logout',
+                type: 'POST',
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function() {
+                    alert('You have logged out successfully.');
+                    window.location.href = '/';
+                },
+                error: function(xhr, status, error) {
+                    console.error('Logout failed:', error);
+                }
+            });
+        }
     </script>
 </body>
 

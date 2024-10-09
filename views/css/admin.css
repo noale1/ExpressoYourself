@@ -1,0 +1,10 @@
+.button-no-frame {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px; 
+}
+
+.button-no-frame:hover {
+    text-decoration: underline; 
+}
