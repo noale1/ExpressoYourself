@@ -3,7 +3,7 @@ const router = express.Router();
 const path = require('path');
 const authController = require('../../controllers/authController');
 const RELATIVE_PAGES_PATH = '../../views/pages';
-
+const messagesController = require('../../controllers/messagesController');
 
 // home page
 router.get('/', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'home.html')) });
@@ -16,7 +16,7 @@ router.get('/about', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_
 
 //ContactUs Page
 router.get('/contact', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'ContactUs.html')); });
-
+router.post('/sendMessage',messagesController.sendMessage);
 
 // login and register pages
 router.get('/login', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'login.html')) });
