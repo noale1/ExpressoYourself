@@ -164,11 +164,10 @@
       localStorage.clear();
             fetch('/logout', {
                 method: 'POST',
-                credentials: 'include'  // Include the JWT cookie in the request
+                credentials: 'include'  
             }).then(response => {
                 if (response.ok) {
                 alert('You have logged out successfully.');
-                // Redirect the user to the login page or home after logout
                 window.location.href = '/';
                 } else {
                 console.error('Logout failed');
