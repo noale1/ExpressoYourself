@@ -222,7 +222,6 @@
             });
         });
 
-        // Function to update cart total
         async function updateCartTotal(selectedCurrency) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const orderSummary = $('#order-summary');
@@ -237,7 +236,6 @@
             const convertedTotal = await currencyController.convertCurrency(totalInUSD, 'USD', selectedCurrency);
             const exchangeRate = await currencyController.currencyModel.fetchExchangeRate('USD', selectedCurrency);
 
-            // Render cart items
             cart.forEach(item => {
                 const orderItem = `
                 <li class="list-group-item d-flex justify-content-between lh-sm">
@@ -250,7 +248,6 @@
                 orderSummary.append(orderItem);
             });
 
-            // Render total
             const totalLine = `
             <li class="list-group-item d-flex justify-content-between">
                 <span>Total (${selectedCurrency})</span>
@@ -265,11 +262,10 @@
                 url: '/logout',
                 type: 'POST',
                 xhrFields: {
-                    withCredentials: true // Include credentials (like the JWT cookie)
+                    withCredentials: true 
                 },
                 success: function() {
                     alert('You have logged out successfully.');
-                    // Redirect the user to the login page or home after logout
                     window.location.href = '/';
                 },
                 error: function(xhr, status, error) {

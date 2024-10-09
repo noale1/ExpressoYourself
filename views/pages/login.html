@@ -30,7 +30,6 @@
 
     <script>
         $(document).ready(function() {
-            // Submit form via jQuery
             $('#loginForm').on('submit', function(event) {
                 event.preventDefault();
 
@@ -40,13 +39,11 @@
                 errorMessage.text('');
                 errorMessage.hide();
 
-                // Create a JSON object
                 const data = {
                     email: email,
                     password: password
                 };
 
-                // Send a POST request using jQuery AJAX
                 $.ajax({
                     url: '/login',
                     type: 'POST',

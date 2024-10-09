@@ -38,40 +38,36 @@
 
     <script>
         $(document).ready(function() {
-            // Submit form via jQuery
             $('#registerForm').on('submit', function(event) {
-                event.preventDefault(); // Prevent the default form submission
+                event.preventDefault(); 
 
                 const username = $('#username').val();
                 const email = $('#email').val();
                 const password = $('#password').val();
                 const confirmPassword = $('#confirm-password').val();
                 const errorMessage = $('#error-message');
-                errorMessage.text(''); // Clear previous error messages
-                errorMessage.hide(); // Hide error message initially
+                errorMessage.text(''); 
+                errorMessage.hide(); 
 
-                // Simple password matching validation
                 if (password !== confirmPassword) {
                     errorMessage.text('Passwords do not match. Please try again.');
-                    errorMessage.show(); // Show the error message
+                    errorMessage.show(); 
                     return;
                 }
 
-                // Create a JSON object
                 const data = {
                     username: username,
                     email: email,
                     password: password
                 };
 
-                // Send a POST request using jQuery AJAX
                 $.ajax({
                     url: '/register',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(data),
                     success: function(response) {
-                        window.location.href = '/login'; // Redirect to the login page upon success
+                        window.location.href = '/login'; 
                     },
                     error: function(xhr, status, error) {
                         const errData = xhr.responseJSON;

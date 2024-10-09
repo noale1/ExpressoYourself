@@ -223,7 +223,7 @@
                 method: 'GET',
                 success: function(products) {
                     const productsContainer = $('#products-container');
-                    productsContainer.empty(); // Clear existing products
+                    productsContainer.empty(); 
 
                     products.forEach(product => {
                         const productCard = `
@@ -244,7 +244,6 @@
                         productsContainer.append(productCard);
                     });
 
-                    // Add to cart functionality after products load
                     $('.image-link-button').on('click', function(event) {
                         event.preventDefault();
                         const id = $(this).data('id');
@@ -294,7 +293,6 @@
             cartTotal.text(total.toFixed(2));
             cartCount.text(count);
 
-            // Bind remove from cart functionality
             $('.remove-item-btn').on('click', function() {
                 const id = $(this).data('id');
                 removeFromCart(id);
