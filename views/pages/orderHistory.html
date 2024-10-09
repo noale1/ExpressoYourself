@@ -160,7 +160,7 @@
 
         function displayOrders(orders) {
             const orderList = $('#order-list');
-            orderList.empty(); // Clear the existing content of order-list
+            orderList.empty(); 
 
             if (orders.length === 0) {
                 orderList.html('<p class="text-center">No orders found.</p>');
@@ -192,7 +192,6 @@
         }
 
 
-        // Load user profile and order history when page loads
         $(document).ready(function() {
             $('#logout-link').click(function(event) {
                 event.preventDefault(); 
@@ -200,7 +199,7 @@
             });
 
             $('#reset-button').click(function() {
-                resetFilter(); // Call the resetFilter function
+                resetFilter(); 
             });
 
             const tipElement = $('#coffee-tip');
@@ -256,11 +255,10 @@
                 url: '/logout',
                 type: 'POST',
                 xhrFields: {
-                    withCredentials: true // Include credentials (like the JWT cookie)
+                    withCredentials: true 
                 },
                 success: function() {
                     alert('You have logged out successfully.');
-                    // Redirect the user to the login page or home after logout
                     window.location.href = '/';
                 },
                 error: function(xhr, status, error) {
