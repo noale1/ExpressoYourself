@@ -18,8 +18,4 @@ router.get('/invitations/supplier', invitationController.get_invitations_by_supp
 router.get('/invitaionManagment', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'SupplierInvitaion.html')) });
 
 
-// supplier ROUTES
-// router.get('/supplier', (req, res) => { res.sendFile(path.join(__dirname, RELATIVE_PAGES_PATH, 'order.html')) });
-// router.post('/suplier',orderController.checkout);
-
 module.exports = router;

@@ -7,17 +7,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        trim: true,  // Remove leading and trailing spaces
+        trim: true,
         lowercase: true
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        lowercase: true,  // Case-insensitive
+        lowercase: true,
         validate: {
             validator: function(v) {
-                return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v);  // Email format validation
+                return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v);
             },
             message: props => `${props.value} is not a valid email!`
         }
@@ -33,47 +33,44 @@ const userSchema = new mongoose.Schema({
     },
     isSupplier: {
         type: Boolean,
-        default: false  // Tracks if user is also a supplier
+        default: false
     },
     supplier: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Supplier'  // Reference to the Supplier model
+        ref: 'Supplier'
     }
     
 },{ versionKey: false });
 
 userSchema.pre('save', async function(next) {
     if (this.isModified('password')) {
-        const salt = await bcrypt.genSalt(10); // Generate salt
-        this.password = await bcrypt.hash(this.password, salt); // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
     }
-    next(); // Proceed to save the user
+    next();
 });
 
 userSchema.pre('deleteOne', async function(next) {
     try {
-        // Remove all suppliers linked to this user
         await Supplier.deleteMany({ user: this.username });
-        next(); // Continue with the deletion of the user
+        next();
     } catch (error) {
-        next(error); // Pass the error to the next middleware
+        next(error);
     }
 });
 
 userSchema.pre('deleteMany', async function(next) {
     try {
-        const filter = this.getFilter();  // Get the filter used in deleteMany
-        const usersToDelete = await mongoose.model('User').find(filter);  // Find all users to be deleted
+        const filter = this.getFilter();
+        const usersToDelete = await mongoose.model('User').find(filter);
 
-        // Get all the user IDs that are about to be deleted
         const userIds = usersToDelete.map(user => user._id);
 
-        // Delete all suppliers linked to those user IDs
         await Supplier.deleteMany({ user: { $in: userIds } });
 
-        next();  // Continue with the deletion of the users
+        next();
     } catch (error) {
-        next(error);  // Pass the error to the next middleware
+        next(error);
     }
 });
 
