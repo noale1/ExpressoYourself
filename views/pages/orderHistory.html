@@ -1,221 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f1f3f5;
-        }
-
-        .profile-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-header img {
-            border-radius: 50%;
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            margin-right: 2rem;
-        }
-
-        .profile-header .user-info {
-            font-size: 1.2rem;
-        }
-
-        .profile-header .user-info h2 {
-            margin: 0;
-            font-size: 1.8rem;
-        }
-
-        .order-history {
-            margin-top: 3rem;
-        }
-
-        .order-card {
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: transform 0.2s ease;
-        }
-
-        .order-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .order-card h4 {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .order-card ul {
-            padding-left: 1rem;
-        }
-
-        .order-card ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .order-card .order-summary {
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-    </style>
+    <title>Products - Expresso Yourself</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/page_bottom.css">
 </head>
 
+<style>
+    .order-history-container {
+        padding: 40px;
+    }
+    .order-card {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+    .order-card h5 {
+        color: #6b4f37; 
+    }
+    .order-item {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+    }
+    .order-item:last-child {
+        border-bottom: none;
+    }
+</style>
+
 <body>
-    <div class="profile-container">
-        <!-- User Profile Section -->
-        <div class="profile-header">
-            <img src="https://via.placeholder.com/120" alt="User Profile Picture">
-            <div class="user-info">
-                <h2 id="userName">John Doe</h2>
-                <p><strong>Email:</strong> <span id="userEmail">john.doe@example.com</span></p>
-                <p><strong>Member Since:</strong> <span id="userSince">January 2023</span></p>
-            </div>
-        </div>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div id="filter-menu" class="p-4">
-                        <h5>Filter Orders</h5>
-                        <form id="filter-form" onsubmit="applyFilter(); return false;">
-                            <div class="mb-3">
-                                <label for="productName" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="productName" name="productName" maxlength="50">
-                            </div>
-                            <div class="mb-3">
-                                <label for="minPrice" class="form-label">Min Price</label>
-                                <input type="number" step="0.01" class="form-control" id="minPrice" name="minPrice">
-                            </div>
-                            <div class="mb-3">
-                                <label for="maxPrice" class="form-label">Max Price</label>
-                                <input type="number" step="0.01" class="form-control" id="maxPrice" name="maxPrice">
-                            </div>
-                            <div class="mb-3">
-                                <label for="orderDate" class="form-label">Order Date</label>
-                                <input type="date" class="form-control" id="orderDate" name="orderDate">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Apply Filter</button>
-                            <button type="button" class="btn btn-secondary" onclick="resetFilter()">Reset</button>
-                        </form>
-                    </div>
-                </div>
-    
-                <div class="col-md-9">
-                    <div class="container mt-4">
-                        <!-- Order History Section -->
-                        <div class="order-history">
-                            <h3>Order History</h3>
-                            <div id="orderHistory"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
-        <!-- Order History Section -->
-        <div class="order-history">
-            <h3>Order History</h3>
-            <div id="orderHistory"></div>
+
+
+    <div class="menu-dropdown">
+        <div class="dropdown">
+            <button class="btn btn-menu dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                ☰ Menu
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="loginDropdown">
+                <li><a href="/">Home</a></li>
+                <li><a href="/login" id="login-logout-link">Login</a></li>
+                <li class="d-none" id="logout-link">
+                    <a href="#" onclick="logoutUser()">Logout</a>
+                </li>
+
+                <li><a href="/products">Products</a></li>
+                <li><a href="/locations">Locations</a></li>
+                <li><a href="/about">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
         </div>
     </div>
 
+    <header class="text-light py-5 text-center" style="background-color: #8d7f6b;">
+        <h1 class="display-4">Order History</h1>
+        <p>Miss your favorite orders? Check them out here!</p>
+    </header>
+    </section>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div id="filter-menu" class="p-4">
+                    <h5>Filter Orders</h5>
+                    <form id="filter-form" onsubmit="applyFilter(); return false;">
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" name="productName" maxlength="50">
+                        </div>
+                        <div class="mb-3">
+                            <label for="minPrice" class="form-label">Min Price</label>
+                            <input type="number" step="0.01" class="form-control" id="minPrice" name="minPrice">
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxPrice" class="form-label">Max Price</label>
+                            <input type="number" step="0.01" class="form-control" id="maxPrice" name="maxPrice">
+                        </div>
+                        <div class="mb-3">
+                            <label for="orderDate" class="form-label">Order Date</label>
+                            <input type="date" class="form-control" id="orderDate" name="orderDate">
+                        </div>
+                        <button type="submit" class="btn custom-btn">Apply Filter</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetFilter()">Reset</button>
+                    </form>
+                </div>
+            </div>
+
+    <div class="container order-history-container col-md-9">
+        <div id="order-list">
+        </div>
+    </div>
+
+    <footer class="enhanced-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Us</h3>
+                    <p>Expresso Yourself is your go-to place for premium coffee and a great experience.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/products">Products</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p>Phone: +972 54-8740682</p>
+                    <p>Email: info@expressoyourself.com</p>
+                </div>
+            </div>
+            <aside>
+                <h4>Coffee Tip of the Day</h4>
+                <p id="coffee-tip"></p>
+            </aside>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Expresso Yourself | All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        async function fetchUserProfile() {
-            // Simulate fetching user profile data (you can replace this with an actual API call)
-            return {
-                name: 'John Doe',
-                email: 'john.doe@example.com',
-                memberSince: 'January 2023'
-            };
-        }
-
-        function fetchOrderHistory() {
-            const filters = {
-                productName: $('#productName').val(),
-                minPrice: $('#minPrice').val(),
-                maxPrice: $('#maxPrice').val(),
-                orderDate: $('#orderDate').val(),
-            };
-
-            $.ajax({
-                url: '/private/listOrders',
-                type: 'GET',
-                data: filters,
-                contentType: 'application/json',
-                success: function(orders) {
-                    if (orders && orders.length > 0) {
-                        displayOrders(orders);
-                    } else {
-                        $('#orderHistory').html('<p>No orders found.</p>');
+        // Fetch orders from the backend
+        async function fetchOrders() {
+            try {
+                const response = await fetch('/private/listOrders', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': document.cookie 
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching order history:', error);
-                    $('#orderHistory').html('<p>Error fetching orders.</p>');
+                });
+
+                console.log(response);
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
                 }
-            });
+
+                const orders = await response.json();
+                displayOrders(orders); 
+            } catch (error) {
+                console.error('Error fetching order history:', error);
+                document.getElementById('order-list').innerHTML = '<p class="text-center">No orders found.</p>';
+            }
         }
 
         function displayOrders(orders) {
-            const orderHistoryDiv = document.getElementById('orderHistory');
-            orderHistoryDiv.innerHTML = '';
+            const orderList = document.getElementById('order-list');
+            if (orders.length === 0) {
+                orderList.innerHTML = '<p class="text-center">No orders found.</p>';
+                return;
+            }
 
             orders.forEach(order => {
                 const orderCard = document.createElement('div');
-                orderCard.classList.add('order-card');
-                
-                const itemsList = order.items.map(item => `
-                    <li>${item.productName} - Quantity: ${item.quantity} - Price: $${item.price}</li>
-                `).join('');
+                orderCard.className = 'order-card';
+
+                const orderDate = new Date(order.orderDate).toLocaleDateString();
 
                 orderCard.innerHTML = `
-                    <h4>Order #${order._id}</h4>
-                    <ul>${itemsList}</ul>
-                    <p class="order-summary">Total Price: $${order.totalPrice}</p>
-                    <p><strong>Delivery Address:</strong> ${order.deliveryDetails.address}, ${order.deliveryDetails.city}, ${order.deliveryDetails.country}</p>
+                    <h5>Order #${order._id}</h5>
+                    <p><strong>Date:</strong> ${orderDate}</p>
+                    <p><strong>Total Price:</strong> $${order.totalPrice.toFixed(2)}</p>
+                    <div class="order-items">
+                        <h6>Items:</h6>
+                        ${order.items.map(item => `
+                            <div class="order-item d-flex justify-content-between">
+                                <span>${item.productName} (x${item.quantity})</span>
+                                <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
                 `;
 
-                orderHistoryDiv.appendChild(orderCard);
+                orderList.appendChild(orderCard);
             });
         }
 
-        // Load user profile and order history when page loads
-        $(document).ready(function() {
-            const userProfile = fetchUserProfile();
-            document.getElementById('userName').textContent = userProfile.name;
-            document.getElementById('userEmail').textContent = userProfile.email;
-            document.getElementById('userSince').textContent = userProfile.memberSince;
+        window.onload = fetchOrders;
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginLink = document.getElementById('login-logout-link');
+            const logoutLink = document.getElementById('logout-link');
+
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            if (isLoggedIn === 'true') {
+                loginLink.classList.add('d-none');
+                logoutLink.classList.remove('d-none');
+            } else {
+                loginLink.classList.remove('d-none');
+                logoutLink.classList.add('d-none');
+            }
+        });
+
+        function logoutUser() {
+            localStorage.clear();;
+            fetch('/logout', {
+                method: 'POST',
+                credentials: 'include'
+            }).then(response => {
+                if (response.ok) {
+                alert('You have logged out successfully.');
+                window.location.href = '/';
+                } else {
+                console.error('Logout failed');
+                }
+            }).catch(error => {
+                console.error('Error during logout:', error);
+            });
             
-            fetchOrderHistory();
-            window.applyFilter = function () {
-                fetchOrderHistory();
-            };
+        }
 
-            window.resetFilter = function () {
-                $('#filter-form')[0].reset();
-                fetchOrderHistory();
-            };
+        function getCoffeeTipOfTheDay() {
+            const tips = [
+                "Start your week right! Drinking coffee can boost your metabolism and help you burn fat.",
+                "For the best flavor, store your coffee beans in an airtight container at room temperature.",
+                "Did you know? Coffee is actually a fruit! The 'beans' are the pits of coffee cherries.",
+                "Espresso doesn't have more caffeine than regular coffee - it's just more concentrated.",
+                "Cold brew isn't just for summer! It's less acidic than hot coffee, making it easier on your stomach.",
+                "The world's most expensive coffee, Kopi Luwak, comes from civet cat droppings. Fancy a cup?",
+                "Coffee naps are real! Drinking coffee before a 20-minute nap can make you feel more alert afterwards."
+            ];
 
+            const today = new Date().getDay();
+            return tips[today === 0 ? 6 : today - 1]; // Sunday is 0, so we adjust the index
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const tipElement = document.getElementById('coffee-tip');
+            tipElement.textContent = getCoffeeTipOfTheDay();
         });
     </script>
+
 </body>
+
 </html>

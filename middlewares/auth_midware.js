@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken'); // If using JWT
+const jwt = require('jsonwebtoken'); 
 
 
-// Middleware function to check authentication
+// Validate authentication
 exports.authenticateToken = async (req, res, next) => {
     try{
         const token = req.headers['cookie']?.split('=')[1];
@@ -22,4 +22,3 @@ exports.authenticateToken = async (req, res, next) => {
         return res.status(500).json({ message: 'Internal server error.' });
     }
 }
-

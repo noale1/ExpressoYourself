@@ -90,7 +90,7 @@
 }
 
 .custom-btn {
-    background-color: #7d9a72;
+    background-color: #847562;
     color: #fff;
 }
 
@@ -145,6 +145,7 @@
     font-weight: bold;
     text-decoration: none;
     transition: background-color 0.3s ease;
+    font-family: 'Poppins', sans-serif;
 }
 
 .dropdown-menu a:hover {
